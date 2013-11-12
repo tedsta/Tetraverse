@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Tetraverse" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Tetraverse" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug/" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="extlibs\lib\libFission.a" />
+					<Add library="extlibs\lib\libsfml-audio.a" />
+					<Add library="extlibs\lib\libsfml-network.a" />
+					<Add library="extlibs\lib\libsfml-graphics.a" />
+					<Add library="extlibs\lib\libsfml-window.a" />
+					<Add library="extlibs\lib\libsfml-system.a" />
+					<Add library="extlibs\lib\libBox2D.a" />
+					<Add library="extlibs\lib\libsquirrel.a" />
+					<Add library="extlibs\lib\libsqstdlib.a" />
+					<Add library="extlibs\lib\libenet.a" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Tetraverse" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="extlibs\lib\libsfml-audio.a" />
+					<Add library="extlibs\lib\libsfml-network.a" />
+					<Add library="extlibs\lib\libsfml-graphics.a" />
+					<Add library="extlibs\lib\libsfml-window.a" />
+					<Add library="extlibs\lib\libsfml-system.a" />
+					<Add library="extlibs\lib\libBox2D.a" />
+					<Add library="extlibs\lib\libsquirrel.a" />
+					<Add library="extlibs\lib\libsqstdlib.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-DWIN32" />
+			<Add directory="include" />
+			<Add directory="extlibs/include" />
+			<Add directory="extlibs/include/Squirrel" />
+			<Add directory="extlibs/src/spine-c/include" />
+			<Add directory="extlibs/src/spine-sfml/src" />
+		</Compiler>
+		<Linker>
+			<Add library="extlibs\lib\libFission.a" />
+			<Add library="extlibs\lib\libsfml-audio.a" />
+			<Add library="extlibs\lib\libsfml-network.a" />
+			<Add library="extlibs\lib\libsfml-graphics.a" />
+			<Add library="extlibs\lib\libsfml-window.a" />
+			<Add library="extlibs\lib\libsfml-system.a" />
+			<Add library="extlibs\lib\libBox2D.a" />
+			<Add library="extlibs\lib\libsquirrel.a" />
+			<Add library="extlibs\lib\libsqstdlib.a" />
+			<Add library="extlibs\lib\libenet.a" />
+		</Linker>
+		<Unit filename="extlibs/src/spine-c/src/spine/Animation.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/AnimationState.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/AnimationStateData.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Atlas.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/AtlasAttachmentLoader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Attachment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/AttachmentLoader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Bone.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/BoneData.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/BoundingBoxAttachment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Event.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/EventData.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Json.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Json.h" />
+		<Unit filename="extlibs/src/spine-c/src/spine/RegionAttachment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Skeleton.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/SkeletonBounds.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/SkeletonData.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/SkeletonJson.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Skin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/Slot.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/SlotData.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-c/src/spine/extension.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
+		<Unit filename="include/GridComponent.h" />
+		<Unit filename="include/GridOps.h" />
+		<Unit filename="include/GridSystem.h" />
+		<Unit filename="include/InventoryComponent.h" />
+		<Unit filename="include/ItemComponent.h" />
+		<Unit filename="include/PhysicsComponent.h" />
+		<Unit filename="include/PhysicsSystem.h" />
+		<Unit filename="include/PlaceableComponent.h" />
+		<Unit filename="include/PlayerComponent.h" />
+		<Unit filename="include/PlayerSystem.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="perlin/perlin.cpp" />
+		<Unit filename="perlin/perlin.h" />
+		<Unit filename="src/GridComponent.cpp" />
+		<Unit filename="src/GridOps.cpp" />
+		<Unit filename="src/GridSystem.cpp" />
+		<Unit filename="src/InventoryComponent.cpp" />
+		<Unit filename="src/ItemComponent.cpp" />
+		<Unit filename="src/PhysicsComponent.cpp" />
+		<Unit filename="src/PhysicsSystem.cpp" />
+		<Unit filename="src/PlaceableComponent.cpp" />
+		<Unit filename="src/PlayerComponent.cpp" />
+		<Unit filename="src/PlayerSystem.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
