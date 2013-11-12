@@ -22,6 +22,12 @@ class ResourceManager
         ResourceManager();
         virtual ~ResourceManager();
 
+        /// \brief Add a resource
+        void add(const std::string& name, void* data);
+
+        /// \brief Get a resource
+        void* get(const std::string& name);
+
         /// \brief Get a texture.
         sf::Texture *getTexture(const std::string& name);
 

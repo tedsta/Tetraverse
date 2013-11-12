@@ -1,13 +1,13 @@
 /******************************************************************************
  * Spine Runtime Software License - Version 1.1
- * 
+ *
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms in whole or in part, with
  * or without modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. A Spine Essential, Professional, Enterprise, or Education License must
  *    be purchased from Esoteric Software and the license must remain valid:
  *    http://esotericsoftware.com/
@@ -18,7 +18,7 @@
  *    above copyright notice, this declaration of conditions and the following
  *    disclaimer, in the documentation and/or other materials provided with the
  *    distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -306,7 +306,7 @@ spAtlas* spAtlas_readAtlasFile (const char* path) {
 	memcpy(dir, path, dirLength);
 	dir[dirLength] = '\0';
 
-	data = _spUtil_readFile(path, &length);
+	data = _readFile(path, &length);
 	if (data) atlas = spAtlas_readAtlas(data, length, dir);
 
 	FREE(data);

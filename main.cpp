@@ -28,6 +28,7 @@
 
 #include "GridComponent.h"
 #include "PhysicsComponent.h"
+#include "SkeletonComponent.h"
 #include "PlayerComponent.h"
 #include "PlaceableComponent.h"
 #include "InventoryComponent.h"
@@ -83,6 +84,7 @@ int main()
     IntentComponent::Type = ComponentFactories::add(IntentComponent::factory);
     GridComponent::Type = ComponentFactories::add(GridComponent::factory);
     PhysicsComponent::Type = ComponentFactories::add(PhysicsComponent::factory);
+    SkeletonComponent::Type = ComponentFactories::add(SkeletonComponent::factory);
     PlayerComponent::Type = ComponentFactories::add(PlayerComponent::factory);
     PlaceableComponent::Type = ComponentFactories::add(PlaceableComponent::factory);
     InventoryComponent::Type = ComponentFactories::add(InventoryComponent::factory);

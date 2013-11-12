@@ -79,7 +79,7 @@
 	<spine/SkeletonData.h>
 	<string.h>
 
-1384209054 c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\include\spine\animationstate.h
+1384220279 c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\include\spine\animationstate.h
 	<spine/Animation.h>
 	<spine/AnimationStateData.h>
 	<spine/Event.h>
@@ -92,7 +92,7 @@
 	<spine/AnimationStateData.h>
 	<spine/extension.h>
 
-1384209055 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\src\spine\atlas.c
+1384225242 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\src\spine\atlas.c
 	<spine/Atlas.h>
 	<ctype.h>
 	<spine/extension.h>
@@ -170,7 +170,7 @@
 	<string.h>
 	<spine/extension.h>
 
-1384209056 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\src\spine\skeletonjson.c
+1384225273 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-c\src\spine\skeletonjson.c
 	<spine/SkeletonJson.h>
 	<stdio.h>
 	"Json.h"
@@ -198,7 +198,7 @@
 	<spine/SlotData.h>
 	<spine/extension.h>
 
-1384209071 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.cpp
+1384222749 source:c:\users\teddy\programming\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.cpp
 	<spine/spine-sfml.h>
 	<spine/extension.h>
 	<SFML/Graphics/Vertex.hpp>
@@ -207,7 +207,7 @@
 	<SFML/Graphics/RenderTarget.hpp>
 	<SFML/Graphics/RenderStates.hpp>
 
-1384209071 c:\users\teddy\programming\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.h
+1384222434 c:\users\teddy\programming\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.h
 	<spine/spine.h>
 	<SFML/Graphics/Vertex.hpp>
 	<SFML/Graphics/VertexArray.hpp>
@@ -327,7 +327,7 @@
 1375438921 c:\users\teddy\programming\tetraverse\extlibs\include\sfml\system\export.hpp
 	<SFML/Config.hpp>
 
-1384213357 source:c:\users\teddy\programming\tetraverse\main.cpp
+1384219495 source:c:\users\teddy\programming\tetraverse\main.cpp
 	<iostream>
 	<bitset>
 	<cstdlib>
@@ -350,6 +350,7 @@
 	"Fission/Script/ScriptComponent.h"
 	"GridComponent.h"
 	"PhysicsComponent.h"
+	"SkeletonComponent.h"
 	"PlayerComponent.h"
 	"PlaceableComponent.h"
 	"InventoryComponent.h"
@@ -403,7 +404,7 @@
 
 1375655322 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\refcounted.h
 
-1376560128 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\resourcemanager.h
+1384223501 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\resourcemanager.h
 	<string>
 	<vector>
 	<SFML/Graphics/Font.hpp>
@@ -582,7 +583,7 @@
 	<Fission/Core/Event.h>
 	<Fission/Core/Entity.h>
 
-1383081387 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\event.h
+1384220444 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\event.h
 
 1384212185 c:\users\teddy\programming\tetraverse\extlibs\include\fission\core\entity.h
 	<vector>
@@ -787,4 +788,12 @@
 	<stdio.h>
 	<math.h>
 	"perlin.h"
+
+1384223586 c:\users\teddy\programming\tetraverse\include\skeletoncomponent.h
+	<spine/spine-sfml.h>
+	<Fission/Core/ResourceManager.h>
+	<Fission/Core/Component.h>
+
+1384224661 source:c:\users\teddy\programming\tetraverse\src\skeletoncomponent.cpp
+	"SkeletonComponent.h"
 

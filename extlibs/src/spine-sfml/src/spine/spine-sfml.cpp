@@ -1,13 +1,13 @@
 /******************************************************************************
  * Spine Runtime Software License - Version 1.1
- * 
+ *
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms in whole or in part, with
  * or without modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. A Spine Essential, Professional, Enterprise, or Education License must
  *    be purchased from Esoteric Software and the license must remain valid:
  *    http://esotericsoftware.com/
@@ -18,7 +18,7 @@
  *    above copyright notice, this declaration of conditions and the following
  *    disclaimer, in the documentation and/or other materials provided with the
  *    distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
 
 using namespace sf;
 
-void _AtlasPage_createTexture (AtlasPage* self, const char* path) {
+void _spAtlasPage_createTexture (spAtlasPage* self, const char* path) {
 	Texture* texture = new Texture();
 	if (!texture->loadFromFile(path)) return;
 	texture->setSmooth(true);
@@ -51,7 +51,7 @@ void _AtlasPage_createTexture (AtlasPage* self, const char* path) {
 	self->height = size.y;
 }
 
-void _AtlasPage_disposeTexture (AtlasPage* self) {
+void _spAtlasPage_disposeTexture (spAtlasPage* self) {
 	delete (Texture*)self->rendererObject;
 }
 
@@ -63,26 +63,26 @@ char* _Util_readFile (const char* path, int* length) {
 
 namespace spine {
 
-SkeletonDrawable::SkeletonDrawable (SkeletonData* skeletonData, AnimationStateData* stateData) :
+SkeletonDrawable::SkeletonDrawable (spSkeletonData* skeletonData, spAnimationStateData* stateData) :
 				timeScale(1),
 				vertexArray(new VertexArray(Quads, skeletonData->boneCount * 4)) {
-	Bone_setYDown(true);
+	spBone_setYDown(true);
 
-	skeleton = Skeleton_create(skeletonData);
-	state = AnimationState_create(stateData);
+	skeleton = spSkeleton_create(skeletonData);
+	state = spAnimationState_create(stateData);
 }
 
 SkeletonDrawable::~SkeletonDrawable () {
 	delete vertexArray;
-	AnimationState_dispose(state);
-	Skeleton_dispose(skeleton);
+	spAnimationState_dispose(state);
+	spSkeleton_dispose(skeleton);
 }
 
 void SkeletonDrawable::update (float deltaTime) {
-	Skeleton_update(skeleton, deltaTime);
-	AnimationState_update(state, deltaTime * timeScale);
-	AnimationState_apply(state, skeleton);
-	Skeleton_updateWorldTransform(skeleton);
+	spSkeleton_update(skeleton, deltaTime);
+	spAnimationState_update(state, deltaTime * timeScale);
+	spAnimationState_apply(state, skeleton);
+	spSkeleton_updateWorldTransform(skeleton);
 }
 
 void SkeletonDrawable::draw (RenderTarget& target, RenderStates states) const {
@@ -91,10 +91,10 @@ void SkeletonDrawable::draw (RenderTarget& target, RenderStates states) const {
 
 	float worldVertices[8];
 	for (int i = 0; i < skeleton->slotCount; ++i) {
-		Slot* slot = skeleton->drawOrder[i];
-		Attachment* attachment = slot->attachment;
+		spSlot* slot = skeleton->drawOrder[i];
+		spAttachment* attachment = slot->attachment;
 		if (!attachment || attachment->type != ATTACHMENT_REGION) continue;
-		RegionAttachment* regionAttachment = (RegionAttachment*)attachment;
+		spRegionAttachment* regionAttachment = (spRegionAttachment*)attachment;
 
 		BlendMode blend = slot->data->additiveBlending ? BlendAdd : BlendAlpha;
 		if (states.blendMode != blend) {
@@ -103,7 +103,7 @@ void SkeletonDrawable::draw (RenderTarget& target, RenderStates states) const {
 			states.blendMode = blend;
 		}
 
-		RegionAttachment_computeWorldVertices(regionAttachment, slot->skeleton->x, slot->skeleton->y, slot->bone, worldVertices);
+		spRegionAttachment_computeWorldVertices(regionAttachment, slot->skeleton->x, slot->skeleton->y, slot->bone, worldVertices);
 
 		Uint8 r = skeleton->r * slot->r * 255;
 		Uint8 g = skeleton->g * slot->g * 255;
@@ -138,7 +138,7 @@ void SkeletonDrawable::draw (RenderTarget& target, RenderStates states) const {
 		vertices[3].position.y = worldVertices[VERTEX_Y4];
 
 		// SMFL doesn't handle batching for us, so we'll just force a single texture per skeleton.
-		states.texture = (Texture*)((AtlasRegion*)regionAttachment->rendererObject)->page->rendererObject;
+		states.texture = (Texture*)((spAtlasRegion*)regionAttachment->rendererObject)->page->rendererObject;
 
 		Vector2u size = states.texture->getSize();
 		vertices[0].texCoords.x = regionAttachment->uvs[VERTEX_X1] * size.x;

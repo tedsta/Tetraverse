@@ -1,13 +1,13 @@
 /******************************************************************************
  * Spine Runtime Software License - Version 1.1
- * 
+ *
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms in whole or in part, with
  * or without modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. A Spine Essential, Professional, Enterprise, or Education License must
  *    be purchased from Esoteric Software and the license must remain valid:
  *    http://esotericsoftware.com/
@@ -18,7 +18,7 @@
  *    above copyright notice, this declaration of conditions and the following
  *    disclaimer, in the documentation and/or other materials provided with the
  *    distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,7 +34,7 @@
 #ifndef SPINE_SFML_H_
 #define SPINE_SFML_H_
 
-#define SPINE_SHORT_NAMES
+// #define SPINE_SHORT_NAMES
 #include <spine/spine.h>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -43,12 +43,12 @@ namespace spine {
 
 class SkeletonDrawable: public sf::Drawable {
 public:
-	Skeleton* skeleton;
-	AnimationState* state;
+	spSkeleton* skeleton;
+	spAnimationState* state;
 	float timeScale;
 	sf::VertexArray* vertexArray;
 
-	SkeletonDrawable (SkeletonData* skeleton, AnimationStateData* stateData = 0);
+	SkeletonDrawable (spSkeletonData* skeleton, spAnimationStateData* stateData = 0);
 	~SkeletonDrawable ();
 
 	void update (float deltaTime);

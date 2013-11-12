@@ -1,13 +1,13 @@
 /******************************************************************************
  * Spine Runtime Software License - Version 1.1
- * 
+ *
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms in whole or in part, with
  * or without modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. A Spine Essential, Professional, Enterprise, or Education License must
  *    be purchased from Esoteric Software and the license must remain valid:
  *    http://esotericsoftware.com/
@@ -18,7 +18,7 @@
  *    above copyright notice, this declaration of conditions and the following
  *    disclaimer, in the documentation and/or other materials provided with the
  *    distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -304,7 +304,7 @@ static spAnimation* _spSkeletonJson_readAnimation (spSkeletonJson* self, Json* r
 spSkeletonData* spSkeletonJson_readSkeletonDataFile (spSkeletonJson* self, const char* path) {
 	int length;
 	spSkeletonData* skeletonData;
-	const char* json = _spUtil_readFile(path, &length);
+	const char* json = _readFile(path, &length);
 	if (!json) {
 		_spSkeletonJson_setError(self, 0, "Unable to read skeleton file: ", path);
 		return 0;
