@@ -20,7 +20,7 @@ Area veggyGridOp(Area a)
 
 Area wireGridOp(Area a)
 {
-    if (a.mTiles[1][1].mWire == 0)
+    if (a.mTiles[1][1].mMat == 4 || a.mTiles[1][1].mWire == 0)
         return a;
 
     if (a.mTiles[1][1].mWire == 3)
@@ -266,8 +266,8 @@ Area fluidGridOp(Area a)
 
     if (isFluid(mat10))
     {
-        flow += horiz(mat11+tmpFlow, mat10, o11, o10);
-        /*int leftVertFlow = 0;
+        //flow += horiz(mat11+tmpFlow, mat10, o11, o10);
+        int leftVertFlow = 0;
         if (isFluid(mat20))
             leftVertFlow -= vert(m10, m20, o10);
         if (isFluid(mat00))
@@ -276,9 +276,11 @@ Area fluidGridOp(Area a)
         if (m10+leftVertFlow >= m11+tmpFlow+compress)
             flow += compress;
         else if (m11+tmpFlow >= m10+leftVertFlow+compress)
-            flow -= compress;*/
+            flow -= compress;
         //flow += -horiz(m11+tmpFlow, m10 - (isFluid(mat20) ? vert(m10, m20, o10) : 0));
     }
+
+    tmpFlow = flow;
 
     /*if (isFluid(mat12))
     {

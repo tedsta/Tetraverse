@@ -66,7 +66,6 @@ void GridSystem::processEntity(Entity *entity, const float dt)
         else
         {
             mTicks[t].mOp(grid, t);
-            grid->clearInteresting(t);
         }
 	}
 }

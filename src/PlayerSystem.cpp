@@ -7,6 +7,7 @@
 #include "GridComponent.h"
 #include "PlayerComponent.h"
 #include "PhysicsComponent.h"
+#include "InventoryComponent.h"
 
 #include <iostream>
 
@@ -33,6 +34,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     auto phys = static_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
     auto intent = static_cast<IntentComponent*>(entity->getComponent(IntentComponent::Type));
     //auto skel = static_cast<SkeletonComponent*>(entity->getComponent(SkeletonComponent::Type));
+    auto inventory = reinterpret_cast<InventoryComponent*>(entity->getComponent(InventoryComponent::Type));
 
 	//skel.Apply(skel.FindAnimation("running"), player->manimTime, true)
 	//skel.Update(dt)
@@ -84,28 +86,101 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 	if (intent->isIntentActive("stupidmode"))
 		player->mStupidMode = !player->mStupidMode;
 
+    if (intent->isIntentActive("0"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 0;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 0;
+    }
+    else if (intent->isIntentActive("1"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 1;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 1;
+    }
+    else if (intent->isIntentActive("2"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 2;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 2;
+    }
+    else if (intent->isIntentActive("3"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 3;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 3;
+    }
+    else if (intent->isIntentActive("4"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 4;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 4;
+    }
+    else if (intent->isIntentActive("5"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 5;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 5;
+    }
+    else if (intent->isIntentActive("6"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 6;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 6;
+    }
+    else if (intent->isIntentActive("7"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 7;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 7;
+    }
+    else if (intent->isIntentActive("8"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 8;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 8;
+    }
+    else if (intent->isIntentActive("9"))
+    {
+        if (intent->isIntentActive("use"))
+            player->mLeftHand = 9;
+        else if (intent->isIntentActive("interact"))
+            player->mRightHand = 9;
+    }
+
 	if (phys->getGrid())
     {
-		auto pt = static_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
-		auto grid = static_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
+		auto pt = reinterpret_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
+		auto grid = reinterpret_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
 
-		if (intent->isIntentActive("dig"))
+		if (intent->isIntentActive("use"))
         {
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
 			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
+            inventory->useItem(player->mLeftHand, grid, pos.x, pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
-				grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 2), -1);
+				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 2), -1);
 		}
-		if (intent->isIntentActive("place"))
+		if (intent->isIntentActive("interact"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
 			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
+			inventory->useItem(player->mRightHand, grid, pos.x, pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
-				grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 1), -1);
+				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 1), -1);
 		}
 		if (intent->isIntentActive("test"))
 		{

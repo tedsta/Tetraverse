@@ -8,7 +8,7 @@
 class SkeletonComponent : public Component
 {
     public:
-        SkeletonComponent(ResourceManager* rc = NULL, std::string spData = "", std::string atlas = "");
+        SkeletonComponent(ResourceManager* rc = NULL, std::string skDataFile = "", std::string atlasFile = "");
         virtual ~SkeletonComponent();
 
         static TypeBits Type;

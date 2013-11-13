@@ -327,7 +327,7 @@
 1375438921 c:\users\teddy\programming\tetraverse\extlibs\include\sfml\system\export.hpp
 	<SFML/Config.hpp>
 
-1384219495 source:c:\users\teddy\programming\tetraverse\main.cpp
+1384368175 source:c:\users\teddy\programming\tetraverse\main.cpp
 	<iostream>
 	<bitset>
 	<cstdlib>
@@ -673,7 +673,7 @@
 
 1382955443 c:\users\teddy\programming\tetraverse\extlibs\include\fission\input\defs.h
 
-1384211954 c:\users\teddy\programming\tetraverse\extlibs\include\fission\script\scriptsystem.h
+1384367876 c:\users\teddy\programming\tetraverse\extlibs\include\fission\script\scriptsystem.h
 	<Sqrat/sqrat.h>
 	<Fission/Core/System.h>
 
@@ -681,7 +681,7 @@
 	<Sqrat/sqrat.h>
 	<Fission/Core/Component.h>
 
-1384210739 c:\users\teddy\programming\tetraverse\include\gridcomponent.h
+1384368108 c:\users\teddy\programming\tetraverse\include\gridcomponent.h
 	<SFML/Graphics/Transformable.hpp>
 	<SFML/System/Vector2.hpp>
 	"Fission/Rendering/RenderComponent.h"
@@ -690,17 +690,18 @@
 	<SFML/System/Vector2.hpp>
 	"Fission/Core/Component.h"
 
-1384210739 c:\users\teddy\programming\tetraverse\include\playercomponent.h
+1384337992 c:\users\teddy\programming\tetraverse\include\playercomponent.h
 	<SFML/System/Vector2.hpp>
 	"Fission/Core/Component.h"
 
 1384210739 c:\users\teddy\programming\tetraverse\include\placeablecomponent.h
 	"Fission/Core/Component.h"
 
-1384210739 c:\users\teddy\programming\tetraverse\include\inventorycomponent.h
+1384313610 c:\users\teddy\programming\tetraverse\include\inventorycomponent.h
+	<vector>
 	"Fission/Core/Component.h"
 
-1384210739 c:\users\teddy\programming\tetraverse\include\itemcomponent.h
+1384338415 c:\users\teddy\programming\tetraverse\include\itemcomponent.h
 	<Sqrat/sqrat.h>
 	<SFML/Graphics/Texture.hpp>
 	"Fission/Core/Component.h"
@@ -730,20 +731,22 @@
 	<SFML/Graphics/Texture.hpp>
 	<SFML/Graphics/VertexArray.hpp>
 
-1384136904 source:c:\users\teddy\programming\tetraverse\src\gridops.cpp
+1384295365 source:c:\users\teddy\programming\tetraverse\src\gridops.cpp
 	"GridOps.h"
 	<iostream>
 	"GridComponent.h"
 
-1383557504 source:c:\users\teddy\programming\tetraverse\src\gridsystem.cpp
+1384286017 source:c:\users\teddy\programming\tetraverse\src\gridsystem.cpp
 	"GridSystem.h"
 	<iostream>
 
-1384137187 source:c:\users\teddy\programming\tetraverse\src\inventorycomponent.cpp
+1384338386 source:c:\users\teddy\programming\tetraverse\src\inventorycomponent.cpp
 	"InventoryComponent.h"
-
-1384210739 source:c:\users\teddy\programming\tetraverse\src\itemcomponent.cpp
 	"ItemComponent.h"
+
+1384368561 source:c:\users\teddy\programming\tetraverse\src\itemcomponent.cpp
+	"ItemComponent.h"
+	<iostream>
 	"Fission/Core/Scene.h"
 	"Fission/Core/Entity.h"
 	"Fission/Rendering/TransformComponent.h"
@@ -769,10 +772,10 @@
 1383188783 source:c:\users\teddy\programming\tetraverse\src\placeablecomponent.cpp
 	"PlaceableComponent.h"
 
-1383129556 source:c:\users\teddy\programming\tetraverse\src\playercomponent.cpp
+1384338508 source:c:\users\teddy\programming\tetraverse\src\playercomponent.cpp
 	"PlayerComponent.h"
 
-1384210739 source:c:\users\teddy\programming\tetraverse\src\playersystem.cpp
+1384367604 source:c:\users\teddy\programming\tetraverse\src\playersystem.cpp
 	"PlayerSystem.h"
 	"Fission/Core/Math.h"
 	"Fission/Rendering/RenderSystem.h"
@@ -781,6 +784,7 @@
 	"GridComponent.h"
 	"PlayerComponent.h"
 	"PhysicsComponent.h"
+	"InventoryComponent.h"
 	<iostream>
 
 1384210948 source:c:\users\teddy\programming\tetraverse\perlin\perlin.cpp
@@ -789,11 +793,11 @@
 	<math.h>
 	"perlin.h"
 
-1384223586 c:\users\teddy\programming\tetraverse\include\skeletoncomponent.h
+1384276840 c:\users\teddy\programming\tetraverse\include\skeletoncomponent.h
 	<spine/spine-sfml.h>
 	<Fission/Core/ResourceManager.h>
 	<Fission/Core/Component.h>
 
-1384224661 source:c:\users\teddy\programming\tetraverse\src\skeletoncomponent.cpp
+1384285676 source:c:\users\teddy\programming\tetraverse\src\skeletoncomponent.cpp
 	"SkeletonComponent.h"
 

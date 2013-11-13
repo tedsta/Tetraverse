@@ -26,6 +26,8 @@ class PlayerComponent : public Component
         float mAnimTime;
         sf::Vector2f mCam;
         bool mStupidMode;
+        int mLeftHand;
+        int mRightHand;
 };
 
 #endif // PLAYERCOMPONENT_H

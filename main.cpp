@@ -42,7 +42,8 @@
 
 #include "perlin/perlin.h"
 
-Tile** newWorld(int seed);
+Tile** newWorld(int seed, int width, int height);
+void bindSquirrel(HSQUIRRELVM vm);
 
 int main()
 {
@@ -95,7 +96,7 @@ int main()
     RenderSystem *render = new RenderSystem(engine->getEventManager(), rcMgr->getFont("Content/Fonts/font.ttf"), GridComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), conn);
-    ScriptSystem *scripting = new ScriptSystem(engine->getEventManager(), engine);
+    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
     GridSystem *gridSys = new GridSystem(engine->getEventManager());
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager());
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render);
@@ -103,21 +104,29 @@ int main()
     engine->addSystem(render);
     engine->addSystem(input);
     engine->addSystem(intentSys);
-    engine->addSystem(scripting);
+    engine->addSystem(scriptSys);
     engine->addSystem(gridSys);
     engine->addSystem(physSys);
     engine->addSystem(playerSys);
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
+    scriptSys->addBinder(bindSquirrel);
+
+    // Set up all the items
+    HSQUIRRELVM itemScript = scriptSys->createScript("Content/Scripts/items.nut");
+    Item *dirtBlock = new Item("dirt", rcMgr->getTexture("Content/Textures/Tiles/dirt.png"), true, 999, itemScript, "dirtBlock");
+    Item::Items.push_back(dirtBlock);
+
+    // Set up the materials
     GridComponent::addTileSheet(1, rcMgr->getTexture("Content/Textures/Tiles/dirt.png"));
     GridComponent::addTileSheet(2, rcMgr->getTexture("Content/Textures/Tiles/stone.png"));
     GridComponent::addTileSheet(3, rcMgr->getTexture("Content/Textures/Tiles/grass.png"));
     GridComponent::addTileSheet(5, rcMgr->getTexture("Content/Textures/Tiles/grass.png"));
 
-    gridSys->addTick(veggyGridOp, 0.1);
-    gridSys->addTick(fluidGridOp, 0.05);
-    gridSys->addTick(wireGridOp, 0.01);
+    gridSys->addTick(veggyGridOp, 5.f);
+    gridSys->addTick(fluidGridOp, 0.05f);
+    gridSys->addTick(wireGridOp, 0.01f);
 
     Scene *scene = engine->getScene();
 
@@ -131,6 +140,11 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent);
     player->addComponent(new PlayerComponent);
+    InventoryComponent* inventory = new InventoryComponent(10);
+    player->addComponent(inventory);
+
+    inventory->addItem(0, 0, 999);
+    inventory->addItem(1, 0, 999);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
@@ -142,19 +156,32 @@ int main()
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
     intent->mapKeyToIntent("right", sf::Keyboard::D, BtnState::DOWN);
 
-    intent->mapMouseBtnToIntent("dig", sf::Mouse::Button::Left, BtnState::DOWN);
-    intent->mapMouseBtnToIntent("place", sf::Mouse::Button::Right, BtnState::DOWN);
+    intent->mapKeyToIntent("0", sf::Keyboard::Num0, BtnState::DOWN);
+    intent->mapKeyToIntent("1", sf::Keyboard::Num1, BtnState::DOWN);
+    intent->mapKeyToIntent("2", sf::Keyboard::Num2, BtnState::DOWN);
+    intent->mapKeyToIntent("3", sf::Keyboard::Num3, BtnState::DOWN);
+    intent->mapKeyToIntent("4", sf::Keyboard::Num4, BtnState::DOWN);
+    intent->mapKeyToIntent("5", sf::Keyboard::Num5, BtnState::DOWN);
+    intent->mapKeyToIntent("6", sf::Keyboard::Num6, BtnState::DOWN);
+    intent->mapKeyToIntent("7", sf::Keyboard::Num7, BtnState::DOWN);
+    intent->mapKeyToIntent("8", sf::Keyboard::Num8, BtnState::DOWN);
+    intent->mapKeyToIntent("9", sf::Keyboard::Num9, BtnState::DOWN);
+
+    intent->mapMouseBtnToIntent("use", sf::Mouse::Button::Left, BtnState::DOWN);
+    intent->mapMouseBtnToIntent("interact", sf::Mouse::Button::Right, BtnState::DOWN);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 
-    Tile** tiles = newWorld(0);
+    int worldW = 1000;
+    int worldH = 1000;
+    Tile** tiles = newWorld(0, worldW, worldH);
 
     for (int i = 0; i < 1; i++)
     {
         Entity *planet = new Entity(engine->getEventManager());
         scene->addEntity(planet);
         planet->addComponent(new TransformComponent(sf::Vector2f(0, 0)));
-        planet->addComponent(new GridComponent(1000, 1000, tiles, 3));
-        planet->addComponent(new ScriptComponent(scripting->createScript("test.nut")));
+        planet->addComponent(new GridComponent(worldW, worldH, tiles, 3));
+        planet->addComponent(new ScriptComponent(scriptSys->createScript("test.nut")));
         physSys->addGrid(planet);
     }
 
@@ -192,21 +219,19 @@ int main()
     return 0;
 }
 
-Tile** newWorld(int seed)
+Tile** newWorld(int seed, int width, int height)
 {
-	int worldW = 1000;
-	int worldH = 1000;
-	Tile** tiles = new Tile*[worldH];
-	for (int i = 0; i < worldH; i++)
-		tiles[i] = new Tile[worldW];
+	Tile** tiles = new Tile*[height];
+	for (int i = 0; i < height; i++)
+		tiles[i] = new Tile[width];
 
-	for (int y = 0; y < worldH; y++)
+	for (int y = 0; y < height; y++)
     {
-		for (int x = 0; x < worldW; x++)
+		for (int x = 0; x < width; x++)
 		{
 			auto n = PerlinNoise1D(x, 1.01, .02, 2) + 1;
 			auto p = PerlinNoise2D(y, x, 1.01, 0.2, 10) + 1;
-			p += float(worldH-y) / float(worldH);
+			p += float(height-y) / float(height);
 			float o[MAX_COMPS];
 			for (int i = 0; i < MAX_COMPS; i++)
 			{
@@ -229,4 +254,15 @@ Tile** newWorld(int seed)
 		}
 	}
 	return tiles;
+}
+
+void bindSquirrel(HSQUIRRELVM vm)
+{
+    Sqrat::Class<Tile> tile(vm);
+    tile.Var("mMat", &Tile::mMat);
+    Sqrat::RootTable(vm).Bind("Tile", tile);
+
+    Sqrat::Class<GridComponent> grid(vm);
+    grid.Func("setTile", &GridComponent::setTile);
+    Sqrat::RootTable(vm).Bind("GridComponent", grid);
 }

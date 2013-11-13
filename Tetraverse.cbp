@@ -150,6 +150,7 @@
 		<Unit filename="include/PlaceableComponent.h" />
 		<Unit filename="include/PlayerComponent.h" />
 		<Unit filename="include/PlayerSystem.h" />
+		<Unit filename="include/SkeletonComponent.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
@@ -163,6 +164,7 @@
 		<Unit filename="src/PlaceableComponent.cpp" />
 		<Unit filename="src/PlayerComponent.cpp" />
 		<Unit filename="src/PlayerSystem.cpp" />
+		<Unit filename="src/SkeletonComponent.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

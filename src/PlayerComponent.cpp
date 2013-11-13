@@ -2,7 +2,7 @@
 
 TypeBits PlayerComponent::Type;
 
-PlayerComponent::PlayerComponent()
+PlayerComponent::PlayerComponent() : mLeftHand(0), mRightHand(1)
 {
     //ctor
 }

@@ -48,7 +48,7 @@ class GridComponent : public RenderComponent
     friend class GridSystem;
 
     public:
-        GridComponent(int sizeX, int sizeY, Tile** tiles, int tickCount);
+        GridComponent(int sizeX = 0, int sizeY = 0, Tile** tiles = NULL, int tickCount = 0);
         virtual ~GridComponent();
 
         // Serialization stuff
@@ -81,7 +81,7 @@ class GridComponent : public RenderComponent
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
-        static Component* factory() {return new GridComponent(0, 0, NULL, 0);}
+        static Component* factory() {return new GridComponent;}
 
         static void addTileSheet(int mat, sf::Texture* sheet)
         {
