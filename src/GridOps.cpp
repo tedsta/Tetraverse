@@ -20,17 +20,38 @@ Area veggyGridOp(Area a)
 
 Area wireGridOp(Area a)
 {
+    int wire = a.mTiles[1][1].mWire;
+    int signal = a.mTiles[1][1].mSignal;
+    if (wire >= 1)
+    {
+        if (wire  < a.mTiles[0][1].mWire-1){
+            a.mTiles[1][1].mWire = a.mTiles[0][1].mWire;
+            a.mTiles[1][1].mSignal = a.mTiles[0][1].mSignal;
+            a.mChanged = true;
+        }
 
-    if (a.mTiles[1][1].mWire == 1 && (a.mTiles[0][1].mWire == 3 || a.mTiles[1][0].mWire == 3 ||
-                                      a.mTiles[1][2].mWire == 3 || a.mTiles[2][1].mWire == 3))
-    {
-        a.mTiles[1][1].mWire = 3;
-        a.mChanged = true;
+        if (wire  < a.mTiles[1][0].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[1][0].mWire) {
+            a.mTiles[1][1].mWire = a.mTiles[1][0].mWire;
+            a.mTiles[1][1].mSignal = a.mTiles[1][0].mSignal;
+            a.mChanged = true;
+        }
+        if (wire  < a.mTiles[2][1].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[2][1].mWire){
+            a.mTiles[1][1].mWire = a.mTiles[2][1].mWire;
+            a.mTiles[1][1].mSignal = a.mTiles[2][1].mSignal;
+            a.mChanged = true;
+        }
+        if (wire  < a.mTiles[1][2].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[1][2].mWire){
+            a.mTiles[1][1].mWire = a.mTiles[1][2].mWire;
+            a.mTiles[1][1].mSignal = a.mTiles[1][2].mSignal;
+            a.mChanged = true;
+        }
     }
-    else if (a.mTiles[1][1].mWire > 1)
-    {
-        --a.mTiles[1][1].mWire;
-        a.mChanged = true;
+    if(!a.mChanged && a.mTiles[1][1].mWire > 1 ){
+            a.mTiles[1][1].mWire -= 1;
+            a.mChanged = true;
+        }
+    if(a.mTiles[1][1].mWire <= 1){
+        a.mTiles[1][1].mSignal = 0;
     }
 
 	return a;
