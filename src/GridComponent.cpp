@@ -88,26 +88,20 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
                 verts[3].color = sf::Color(255, 0, 0, mTiles[y][x].mFluid);
                 target.draw(verts, states);
             }
-            else if (mTiles[y][x].mWire == 1)
-            {
-                states.texture = NULL;
-                verts[0].color = sf::Color(0, 0, 255, 255);
-                verts[1].color = sf::Color(0, 0, 255, 255);
-                verts[2].color = sf::Color(0, 0, 255, 255);
-                verts[3].color = sf::Color(0, 0, 255, 255);
-                target.draw(verts, states);
-            }
-            else if (mTiles[y][x].mWire == 2)
-            {
-                states.texture = NULL;
-                verts[0].color = sf::Color(0, 255, 0, 255);
-                verts[1].color = sf::Color(0, 255, 0, 255);
-                verts[2].color = sf::Color(0, 255, 0, 255);
-                verts[3].color = sf::Color(0, 255, 0, 255);
-                target.draw(verts, states);
-            }
             else
             {
+                if (mTiles[y][x].mWire > 0)
+                {
+                    states.texture = NULL;
+                    verts[0].color = sf::Color(mTiles[y][x].mWire, mTiles[y][x].mWire, mTiles[y][x].mSignal, 255);
+                    verts[1].color = sf::Color(mTiles[y][x].mWire, mTiles[y][x].mWire, mTiles[y][x].mSignal, 255);
+                    verts[2].color = sf::Color(mTiles[y][x].mWire, mTiles[y][x].mWire, mTiles[y][x].mSignal, 255);
+                    verts[3].color = sf::Color(mTiles[y][x].mWire, mTiles[y][x].mWire, mTiles[y][x].mSignal, 255);
+
+                    target.draw(verts, states);
+                }
+
+
                 if (mTiles[y][x].mMat == 0 || mTiles[y][x].mMat >= TileSheets.size())
                     continue;
 
