@@ -733,14 +733,14 @@
 
 1347281087 c:\users\teddy\programming\tetraverse\perlin\perlin.h
 
-1384135136 source:c:\users\teddy\programming\tetraverse\src\gridcomponent.cpp
+1384482486 source:c:\users\teddy\programming\tetraverse\src\gridcomponent.cpp
 	"GridComponent.h"
 	<cmath>
 	<iostream>
 	<SFML/Graphics/Texture.hpp>
 	<SFML/Graphics/VertexArray.hpp>
 
-1384295365 source:c:\users\teddy\programming\tetraverse\src\gridops.cpp
+1384482486 source:c:\users\teddy\programming\tetraverse\src\gridops.cpp
 	"GridOps.h"
 	<iostream>
 	"GridComponent.h"
@@ -778,14 +778,14 @@
 	<vector>
 	<SFML/System/Vector2.hpp>
 
-1384475428 source:c:\users\teddy\programming\tetraverse\src\placeablecomponent.cpp
+1384482298 source:c:\users\teddy\programming\tetraverse\src\placeablecomponent.cpp
 	"PlaceableComponent.h"
 	<iostream>
 
 1384338508 source:c:\users\teddy\programming\tetraverse\src\playercomponent.cpp
 	"PlayerComponent.h"
 
-1384458216 source:c:\users\teddy\programming\tetraverse\src\playersystem.cpp
+1384482486 source:c:\users\teddy\programming\tetraverse\src\playersystem.cpp
 	"PlayerSystem.h"
 	<Fission/Core/Math.h>
 	<Fission/Rendering/RenderSystem.h>
@@ -811,6 +811,8 @@
 1384285676 source:c:\users\teddy\programming\tetraverse\src\skeletoncomponent.cpp
 	"SkeletonComponent.h"
 
+1384285676 D
+
 1384457130 c:\users\teddy\programming\tetraverse\extlibs\include\sqrat\sqext.h
 	<vector>
 	<string.h>
@@ -824,4 +826,834 @@
 
 1384458058 c:\users\teddy\programming\tetraverse\include\placeablesystem.h
 	<Fission/Core/System.h>
+
+1384458058 ore/System.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\animation.c
+	<spine/Animation.h>
+	<limits.h>
+	<spine/extension.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\animation.h
+	<spine/Event.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\event.h
+	<spine/EventData.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\eventdata.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\extension.h
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<spine/Skeleton.h>
+	<spine/RegionAttachment.h>
+	<spine/BoundingBoxAttachment.h>
+	<spine/Animation.h>
+	<spine/Atlas.h>
+	<spine/AttachmentLoader.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\skeleton.h
+	<spine/SkeletonData.h>
+	<spine/Slot.h>
+	<spine/Skin.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\skeletondata.h
+	<spine/BoneData.h>
+	<spine/SlotData.h>
+	<spine/Skin.h>
+	<spine/EventData.h>
+	<spine/Animation.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\bonedata.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\slotdata.h
+	<spine/BoneData.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\skin.h
+	<spine/Attachment.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\attachment.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\slot.h
+	<spine/Bone.h>
+	<spine/Attachment.h>
+	<spine/SlotData.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\bone.h
+	<spine/BoneData.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\regionattachment.h
+	<spine/Attachment.h>
+	<spine/Atlas.h>
+	<spine/Slot.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\atlas.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\boundingboxattachment.h
+	<spine/Attachment.h>
+	<spine/Atlas.h>
+	<spine/Slot.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\attachmentloader.h
+	<spine/Attachment.h>
+	<spine/Skin.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\animationstate.c
+	<spine/Animation.h>
+	<spine/AnimationState.h>
+	<spine/AnimationStateData.h>
+	<spine/Event.h>
+	<spine/extension.h>
+	<spine/Skeleton.h>
+	<spine/SkeletonData.h>
+	<string.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\animationstate.h
+	<spine/Animation.h>
+	<spine/AnimationStateData.h>
+	<spine/Event.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\animationstatedata.h
+	<spine/Animation.h>
+	<spine/SkeletonData.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\animationstatedata.c
+	<spine/AnimationStateData.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\atlas.c
+	<spine/Atlas.h>
+	<ctype.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\atlasattachmentloader.c
+	<spine/AtlasAttachmentLoader.h>
+	<spine/extension.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\atlasattachmentloader.h
+	<spine/AttachmentLoader.h>
+	<spine/Atlas.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\attachment.c
+	<spine/Attachment.h>
+	<spine/extension.h>
+	<spine/Slot.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\attachmentloader.c
+	<spine/AttachmentLoader.h>
+	<stdio.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\bone.c
+	<spine/Bone.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\bonedata.c
+	<spine/BoneData.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\boundingboxattachment.c
+	<spine/BoundingBoxAttachment.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\event.c
+	<spine/Event.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\eventdata.c
+	<spine/EventData.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\extension.c
+	<spine/extension.h>
+	<stdio.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\json.c
+	"Json.h"
+	<stdio.h>
+	<ctype.h>
+	<spine/extension.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\json.h
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\regionattachment.c
+	<spine/RegionAttachment.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\skeleton.c
+	<spine/Skeleton.h>
+	<string.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\skeletonbounds.c
+	<spine/SkeletonBounds.h>
+	<limits.h>
+	<spine/extension.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\skeletonbounds.h
+	<spine/BoundingBoxAttachment.h>
+	<spine/Skeleton.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\skeletondata.c
+	<spine/SkeletonData.h>
+	<string.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\skeletonjson.c
+	<spine/SkeletonJson.h>
+	<stdio.h>
+	"Json.h"
+	<spine/extension.h>
+	<spine/RegionAttachment.h>
+	<spine/AtlasAttachmentLoader.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\skeletonjson.h
+	<spine/Attachment.h>
+	<spine/AttachmentLoader.h>
+	<spine/SkeletonData.h>
+	<spine/Atlas.h>
+	<spine/Animation.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\skin.c
+	<spine/Skin.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\slot.c
+	<spine/Slot.h>
+	<spine/extension.h>
+	<spine/Skeleton.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-c\src\spine\slotdata.c
+	<spine/SlotData.h>
+	<spine/extension.h>
+
+1384286777 source:c:\dev\src\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.cpp
+	<spine/spine-sfml.h>
+	<spine/extension.h>
+	<SFML/Graphics/Vertex.hpp>
+	<SFML/Graphics/VertexArray.hpp>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/RenderTarget.hpp>
+	<SFML/Graphics/RenderStates.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-sfml\src\spine\spine-sfml.h
+	<spine/spine.h>
+	<SFML/Graphics/Vertex.hpp>
+	<SFML/Graphics/VertexArray.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\src\spine-c\include\spine\spine.h
+	<spine/Animation.h>
+	<spine/AnimationState.h>
+	<spine/AnimationStateData.h>
+	<spine/Atlas.h>
+	<spine/AtlasAttachmentLoader.h>
+	<spine/Attachment.h>
+	<spine/AttachmentLoader.h>
+	<spine/Bone.h>
+	<spine/BoneData.h>
+	<spine/RegionAttachment.h>
+	<spine/BoundingBoxAttachment.h>
+	<spine/Skeleton.h>
+	<spine/SkeletonBounds.h>
+	<spine/SkeletonData.h>
+	<spine/SkeletonJson.h>
+	<spine/Skin.h>
+	<spine/Slot.h>
+	<spine/SlotData.h>
+	<spine/Event.h>
+	<spine/EventData.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\vertex.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Color.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\export.hpp
+	<SFML/Config.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\config.hpp
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\color.hpp
+	<SFML/Graphics/Export.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\vector2.hpp
+	<SFML/System/Vector2.inl>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\vector2.inl
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\vertexarray.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Vertex.hpp>
+	<SFML/Graphics/PrimitiveType.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<SFML/Graphics/Drawable.hpp>
+	<vector>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\primitivetype.hpp
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\rect.hpp
+	<SFML/System/Vector2.hpp>
+	<algorithm>
+	<SFML/Graphics/Rect.inl>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\rect.inl
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\drawable.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/RenderStates.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\renderstates.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/BlendMode.hpp>
+	<SFML/Graphics/Transform.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\blendmode.hpp
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\transform.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\texture.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Image.hpp>
+	<SFML/Window/GlResource.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\image.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Color.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<string>
+	<vector>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\glresource.hpp
+	<SFML/Window/Export.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\export.hpp
+	<SFML/Config.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\rendertarget.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Color.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<SFML/Graphics/View.hpp>
+	<SFML/Graphics/Transform.hpp>
+	<SFML/Graphics/BlendMode.hpp>
+	<SFML/Graphics/RenderStates.hpp>
+	<SFML/Graphics/PrimitiveType.hpp>
+	<SFML/Graphics/Vertex.hpp>
+	<SFML/System/NonCopyable.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\view.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<SFML/Graphics/Transform.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\noncopyable.hpp
+	<SFML/System/Export.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\export.hpp
+	<SFML/Config.hpp>
+
+1384407235 source:c:\dev\src\tetraverse\main.cpp
+	<iostream>
+	<bitset>
+	<cstdlib>
+	<sstream>
+	<SFML/Window/Event.hpp>
+	<SFML/Graphics/Texture.hpp>
+	"Fission/Core/Engine.h"
+	"Fission/Core/Scene.h"
+	"Fission/Core/ResourceManager.h"
+	"Fission/Core/ComponentFactories.h"
+	"Fission/Rendering/RenderSystem.h"
+	"Fission/Rendering/DebugDisplay.h"
+	"Fission/Rendering/SpriteComponent.h"
+	"Fission/Rendering/TransformComponent.h"
+	"Fission/Input/InputSystem.h"
+	"Fission/Network/Connection.h"
+	"Fission/Network/IntentSystem.h"
+	"Fission/Network/IntentComponent.h"
+	"Fission/Script/ScriptSystem.h"
+	"Fission/Script/ScriptComponent.h"
+	"GridComponent.h"
+	"PhysicsComponent.h"
+	"SkeletonComponent.h"
+	"PlayerComponent.h"
+	"PlaceableComponent.h"
+	"InventoryComponent.h"
+	"ItemComponent.h"
+	"GridSystem.h"
+	"PhysicsSystem.h"
+	"PlayerSystem.h"
+	"GridOps.h"
+	"perlin/perlin.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\event.hpp
+	<SFML/Config.hpp>
+	<SFML/Window/Joystick.hpp>
+	<SFML/Window/Keyboard.hpp>
+	<SFML/Window/Mouse.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\joystick.hpp
+	<SFML/Window/Export.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\keyboard.hpp
+	<SFML/Window/Export.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\mouse.hpp
+	<SFML/Window/Export.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\engine.h
+	<vector>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\scene.h
+	<vector>
+	<map>
+	<SFML/Network/Packet.hpp>
+	<Fission/Core/Component.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\network\packet.hpp
+	<SFML/Network/Export.hpp>
+	<string>
+	<vector>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\network\export.hpp
+	<SFML/Config.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\component.h
+	<bitset>
+	<SFML/Network/Packet.hpp>
+	<Fission/Core/config.h>
+	<Fission/Core/RefCounted.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\config.h
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\refcounted.h
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\resourcemanager.h
+	<string>
+	<vector>
+	<SFML/Graphics/Font.hpp>
+	<SFML/Graphics/Texture.hpp>
+	<Sqrat/sqrat.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\font.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Glyph.hpp>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/Rect.hpp>
+	<SFML/System/Vector2.hpp>
+	<SFML/System/String.hpp>
+	<map>
+	<string>
+	<vector>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\glyph.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Rect.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\string.hpp
+	<SFML/System/Export.hpp>
+	<locale>
+	<string>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat.h
+	<squirrel.h>
+	"sqrat/sqratTable.h"
+	"sqrat/sqratClass.h"
+	"sqrat/sqratFunction.h"
+	"sqrat/sqratConst.h"
+	"sqrat/sqratUtil.h"
+	"sqrat/sqratScript.h"
+	"sqrat/sqratArray.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\squirrel\squirrel.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqrattable.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratFunction.h"
+	"sqratGlobalMethods.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratobject.h
+	<squirrel.h>
+	<string.h>
+	"sqratAllocator.h"
+	"sqratTypes.h"
+	"sqratOverloadMethods.h"
+	"sqratUtil.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratallocator.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratTypes.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqrattypes.h
+	<cstdlib>
+	<cstring>
+	<squirrel.h>
+	<string>
+	"sqratClassType.h"
+	"sqratUtil.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratclasstype.h
+	<squirrel.h>
+	<map>
+	"sqratUtil.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratutil.h
+	<squirrel.h>
+	<string.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratoverloadmethods.h
+	<squirrel.h>
+	<sqstdaux.h>
+	<sstream>
+	"sqratTypes.h"
+	"sqratUtil.h"
+	"sqratGlobalMethods.h"
+	"sqratMemberMethods.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\squirrel\sqstdaux.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratglobalmethods.h
+	<squirrel.h>
+	"sqratTypes.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratmembermethods.h
+	<squirrel.h>
+	"sqratTypes.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratfunction.h
+	<squirrel.h>
+	"sqratObject.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratclass.h
+	<typeinfo>
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratClassType.h"
+	"sqratMemberMethods.h"
+	"sqratAllocator.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratconst.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratscript.h
+	<squirrel.h>
+	<sqstdio.h>
+	<string.h>
+	"sqratObject.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\squirrel\sqstdio.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sqrat\sqrat\sqratarray.h
+	<squirrel.h>
+	<string.h>
+	"sqratObject.h"
+	"sqratFunction.h"
+	"sqratGlobalMethods.h"
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\componentfactories.h
+	<Fission/Core/Component.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\rendering\rendersystem.h
+	<SFML/Graphics/RenderWindow.hpp>
+	<SFML/Graphics/Font.hpp>
+	<Fission/Core/System.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\renderwindow.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/RenderTarget.hpp>
+	<SFML/Graphics/Image.hpp>
+	<SFML/Window/Window.hpp>
+	<string>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\window.hpp
+	<SFML/Window/Export.hpp>
+	<SFML/Window/ContextSettings.hpp>
+	<SFML/Window/VideoMode.hpp>
+	<SFML/Window/WindowHandle.hpp>
+	<SFML/Window/WindowStyle.hpp>
+	<SFML/Window/GlResource.hpp>
+	<SFML/System/Clock.hpp>
+	<SFML/System/Vector2.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/String.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\contextsettings.hpp
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\videomode.hpp
+	<SFML/Window/Export.hpp>
+	<vector>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\windowhandle.hpp
+	<SFML/Config.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\window\windowstyle.hpp
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\system\clock.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\sfml\system\time.hpp
+	<SFML/System/Export.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\system.h
+	<set>
+	<Fission/Core/Event.h>
+	<Fission/Core/Entity.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\event.h
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\entity.h
+	<vector>
+	<bitset>
+	<SFML/Network/Packet.hpp>
+	<Fission/Core/config.h>
+	<Fission/Core/RefCounted.h>
+	<Fission/Core/Component.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\rendering\debugdisplay.h
+	<string>
+	<map>
+	<SFML/Graphics/Font.hpp>
+	<SFML/Graphics/RenderTarget.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\rendering\spritecomponent.h
+	<string>
+	<SFML/System/Clock.hpp>
+	<SFML/Graphics/Sprite.hpp>
+	<Fission/Rendering/RenderComponent.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\sprite.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Drawable.hpp>
+	<SFML/Graphics/Transformable.hpp>
+	<SFML/Graphics/Vertex.hpp>
+	<SFML/Graphics/Rect.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\sfml\graphics\transformable.hpp
+	<SFML/Graphics/Export.hpp>
+	<SFML/Graphics/Transform.hpp>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\rendering\rendercomponent.h
+	<SFML/Graphics/RenderTarget.hpp>
+	<Fission/Core/Component.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\rendering\transformcomponent.h
+	<SFML/System/Vector2.hpp>
+	<SFML/Graphics/Transformable.hpp>
+	<Fission/Core/Component.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\input\inputsystem.h
+	<SFML/Window/Window.hpp>
+	<Fission/Core/System.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\network\connection.h
+	<enet/enet.h>
+	<SFML/Network/Packet.hpp>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\enet.h
+	<stdlib.h>
+	"enet/win32.h"
+	"enet/unix.h"
+	"enet/types.h"
+	"enet/protocol.h"
+	"enet/list.h"
+	"enet/callbacks.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\win32.h
+	<stdlib.h>
+	<winsock2.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\types.h
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\protocol.h
+	"enet/types.h"
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\list.h
+	<stdlib.h>
+
+1384286777 c:\dev\src\tetraverse\extlibs\include\enet\callbacks.h
+	<stdlib.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\network\intentsystem.h
+	<map>
+	<Fission/Core/System.h>
+	<Fission/Core/Event.h>
+	<Fission/Network/Connection.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\network\intentcomponent.h
+	<string>
+	<map>
+	<SFML/Window/Event.hpp>
+	<Fission/Core/Component.h>
+	<Fission/Core/Event.h>
+	<Fission/Input/Defs.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\input\defs.h
+
+1384381233 c:\dev\src\tetraverse\extlibs\include\fission\script\scriptsystem.h
+	<Sqrat/sqrat.h>
+	<Fission/Core/System.h>
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\script\scriptcomponent.h
+	<Sqrat/sqrat.h>
+	<Fission/Core/Component.h>
+
+1384381233 c:\dev\src\tetraverse\include\gridcomponent.h
+	<SFML/Graphics/Transformable.hpp>
+	<SFML/System/Vector2.hpp>
+	"Fission/Rendering/RenderComponent.h"
+
+1384286777 c:\dev\src\tetraverse\include\physicscomponent.h
+	<SFML/System/Vector2.hpp>
+	"Fission/Core/Component.h"
+
+1384381233 c:\dev\src\tetraverse\include\skeletoncomponent.h
+	<spine/spine-sfml.h>
+	<Fission/Core/ResourceManager.h>
+	<Fission/Core/Component.h>
+
+1384381233 c:\dev\src\tetraverse\include\playercomponent.h
+	<SFML/System/Vector2.hpp>
+	"Fission/Core/Component.h"
+
+1384286777 c:\dev\src\tetraverse\include\placeablecomponent.h
+	"Fission/Core/Component.h"
+
+1384381233 c:\dev\src\tetraverse\include\inventorycomponent.h
+	<vector>
+	"Fission/Core/Component.h"
+
+1384381233 c:\dev\src\tetraverse\include\itemcomponent.h
+	<Sqrat/sqrat.h>
+	<SFML/Graphics/Texture.hpp>
+	"Fission/Core/Component.h"
+
+1384286777 c:\dev\src\tetraverse\include\gridsystem.h
+	"Fission/Core/System.h"
+	"Fission/Network/Connection.h"
+	"GridComponent.h"
+	<SFML/System/Clock.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384286777 c:\dev\src\tetraverse\include\physicssystem.h
+	"Fission/Core/System.h"
+
+1384286777 c:\dev\src\tetraverse\include\playersystem.h
+	"Fission/Core/System.h"
+
+1384286777 c:\dev\src\tetraverse\include\gridops.h
+	"GridSystem.h"
+
+1384286778 c:\dev\src\tetraverse\perlin\perlin.h
+
+1384286778 source:c:\dev\src\tetraverse\perlin\perlin.cpp
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	"perlin.h"
+
+1384409654 source:c:\dev\src\tetraverse\src\gridops.cpp
+	"GridOps.h"
+	<iostream>
+	"GridComponent.h"
+
+1384381233 source:c:\dev\src\tetraverse\src\gridsystem.cpp
+	"GridSystem.h"
+	<iostream>
+
+1384381233 source:c:\dev\src\tetraverse\src\inventorycomponent.cpp
+	"InventoryComponent.h"
+	"ItemComponent.h"
+
+1384381233 source:c:\dev\src\tetraverse\src\itemcomponent.cpp
+	"ItemComponent.h"
+	<iostream>
+	"Fission/Core/Scene.h"
+	"Fission/Core/Entity.h"
+	"Fission/Rendering/TransformComponent.h"
+	"Fission/Rendering/SpriteComponent.h"
+	"PhysicsComponent.h"
+
+1384286778 source:c:\dev\src\tetraverse\src\physicscomponent.cpp
+	"PhysicsComponent.h"
+	"GridComponent.h"
+
+1384286778 source:c:\dev\src\tetraverse\src\physicssystem.cpp
+	"PhysicsSystem.h"
+	"Fission/Core/Math.h"
+	"Fission/Rendering/TransformComponent.h"
+	"GridComponent.h"
+	"PhysicsComponent.h"
+
+1384286776 c:\dev\src\tetraverse\extlibs\include\fission\core\math.h
+	<cmath>
+	<vector>
+	<SFML/System/Vector2.hpp>
+
+1384286779 source:c:\dev\src\tetraverse\src\placeablecomponent.cpp
+	"PlaceableComponent.h"
+
+1384381233 source:c:\dev\src\tetraverse\src\playercomponent.cpp
+	"PlayerComponent.h"
+
+1384381233 source:c:\dev\src\tetraverse\src\skeletoncomponent.cpp
+	"SkeletonComponent.h"
+
+1384410240 source:c:\dev\src\tetraverse\src\playersystem.cpp
+	"PlayerSystem.h"
+	"Fission/Core/Math.h"
+	"Fission/Rendering/RenderSystem.h"
+	"Fission/Rendering/TransformComponent.h"
+	"Fission/Network/IntentComponent.h"
+	"GridComponent.h"
+	"PlayerComponent.h"
+	"PhysicsComponent.h"
+	"InventoryComponent.h"
+	<iostream>
+
+1384409302 source:c:\dev\src\tetraverse\src\gridcomponent.cpp
+	"GridComponent.h"
+	<cmath>
+	<iostream>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/VertexArray.hpp>
+
+1384476912 source:c:\dev\src\tetraverse\src\electriccomponent.cpp
+	"ElectricComponent.h"
+	<cmath>
+	<iostream>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/VertexArray.hpp>
+
+1384475696 c:\dev\src\tetraverse\include\electriccomponent.h
+	<SFML/Graphics/Transformable.hpp>
+	<SFML/System/Vector2.hpp>
+	"Fission/Rendering/RenderComponent.h"
+
+1384475721 source:c:\dev\src\tetraverse\src\electricsystem.cpp
+	"ElectricSystem.h"
+	"ElectricComponent.h"
+	<iostream>
+
+1384475470 c:\dev\src\tetraverse\include\electricsystem.h
+	"Fission/Core/System.h"
+	"Fission/Network/Connection.h"
+	"GridComponent.h"
+	<SFML/System/Clock.hpp>
+	<SFML/System/Vector2.hpp>
+
+1384475470 3e759e87edf285a8ebec513b16e97b6918942
 

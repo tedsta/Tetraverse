@@ -5,6 +5,7 @@
 		<Option title="Tetraverse" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="src\;" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/Tetraverse" prefix_auto="1" extension_auto="1" />
@@ -155,7 +156,9 @@
 		<Unit filename="include/PlaceableSystem.h" />
 		<Unit filename="include/PlayerComponent.h" />
 		<Unit filename="include/PlayerSystem.h" />
-		<Unit filename="include/SkeletonComponent.h" />
+		<Unit filename="include/SkeletonComponent.h">
+			<Option virtualFolder="src/" />
+		</Unit>
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />

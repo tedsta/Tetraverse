@@ -191,9 +191,17 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			mousePos -= mRndSys->getView().getSize()/2.f;
 			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
             pos.x = grid->wrapX(pos.x);
-			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
-				//std::cout << "Water: " << int(grid->getTile(pos.x, pos.y).mFluid) << std::endl;
-				grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 3), -1);
+
+            Tile wire = grid->getTile(int(pos.x),int(pos.y));
+            if(grid->getTile(int(pos.x),int(pos.y)).mWire == 0){
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 1, 0), -1);
+            }
+            else if(grid->getTile(int(pos.x),int(pos.y)).mWire == 1){
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 128, 128), -1);
+            }
+            else{
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 0, 0), -1);
+            }
 		}
 	}
 }
