@@ -1537,7 +1537,7 @@
 	<math.h>
 	"perlin.h"
 
-1384409466 source:c:\dev\src\tetraverse\src\gridops.cpp
+1384409654 source:c:\dev\src\tetraverse\src\gridops.cpp
 	"GridOps.h"
 	<iostream>
 	"GridComponent.h"
@@ -1584,7 +1584,7 @@
 1384381233 source:c:\dev\src\tetraverse\src\skeletoncomponent.cpp
 	"SkeletonComponent.h"
 
-1384409157 source:c:\dev\src\tetraverse\src\playersystem.cpp
+1384410240 source:c:\dev\src\tetraverse\src\playersystem.cpp
 	"PlayerSystem.h"
 	"Fission/Core/Math.h"
 	"Fission/Rendering/RenderSystem.h"
@@ -1602,4 +1602,28 @@
 	<iostream>
 	<SFML/Graphics/Texture.hpp>
 	<SFML/Graphics/VertexArray.hpp>
+
+1384476912 source:c:\dev\src\tetraverse\src\electriccomponent.cpp
+	"ElectricComponent.h"
+	<cmath>
+	<iostream>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/VertexArray.hpp>
+
+1384475696 c:\dev\src\tetraverse\include\electriccomponent.h
+	<SFML/Graphics/Transformable.hpp>
+	<SFML/System/Vector2.hpp>
+	"Fission/Rendering/RenderComponent.h"
+
+1384475721 source:c:\dev\src\tetraverse\src\electricsystem.cpp
+	"ElectricSystem.h"
+	"ElectricComponent.h"
+	<iostream>
+
+1384475470 c:\dev\src\tetraverse\include\electricsystem.h
+	"Fission/Core/System.h"
+	"Fission/Network/Connection.h"
+	"GridComponent.h"
+	<SFML/System/Clock.hpp>
+	<SFML/System/Vector2.hpp>
 

@@ -140,6 +140,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
+		<Unit filename="include/ElectricComponent.h" />
+		<Unit filename="include/ElectricSystem.h" />
 		<Unit filename="include/GridComponent.h" />
 		<Unit filename="include/GridOps.h" />
 		<Unit filename="include/GridSystem.h" />
@@ -154,6 +156,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
+		<Unit filename="src/ElectricComponent.cpp" />
+		<Unit filename="src/ElectricSystem.cpp" />
 		<Unit filename="src/GridComponent.cpp" />
 		<Unit filename="src/GridOps.cpp" />
 		<Unit filename="src/GridSystem.cpp" />
@@ -170,6 +174,15 @@
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
