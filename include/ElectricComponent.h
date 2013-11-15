@@ -15,7 +15,7 @@ class ElectricComponent : public RenderComponent
         const TypeBits getTypeBits() const {return Type;}
         //static Component* factory() {return new ElectricComponent();}
         int load(int value);
-        void connect(ElectricComponent wire){};
+        void connect(ElectricComponent* wire){};
 
 
 
