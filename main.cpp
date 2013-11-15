@@ -162,10 +162,12 @@ int main()
 
     for (int i = 0; i < 1; i++)
     {
+        TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
+
         Entity *planet = new Entity(engine->getEventManager());
         scene->addEntity(planet);
-        planet->addComponent(new TransformComponent(sf::Vector2f(0, 0)));
-        planet->addComponent(new GridComponent(worldW, worldH, tiles, 3));
+        planet->addComponent(pt);
+        planet->addComponent(new GridComponent(pt, worldW, worldH, tiles, 3));
         planet->addComponent(new ScriptComponent(scriptSys->createScript("test.nut")));
         physSys->addGrid(planet);
     }
@@ -252,7 +254,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     //sprite.Func("setTexture", &SpriteComponent::setTexture);
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
-    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, GridComponent*, const std::string&>> placeable(vm);
+    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, GridComponent*, const std::string&, int, int, int, int>> placeable(vm);
     placeable.Func("setGrid", &PlaceableComponent::setGrid);
     placeable.Func("setClassName", &PlaceableComponent::setClassName);
     Sqrat::RootTable(vm).Bind("PlaceableComponent", placeable);
@@ -262,6 +264,9 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
     Sqrat::DerivedClass<GridComponent, Component> grid(vm);
+    grid.Func("canPlace", &GridComponent::canPlace);
+    grid.Func("addPlaceable", &GridComponent::addPlaceable);
+    grid.Func("getPlaceableAt", &GridComponent::getPlaceableAt);
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);

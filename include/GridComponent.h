@@ -42,13 +42,14 @@ struct Area
 	bool mChanged;
 };
 
+class Entity;
 
 class GridComponent : public RenderComponent
 {
     friend class GridSystem;
 
     public:
-        GridComponent(int sizeX = 0, int sizeY = 0, Tile** tiles = NULL, int tickCount = 0);
+        GridComponent(sf::Transformable* transform = NULL, int sizeX = 0, int sizeY = 0, Tile** tiles = NULL, int tickCount = 0);
         virtual ~GridComponent();
 
         // Serialization stuff
@@ -58,10 +59,14 @@ class GridComponent : public RenderComponent
         // Renderable components gotto render...
         void render(sf::RenderTarget& target, sf::RenderStates states);
 
-        sf::Vector2f getTilePos(sf::Transformable* myTrans, sf::Vector2f pos);
-        bool checkCollision(sf::Transformable* myTrans, sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
+        sf::Vector2f getTilePos(sf::Vector2f pos);
+        bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
         bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
+
         void setTile(int x, int y, Tile tile, int tick);
+        bool canPlace(int x, int y, int width, int height);
+        void addPlaceable(Entity* entity);
+        Entity* getPlaceableAt(int x, int y);
         void calcNeighborState(int x, int y);
         int wrapX(int x);
 
@@ -95,9 +100,10 @@ class GridComponent : public RenderComponent
         int mSizeX;
         int mSizeY;
         Tile** mTiles; // 2D array of tiles
+        sf::Transformable* mTransform;
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
-        std::vector<std::vector<sf::Vector2i>> mBuses; // Array of buses
+        std::vector<Entity*> mPlaceables;
 
         static std::vector<sf::Texture*> TileSheets;
 };

@@ -6,6 +6,11 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <Fission/Core/Entity.h>
+#include <Fission/Rendering/TransformComponent.h>
+
+#include "PlaceableComponent.h"
+
 int randStateCovered();
 int randStateTop();
 int randStateBot();
@@ -15,8 +20,8 @@ int randStateLeft();
 TypeBits GridComponent::Type;
 std::vector<sf::Texture*> GridComponent::TileSheets;
 
-GridComponent::GridComponent(int sizeX, int sizeY, Tile** tiles, int tickCount) : mSizeX(sizeX), mSizeY(sizeY),
-    mTiles(tiles), mTickCount(tickCount)
+GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, Tile** tiles, int tickCount) :
+    mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mTiles(tiles), mTickCount(tickCount)
 {
 	for (int y = 0; y < mSizeY; y++)
 		for (int x = 0; x < mSizeX; x++)
@@ -185,9 +190,9 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 	}
 }
 
-bool GridComponent::checkCollision(sf::Transformable* myTrans, sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix)
+bool GridComponent::checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix)
 {
-	sf::Transform myInv = myTrans->getTransform().getInverse(); // Inverse of grid's transform
+	sf::Transform myInv = mTransform->getTransform().getInverse(); // Inverse of grid's transform
 	sf::Vector2f cOffset = myInv.transformPoint(trans->getPosition());
 	sf::Vector2f offset = cOffset-(dim/2.f);
 	sf::Vector2f tOffset = offset/float(TILE_SIZE);
@@ -238,7 +243,7 @@ bool GridComponent::checkCollision(sf::Transformable* myTrans, sf::Transformable
 	if (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE)
     {
 		cOffset.x = fmod(cOffset.x, mSizeX*TILE_SIZE);
-		sf::Transform t = myTrans->getTransform();
+		sf::Transform t = mTransform->getTransform();
 		trans->setPosition(t.transformPoint(cOffset));
 	}
 
@@ -272,9 +277,9 @@ bool GridComponent::dirCollision(int left, int top, int right, int bot, int dir,
 	return false;
 }
 
-sf::Vector2f GridComponent::getTilePos(sf::Transformable* myTrans, sf::Vector2f pos)
+sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 {
-	sf::Transform myInv = myTrans->getTransform().getInverse();
+	sf::Transform myInv = mTransform->getTransform().getInverse();
 	pos = myInv.transformPoint(pos);
 	pos = pos/float(TILE_SIZE);
 	pos.x = floor(pos.x);
@@ -359,6 +364,55 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
                 mCTiles[t].push_back(sf::Vector2i(right, i));*/
 		//}
 	}
+}
+
+bool GridComponent::canPlace(int x, int y, int width, int height)
+{
+    for (int i = y; i < y+height; i++)
+    {
+        for (int j = x; j < x+width; j++)
+        {
+            if (mTiles[i][j].mMat != 0)
+                return false;
+        }
+    }
+
+    for (auto entity : mPlaceables)
+    {
+        PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
+        if (x+width > placeable->getGridX() && x < placeable->getGridX()+placeable->getWidth() &&
+            y+height > placeable->getGridY() && y < placeable->getGridY()+placeable->getHeight())
+            return false;
+    }
+
+    return true;
+}
+
+void GridComponent::addPlaceable(Entity* entity)
+{
+    TransformComponent* trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
+    PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
+
+    sf::Vector2f pos(placeable->getGridX(), placeable->getGridY());
+    pos *= float(TILE_SIZE);
+    mTransform->getTransform().transformPoint(pos);
+    trans->setPosition(pos);
+    trans->setRotation(mTransform->getRotation());
+    trans->setScale(mTransform->getScale());
+    mPlaceables.push_back(entity);
+}
+
+Entity* GridComponent::getPlaceableAt(int x, int y)
+{
+    for (auto entity : mPlaceables)
+    {
+        PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
+        if (x >= placeable->getGridX() && x < placeable->getGridX()+placeable->getWidth() &&
+            y >= placeable->getGridY() && y < placeable->getGridY()+placeable->getHeight())
+            return entity;
+    }
+
+    return NULL;
 }
 
 void GridComponent::calcNeighborState(int x, int y)

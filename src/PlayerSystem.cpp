@@ -167,7 +167,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
-			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
+			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
                 inventory->useItem(player->mLeftHand, grid, grid->wrapX(pos.x), pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
@@ -178,7 +178,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
-			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
+			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
                 inventory->useItem(player->mRightHand, grid, grid->wrapX(pos.x), pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
@@ -189,7 +189,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
-			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
+			sf::Vector2f pos = grid->getTilePos(mousePos);
             pos.x = grid->wrapX(pos.x);
 
             Tile wire = grid->getTile(int(pos.x),int(pos.y));
