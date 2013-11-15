@@ -88,7 +88,7 @@ void PhysicsSystem::processEntity(Entity *entity, const float dt)
     if (hdir != NO_DIR)
     {
         float fix = 0;
-        if (grid->checkCollision(trans, sf::Vector2f(30, 96), hdir, fix))
+        if (grid->checkCollision(trans, sf::Vector2f(30, 60), hdir, fix))
         {
             phys->mVelocity.x = 0;
             trans->move(sf::Vector2f(fix, 0));
@@ -101,7 +101,7 @@ void PhysicsSystem::processEntity(Entity *entity, const float dt)
     if (vdir != NO_DIR)
     {
         float fix = 0;
-        if (grid->checkCollision(trans, sf::Vector2f(30, 96), vdir, fix))
+        if (grid->checkCollision(trans, sf::Vector2f(30, 60), vdir, fix))
         {
             phys->mVelocity.y = 0;
             trans->move(sf::Vector2f(0, fix));

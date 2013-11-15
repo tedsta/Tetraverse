@@ -9,6 +9,7 @@
 #include "PlayerComponent.h"
 #include "PhysicsComponent.h"
 #include "InventoryComponent.h"
+#include "SkeletonComponent.h"
 
 #include <iostream>
 
@@ -30,28 +31,41 @@ void PlayerSystem::begin(const float dt)
 
 void PlayerSystem::processEntity(Entity *entity, const float dt)
 {
-    auto trans = static_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
-    auto player = static_cast<PlayerComponent*>(entity->getComponent(PlayerComponent::Type));
-    auto phys = static_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
-    auto intent = static_cast<IntentComponent*>(entity->getComponent(IntentComponent::Type));
-    //auto skel = static_cast<SkeletonComponent*>(entity->getComponent(SkeletonComponent::Type));
+    auto trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
+    auto player = reinterpret_cast<PlayerComponent*>(entity->getComponent(PlayerComponent::Type));
+    auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
+    auto intent = reinterpret_cast<IntentComponent*>(entity->getComponent(IntentComponent::Type));
+    auto skel = reinterpret_cast<SkeletonComponent*>(entity->getComponent(SkeletonComponent::Type));
     auto inventory = reinterpret_cast<InventoryComponent*>(entity->getComponent(InventoryComponent::Type));
 
-	//skel.Apply(skel.FindAnimation("running"), player->manimTime, true)
-	//skel.Update(dt)
+	skel->update(dt);
 
 	if (!player->mStupidMode)
     {
-		if (intent->isIntentActive("left") && phys->getVelocity().x > -250)
+        bool runLeft = skel->getCurrentAnimation() == "running" && skel->getSkeleton()->skeleton->flipX;
+        bool runRight = skel->getCurrentAnimation() == "running" && !skel->getSkeleton()->skeleton->flipX;
+
+        if (intent->isIntentActive("left") && skel->getCurrentAnimation() == "")
+        {
+            skel->setAnimation(skel->findAnimation("running"), false);
+            skel->getSkeleton()->skeleton->flipX = true;
+            runLeft = true;
+        }
+        else if (intent->isIntentActive("right") && skel->getCurrentAnimation() == "")
+        {
+            skel->setAnimation(skel->findAnimation("running"), false);
+            skel->getSkeleton()->skeleton->flipX = false;
+            runRight = true;
+        }
+
+		if (runLeft && phys->getVelocity().x > -250)
 		{
 			phys->setVelocityX(-100);
-			//skel.skel.FlipX = true
 			player->mAnimTime += dt;
 		}
-        else if (intent->isIntentActive("right") && phys->getVelocity().x < 2500)
+        else if (runRight && phys->getVelocity().x < 2500)
         {
 			phys->setVelocityX(100);
-			//skel.skel.FlipX = false
 			player->mAnimTime += dt;
 		}
 		else

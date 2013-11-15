@@ -68,7 +68,8 @@ int main()
 
     Connection* conn = new Connection(engine->getEventManager());
 
-    RenderSystem *render = new RenderSystem(engine->getEventManager(), ResourceManager::get()->getFont("Content/Fonts/font.ttf"), GridComponent::Type);
+    RenderSystem *render = new RenderSystem(engine->getEventManager(), ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
+                                            GridComponent::Type|SkeletonComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
@@ -120,7 +121,8 @@ int main()
     Entity *player = new Entity(engine->getEventManager());
     scene->addEntity(player);
     player->addComponent(new TransformComponent);
-    player->addComponent(new SpriteComponent("robot.png"));
+    //player->addComponent(new SpriteComponent("robot.png"));
+    player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent);
     player->addComponent(new PlayerComponent);
@@ -134,7 +136,7 @@ int main()
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
-    trans->setOrigin(sf::Vector2f(30, 48));
+    //trans->setOrigin(sf::Vector2f(30, 48));
     trans->setPosition(sf::Vector2f(3.f, 3.f));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);

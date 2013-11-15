@@ -2,14 +2,24 @@
 #define SKELETONCOMPONENT_H
 
 #include <spine/spine-sfml.h>
-#include <Fission/Core/ResourceManager.h>
-#include <Fission/Core/Component.h>
+#include <Fission/Rendering/RenderComponent.h>
 
-class SkeletonComponent : public Component
+class SkeletonComponent : public RenderComponent
 {
     public:
-        SkeletonComponent(ResourceManager* rc = NULL, std::string skDataFile = "", std::string atlasFile = "");
+        SkeletonComponent(std::string skDataFile = "", std::string atlasFile = "");
         virtual ~SkeletonComponent();
+
+        void render(sf::RenderTarget& target, sf::RenderStates states);
+
+        spAnimation* findAnimation(const std::string& name);
+        void setAnimation(spAnimation* animation, bool loop);
+        void addAnimation(spAnimation* animation, bool loop, float delay);
+        void clearAnimation();
+        void update(float dt);
+        const std::string& getCurrentAnimation();
+
+        spine::SkeletonDrawable* getSkeleton(){return mSkeleton;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
