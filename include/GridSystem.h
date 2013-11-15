@@ -1,8 +1,8 @@
 #ifndef GRIDSYSTEM_H
 #define GRIDSYSTEM_H
 
-#include "Fission/Core/System.h"
-#include "Fission/Network/Connection.h"
+#include <Fission/Core/System.h>
+#include <Fission/Network/Connection.h>
 #include "GridComponent.h"
 
 #include <SFML/System/Clock.hpp>

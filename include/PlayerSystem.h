@@ -1,7 +1,7 @@
 #ifndef PLAYERSYSTEM_H
 #define PLAYERSYSTEM_H
 
-#include "Fission/Core/System.h"
+#include <Fission/Core/System.h>
 
 class RenderSystem;
 

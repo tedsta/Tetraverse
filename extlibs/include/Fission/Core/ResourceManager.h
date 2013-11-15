@@ -19,7 +19,6 @@ struct Resource
 class ResourceManager
 {
     public:
-        ResourceManager();
         virtual ~ResourceManager();
 
         /// \brief Add a resource
@@ -37,7 +36,14 @@ class ResourceManager
         /// \brief Get a script.
         Sqrat::Script *getScript(const std::string& name, HSQUIRRELVM master = NULL);
 
+        static void init(){Instance=new ResourceManager;}
+        static ResourceManager* get(){return Instance;}
+
     private:
+        ResourceManager();
+
+        static ResourceManager* Instance;
+
         Resource *findResource(std::string name);
 
         /// All of the resources

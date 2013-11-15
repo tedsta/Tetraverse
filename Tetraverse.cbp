@@ -54,6 +54,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-DWIN32" />
+			<Add option="-DNOGDI" />
 			<Add directory="include" />
 			<Add directory="extlibs/include" />
 			<Add directory="extlibs/include/Squirrel" />
@@ -72,6 +73,9 @@
 			<Add library="extlibs\lib\libsqstdlib.a" />
 			<Add library="extlibs\lib\libenet.a" />
 		</Linker>
+		<Unit filename="extlibs/include/Sqrat/sqext.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="extlibs/src/spine-c/src/spine/Animation.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -148,6 +152,7 @@
 		<Unit filename="include/PhysicsComponent.h" />
 		<Unit filename="include/PhysicsSystem.h" />
 		<Unit filename="include/PlaceableComponent.h" />
+		<Unit filename="include/PlaceableSystem.h" />
 		<Unit filename="include/PlayerComponent.h" />
 		<Unit filename="include/PlayerSystem.h" />
 		<Unit filename="include/SkeletonComponent.h" />
@@ -162,6 +167,7 @@
 		<Unit filename="src/PhysicsComponent.cpp" />
 		<Unit filename="src/PhysicsSystem.cpp" />
 		<Unit filename="src/PlaceableComponent.cpp" />
+		<Unit filename="src/PlaceableSystem.cpp" />
 		<Unit filename="src/PlayerComponent.cpp" />
 		<Unit filename="src/PlayerSystem.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />

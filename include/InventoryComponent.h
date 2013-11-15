@@ -2,7 +2,7 @@
 #define INVENTORYCOMPONENT_H
 
 #include <vector>
-#include "Fission/Core/Component.h"
+#include <Fission/Core/Component.h>
 
 class Item;
 class GridComponent;

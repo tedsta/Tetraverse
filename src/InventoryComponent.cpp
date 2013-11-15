@@ -67,14 +67,14 @@ bool InventoryComponent::useItem(int slot, GridComponent* grid, int x, int y)
 
     int item = mSlots[slot].mItem;
 
-    Item::Items[item]->use(grid, x, y);
+    bool used = Item::Items[item]->use(grid, x, y);
 
-    if (Item::Items[item]->getConsumable())
+    if (used && Item::Items[item]->getConsumable())
     {
         mSlots[slot].mStack--;
         if (mSlots[slot].mStack == 0)
             mSlots[slot].mItem = -1;
     }
 
-    return true;
+    return used;
 }

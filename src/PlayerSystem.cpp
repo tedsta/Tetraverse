@@ -1,9 +1,10 @@
 #include "PlayerSystem.h"
 
-#include "Fission/Core/Math.h"
-#include "Fission/Rendering/RenderSystem.h"
-#include "Fission/Rendering/TransformComponent.h"
-#include "Fission/Network/IntentComponent.h"
+#include <Fission/Core/Math.h>
+#include <Fission/Rendering/RenderSystem.h>
+#include <Fission/Rendering/TransformComponent.h>
+#include <Fission/Network/IntentComponent.h>
+
 #include "GridComponent.h"
 #include "PlayerComponent.h"
 #include "PhysicsComponent.h"
@@ -156,8 +157,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
         else if (intent->isIntentActive("interact"))
             player->mRightHand = 9;
     }
-
-	if (phys->getGrid())
+    else if (phys->getGrid()) // We're not setting any hands, so lets use them
     {
 		auto pt = reinterpret_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
 		auto grid = reinterpret_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
@@ -168,7 +168,8 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
 			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
-            inventory->useItem(player->mLeftHand, grid, pos.x, pos.y);
+			if (pos.y >= 0 && pos.y < grid->getSizeY())
+                inventory->useItem(player->mLeftHand, grid, grid->wrapX(pos.x), pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
 				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 2), -1);
 		}
@@ -178,7 +179,8 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			mousePos += mRndSys->getView().getCenter();
 			mousePos -= mRndSys->getView().getSize()/2.f;
 			sf::Vector2f pos = grid->getTilePos(pt, mousePos);
-			inventory->useItem(player->mRightHand, grid, pos.x, pos.y);
+			if (pos.y >= 0 && pos.y < grid->getSizeY())
+                inventory->useItem(player->mRightHand, grid, grid->wrapX(pos.x), pos.y);
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
 				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 1), -1);
 		}

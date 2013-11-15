@@ -3,7 +3,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include "Fission/Core/Component.h"
+#include <Fission/Core/Component.h>
 
 class Entity;
 

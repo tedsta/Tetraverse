@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "Fission/Rendering/RenderComponent.h"
+#include <Fission/Rendering/RenderComponent.h>
 
 #define MAX_COMPS 4
 #define TILE_SIZE 16

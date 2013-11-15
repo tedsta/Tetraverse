@@ -6,24 +6,26 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include "Fission/Core/Engine.h"
-#include "Fission/Core/Scene.h"
-#include "Fission/Core/ResourceManager.h"
-#include "Fission/Core/ComponentFactories.h"
+#include <Sqrat/sqext.h>
 
-#include "Fission/Rendering/RenderSystem.h"
-#include "Fission/Rendering/DebugDisplay.h"
-#include "Fission/Rendering/SpriteComponent.h"
-#include "Fission/Rendering/TransformComponent.h"
+#include <Fission/Core/Engine.h>
+#include <Fission/Core/Scene.h>
+#include <Fission/Core/ResourceManager.h>
+#include <Fission/Core/ComponentFactories.h>
 
-#include "Fission/Input/InputSystem.h"
+#include <Fission/Rendering/RenderSystem.h>
+#include <Fission/Rendering/DebugDisplay.h>
+#include <Fission/Rendering/SpriteComponent.h>
+#include <Fission/Rendering/TransformComponent.h>
 
-#include "Fission/Network/Connection.h"
-#include "Fission/Network/IntentSystem.h"
-#include "Fission/Network/IntentComponent.h"
+#include <Fission/Input/InputSystem.h>
 
-#include "Fission/Script/ScriptSystem.h"
-#include "Fission/Script/ScriptComponent.h"
+#include <Fission/Network/Connection.h>
+#include <Fission/Network/IntentSystem.h>
+#include <Fission/Network/IntentComponent.h>
+
+#include <Fission/Script/ScriptSystem.h>
+#include <Fission/Script/ScriptComponent.h>
 
 
 #include "GridComponent.h"
@@ -35,6 +37,7 @@
 #include "ItemComponent.h"
 
 #include "GridSystem.h"
+#include "PlaceableSystem.h"
 #include "PhysicsSystem.h"
 #include "PlayerSystem.h"
 
@@ -47,37 +50,9 @@ void bindSquirrel(HSQUIRRELVM vm);
 
 int main()
 {
-    Area a;
-
-    a.mTiles[0][0].mState = 0;
-    a.mTiles[0][1].mState = 127;
-    a.mTiles[0][2].mState = 0;
-
-    a.mTiles[1][0].mState = 0;
-    a.mTiles[1][1].mState = 255;
-    a.mTiles[1][2].mState = 0;
-
-    a.mTiles[2][0].mState = 0;
-    a.mTiles[2][1].mState = 127;
-    a.mTiles[2][2].mState = 0;
-
-    std::cout << int(a.mTiles[0][0].mState) << "\t" << int(a.mTiles[0][1].mState) << "\t" << int(a.mTiles[0][2].mState) << std::endl;
-    std::cout << int(a.mTiles[1][0].mState) << "\t" << int(a.mTiles[1][1].mState) << "\t" << int(a.mTiles[1][2].mState) << std::endl;
-    std::cout << int(a.mTiles[2][0].mState) << "\t" << int(a.mTiles[2][1].mState) << "\t" << int(a.mTiles[2][2].mState) << "\n\n";
-
-    for (int i = 0; i < 4; i++)
-    {
-        flowVert(a);
-
-        std::cout << int(a.mTiles[0][0].mState) << "\t" << int(a.mTiles[0][1].mState) << "\t" << int(a.mTiles[0][2].mState) << std::endl;
-        std::cout << int(a.mTiles[1][0].mState) << "\t" << int(a.mTiles[1][1].mState) << "\t" << int(a.mTiles[1][2].mState) << std::endl;
-        std::cout << int(a.mTiles[2][0].mState) << "\t" << int(a.mTiles[2][1].mState) << "\t" << int(a.mTiles[2][2].mState) << "\n\n";
-    }
-
-    //return 0;
+    ResourceManager::init();
 
     Engine *engine = new Engine;
-    ResourceManager *rcMgr = new ResourceManager;
 
     TransformComponent::Type = ComponentFactories::add(TransformComponent::factory);
     SpriteComponent::Type = ComponentFactories::add(SpriteComponent::factory);
@@ -93,11 +68,12 @@ int main()
 
     Connection* conn = new Connection(engine->getEventManager());
 
-    RenderSystem *render = new RenderSystem(engine->getEventManager(), rcMgr->getFont("Content/Fonts/font.ttf"), GridComponent::Type);
+    RenderSystem *render = new RenderSystem(engine->getEventManager(), ResourceManager::get()->getFont("Content/Fonts/font.ttf"), GridComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
     GridSystem *gridSys = new GridSystem(engine->getEventManager());
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager());
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager());
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render);
 
@@ -106,6 +82,7 @@ int main()
     engine->addSystem(intentSys);
     engine->addSystem(scriptSys);
     engine->addSystem(gridSys);
+    engine->addSystem(placeableSys);
     engine->addSystem(physSys);
     engine->addSystem(playerSys);
 
@@ -115,14 +92,24 @@ int main()
 
     // Set up all the items
     HSQUIRRELVM itemScript = scriptSys->createScript("Content/Scripts/items.nut");
-    Item *dirtBlock = new Item("dirt", rcMgr->getTexture("Content/Textures/Tiles/dirt.png"), true, 999, itemScript, "dirtBlock");
+    Item *dirtBlock = new Item("dirt", "Content/Textures/Tiles/dirt.png", true, 999, itemScript, "dirtBlock");
     Item::Items.push_back(dirtBlock);
 
+    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, 1, itemScript, "crowbar");
+    Item::Items.push_back(crowbar);
+
+    Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", true, 10, itemScript, "door");
+    Item::Items.push_back(door);
+
+    // Set up the placeables
+    HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
+    PlaceableComponent::registerClass(placeableScript, "Door");
+
     // Set up the materials
-    GridComponent::addTileSheet(1, rcMgr->getTexture("Content/Textures/Tiles/dirt.png"));
-    GridComponent::addTileSheet(2, rcMgr->getTexture("Content/Textures/Tiles/stone.png"));
-    GridComponent::addTileSheet(3, rcMgr->getTexture("Content/Textures/Tiles/grass.png"));
-    GridComponent::addTileSheet(5, rcMgr->getTexture("Content/Textures/Tiles/grass.png"));
+    GridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
+    GridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
+    GridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
     gridSys->addTick(fluidGridOp, 0.05f);
@@ -130,21 +117,19 @@ int main()
 
     Scene *scene = engine->getScene();
 
-    sf::Texture texture;
-    texture.loadFromFile("robot.png");
-
     Entity *player = new Entity(engine->getEventManager());
     scene->addEntity(player);
     player->addComponent(new TransformComponent);
-    player->addComponent(new SpriteComponent(&texture));
+    player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent);
     player->addComponent(new PlayerComponent);
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
-    inventory->addItem(0, 0, 999);
+    inventory->addItem(0, 1, 1);
     inventory->addItem(1, 0, 999);
+    inventory->addItem(2, 2, 10);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
@@ -258,11 +243,26 @@ Tile** newWorld(int seed, int width, int height)
 
 void bindSquirrel(HSQUIRRELVM vm)
 {
+    Sqrat::DerivedClass<TransformComponent, Component, sqext::ConstAlloc<TransformComponent, sf::Vector2f, float, sf::Vector2f>> transform(vm);
+    transform.Func("setPosition", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setPosition);
+    transform.Func("getPosition", &TransformComponent::getPosition);
+    Sqrat::RootTable(vm).Bind("TransformComponent", transform);
+
+    Sqrat::DerivedClass<SpriteComponent, Component, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
+    //sprite.Func("setTexture", &SpriteComponent::setTexture);
+    Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
+
+    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, GridComponent*, const std::string&>> placeable(vm);
+    placeable.Func("setGrid", &PlaceableComponent::setGrid);
+    placeable.Func("setClassName", &PlaceableComponent::setClassName);
+    Sqrat::RootTable(vm).Bind("PlaceableComponent", placeable);
+
     Sqrat::Class<Tile> tile(vm);
     tile.Var("mMat", &Tile::mMat);
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
-    Sqrat::Class<GridComponent> grid(vm);
+    Sqrat::DerivedClass<GridComponent, Component> grid(vm);
     grid.Func("setTile", &GridComponent::setTile);
+    grid.Func("getTile", &GridComponent::getTile);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 }

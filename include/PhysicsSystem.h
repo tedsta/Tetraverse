@@ -1,7 +1,7 @@
 #ifndef PHYSICSSYSTEM_H
 #define PHYSICSSYSTEM_H
 
-#include "Fission/Core/System.h"
+#include <Fission/Core/System.h>
 
 class PhysicsSystem : public System
 {
