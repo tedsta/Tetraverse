@@ -97,6 +97,8 @@ void fluidGridOp2(GridComponent* grid, int tick)
 
     struct fluidArea {
         float& operator[](int i){return fluid[i];}
+        int x;
+        int y;
         float fluid[5];
     };
 
@@ -117,6 +119,8 @@ void fluidGridOp2(GridComponent* grid, int tick)
         if (y < grid->getSizeY()-1)
             area[DOWN] = grid->getTile(x, y+1).mFluid;
 
+        areas[i].x = x;
+        areas[i].y = y;
         areas[i][0] = area[0];
         areas[i][1] = area[1];
         areas[i][2] = area[2];
@@ -227,8 +231,24 @@ void fluidGridOp2(GridComponent* grid, int tick)
         }
     }
 
-    for (int i = 0; i < grid->getInterestingTiles(tick).size(); i++)
+    grid->clearInteresting(tick);
+    for (int i = 0; i < areas.size(); i++)
     {
+        int x = areas[i].x;
+        int y = areas[i].y;
+        int left = grid->wrapX(x-1);
+        int right = grid->wrapX(x+1);
+
+        if (y > 0 && grid->getTile(x, y-1).mFluid != areas[i][UP])
+            grid->setInteresting(x, y-1, tick);
+        if (grid->getTile(left, y).mFluid != areas[i][LEFT])
+            grid->setInteresting(left, y, tick);
+        if (grid->getTile(x, y).mFluid != areas[i][CENTER])
+            grid->setInteresting(x, y, tick);
+        if (grid->getTile(right, y).mFluid != areas[i][RIGHT])
+            grid->setInteresting(right, y, tick);
+        if (y < grid->getSizeY()-1 && grid->getTile(x, y+1).mFluid != areas[i][DOWN])
+            grid->setInteresting(x, y+1, tick);
     }
 }
 
