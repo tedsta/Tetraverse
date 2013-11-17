@@ -18,9 +18,7 @@ class PlaceableComponent : public Component
 
         static void registerClass(HSQUIRRELVM vm, const std::string& className);
 
-        // Setters
-        void setGrid(GridComponent* grid){mGrid=grid;}
-        void setClassName(const std::string& className);
+        void interact();
 
         // Getters
         int getGridX(){return mGridX;}

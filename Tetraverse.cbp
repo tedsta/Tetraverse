@@ -26,6 +26,9 @@
 					<Add library="extlibs\lib\libsquirrel.a" />
 					<Add library="extlibs\lib\libsqstdlib.a" />
 					<Add library="extlibs\lib\libenet.a" />
+					<Add library="glut32" />
+					<Add library="glu32" />
+					<Add library="opengl32" />
 				</Linker>
 			</Target>
 			<Target title="Release">

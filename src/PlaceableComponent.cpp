@@ -8,8 +8,8 @@ TypeBits PlaceableComponent::Type;
 PlaceableComponent::PlaceableComponent(GridComponent* grid, const std::string& className, int gridX, int gridY, int width, int height) :
     mGrid(grid), mClassName(className), mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
 {
-    if (mClassName.size() > 0)
-        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New());
+    if (grid && mClassName.size() > 0)
+        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(grid, gridX, gridY));
 }
 
 PlaceableComponent::~PlaceableComponent()
@@ -17,15 +17,16 @@ PlaceableComponent::~PlaceableComponent()
     delete mInst;
 }
 
-void PlaceableComponent::setClassName(const std::string& className)
+void PlaceableComponent::interact()
 {
-    if (!mInst)
+    try
     {
-        mClassName = className;
-        if (mClassName.size() > 0)
-            mInst = new sqext::SQIClassInstance(Classes[mClassName]->New());
-        else
-            mInst = NULL;
+        if (mGrid && mInst)
+            mInst->call("interact");
+    }
+    catch (Sqrat::Exception e)
+    {
+        std::cout << "Squirrel error: " << e.Message() << std::endl;
     }
 }
 

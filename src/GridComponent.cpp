@@ -11,11 +11,11 @@
 
 #include "PlaceableComponent.h"
 
-int randStateCovered();
-int randStateTop();
-int randStateBot();
-int randStateRight();
-int randStateLeft();
+int randStateCovered(int x, int y);
+int randStateTop(int x, int y);
+int randStateBot(int x, int y);
+int randStateRight(int x, int y);
+int randStateLeft(int x, int y);
 
 TypeBits GridComponent::Type;
 std::vector<sf::Texture*> GridComponent::TileSheets;
@@ -84,13 +84,13 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 				sf::Color(255, 255, 255, 255),
 				sf::Vector2f(tsize, 0));
 
-            if (mTiles[y][x].mMat == 4)
+            if (mTiles[y][x].mFluid > 0)
             {
                 states.texture = NULL;
-                verts[0].color = sf::Color(255, 0, 0, mTiles[y][x].mFluid);
-                verts[1].color = sf::Color(255, 0, 0, mTiles[y][x].mFluid);
-                verts[2].color = sf::Color(255, 0, 0, mTiles[y][x].mFluid);
-                verts[3].color = sf::Color(255, 0, 0, mTiles[y][x].mFluid);
+                verts[0].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[1].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[2].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[3].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
                 target.draw(verts, states);
             }
             else
@@ -118,8 +118,9 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
                 int sheetSizeX = sheet->getSize().x / TILE_SIZE;
                 int sheetSizeY = sheet->getSize().y / TILE_SIZE;
 
-                float texStartX = float(int(mTiles[y][x].mState)%sheetSizeX) * tsize;
-                float texStartY = float(int(mTiles[y][x].mState)/sheetSizeY) * tsize;
+                int edgeState = calcNeighborState(x, y);
+                float texStartX = float(edgeState%sheetSizeX) * tsize;
+                float texStartY = float(edgeState/sheetSizeY) * tsize;
 
                 verts[0].texCoords.x += texStartX;
                 verts[0].texCoords.y += texStartY;
@@ -287,12 +288,30 @@ sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 	return pos;
 }
 
+void GridComponent::interact(int x, int y)
+{
+    Entity *entity = getPlaceableAt(x, y);
+    if (entity)
+    {
+        PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
+        placeable->interact();
+    }
+}
+
+void GridComponent::addFluid(int x, int y, float fluid)
+{
+    if (y < 0 || y >= mSizeY)
+		return;
+
+	x = wrapX(x);
+
+	mTiles[y][x].mFluid += fluid;
+}
+
 void GridComponent::setTile(int x, int y, Tile tile, int tick)
 {
 	if (y < 0 || y >= mSizeY)
-	{
 		return;
-	}
 
 	x = wrapX(x);
 
@@ -326,43 +345,15 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
 		tickMax = tick+1;
 	}
 
-	if (y > 0)
-    {
-        calcNeighborState(left, y-1);
-        calcNeighborState(x, y-1);
-        calcNeighborState(right, y-1);
-    }
-
-    calcNeighborState(left, y);
-	calcNeighborState(x, y);
-	calcNeighborState(right, y);
-
-	if (y < mSizeY-1)
-    {
-        calcNeighborState(left, y+1);
-        calcNeighborState(x, y+1);
-        calcNeighborState(right, y+1);
-    }
-
 	for (int t = tickMin; t < tickMax; t++)
     {
-		//for (int i = top; i <= bot; i++)
-		//{
-		    if (y > 0)
-                addInterestingTile(x, y-1, t);
-            addInterestingTile(left, y, t);
-            addInterestingTile(x, y, t);
-            addInterestingTile(right, y, t);
-            if (y < mSizeY-1)
-                addInterestingTile(x, y+1, t);
-
-		    /*if (std::find(mCTiles[t].begin(), mCTiles[t].end(), sf::Vector2i(left, i)) == mCTiles[t].end())
-                mCTiles[t].push_back(sf::Vector2i(left, i));
-            if (std::find(mCTiles[t].begin(), mCTiles[t].end(), sf::Vector2i(x, i)) == mCTiles[t].end())
-                mCTiles[t].push_back(sf::Vector2i(x, i));
-            if (std::find(mCTiles[t].begin(), mCTiles[t].end(), sf::Vector2i(right, i)) == mCTiles[t].end())
-                mCTiles[t].push_back(sf::Vector2i(right, i));*/
-		//}
+        if (y > 0)
+            setInteresting(x, y-1, t);
+        setInteresting(left, y, t);
+        setInteresting(x, y, t);
+        setInteresting(right, y, t);
+        if (y < mSizeY-1)
+            setInteresting(x, y+1, t);
 	}
 }
 
@@ -415,14 +406,14 @@ Entity* GridComponent::getPlaceableAt(int x, int y)
     return NULL;
 }
 
-void GridComponent::calcNeighborState(int x, int y)
+int GridComponent::calcNeighborState(int x, int y)
 {
     x = wrapX(x);
 	int left = wrapX(x - 1);
 	int right = wrapX(x + 1);
 
     if (mTiles[y][x].mMat == 0 || mTiles[y][x].mMat == 4)
-        return;
+        return 0;
 
 	Tile a[3][3]; // Area
 
@@ -447,67 +438,67 @@ void GridComponent::calcNeighborState(int x, int y)
 	if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = randStateCovered();
+		return randStateCovered(x, y);
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 21;
+		return 21;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = randStateTop();
+		return randStateTop(x, y);
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = randStateBot();
+		return randStateBot(x, y);
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = randStateLeft();
+		return randStateLeft(x, y);
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = randStateRight();
+		return randStateRight(x, y);
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 0;
+		return 0;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = 1;
+		return 1;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = 17;
+		return 17;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = 18;
+		return 18;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 19;
+		return 19;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 20;
+		return 20;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		mTiles[y][x].mState = 2;
+		return 2;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 3;
+		return 3;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 4;
+		return 4;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		mTiles[y][x].mState = 5;
+		return 5;
 }
 
 int GridComponent::wrapX(int x)
@@ -556,32 +547,32 @@ Area GridComponent::getArea(int x, int y)
 
 // ****************************************************************************
 
-int random(int min, int max)
+int random(int x, int y, int min, int max)
 {
-    return (rand()%(max-min))+min;
+    return ((x ^ y)%(max-min+1))+min;
 }
 
-int randStateCovered()
+int randStateCovered(int x, int y)
 {
-	return random(6, 9);
+	return random(x, y, 6, 9);
 }
 
-int randStateTop()
+int randStateTop(int x, int y)
 {
-	return random(10, 11);
+	return random(x, y, 10, 11);
 }
 
-int randStateBot()
+int randStateBot(int x, int y)
 {
-	return random(12, 13);
+	return random(x, y, 12, 13);
 }
 
-int randStateRight()
+int randStateRight(int x, int y)
 {
-	return random(14, 15);
+	return random(x, y, 14, 15);
 }
 
-int randStateLeft()
+int randStateLeft(int x, int y)
 {
 	return 16;
 }

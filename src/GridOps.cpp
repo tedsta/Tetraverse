@@ -59,112 +59,178 @@ Area wireGridOp(Area a)
 
 // ******************************************************************************************************
 
-const float MaxMass = 1.f;
-const float MaxCompress = 0.02f; //How much excess water a cell can store, compared to the cell above it
-const float MinMass = 0.001f;
-const float MinFlow = 0.01f;
-const float MaxSpeed = 1.f;
-
 bool isFluid(int mat){return mat==0||mat==4;}
+
+const float MaxMass = 1;
+const float MaxCompress = 0.05f; //How much excess water a cell can store, compared to the cell above it
+const float MinMass = 0.0001;
+const float MinFlow = 0.01;
+const float MaxSpeed = 1;
 
 //Returns the amount of water that should be in the bottom cell.
 float fluidStableState(float mass)
 {
-    if (mass <= 1)
-        return 1;
-    else if (mass < 2*MaxMass + MaxCompress)
-        return (MaxMass*MaxMass + mass*MaxCompress)/(MaxMass + MaxCompress);
+    if (mass <= MaxMass)
+        return MaxMass;
+    else if (mass < 2*MaxMass + MaxMass*MaxCompress)
+        return (float(MaxMass + mass*MaxCompress)/float(MaxMass + (MaxCompress*MaxMass)))*MaxMass;
     else
-        return (mass + MaxCompress)/2;
+        return (mass + MaxMass*MaxCompress)/2.f;
 }
 
-float constrain(float v, float min, float max)
+float constrain( const float& val, const float& minVal, const float& maxVal )
 {
-    if (v < min)
-        v = min;
-    else if (v > max)
-        v = max;
-    return v;
+    return std::max( minVal, std::min( val, maxVal ) );
 }
 
-/*void fluidGridOp2(GridComponent* grid, int tick)
+void fluidGridOp2(GridComponent* grid, int tick)
 {
+    //return;
+
+    enum {
+        UP = 0,
+        LEFT = 1,
+        CENTER = 2,
+        RIGHT = 3,
+        DOWN = 4
+    };
+
+    struct fluidArea {
+        float& operator[](int i){return fluid[i];}
+        float fluid[5];
+    };
+
+    std::vector<fluidArea> areas(grid->getInterestingTiles(tick).size()); // up, left, center, right, down
+
     for (int i = 0; i < grid->getInterestingTiles(tick).size(); i++)
     {
         int x = grid->getInterestingTiles(tick)[i].x;
         int y = grid->getInterestingTiles(tick)[i].y;
 
-        float m01, m10, m11, m12, m21;
-        m01 = float(a.mTiles[0][1].mState);
-        m10 = float(a.mTiles[1][0].mState);
-        m11 = float(a.mTiles[1][1].mState);
-        m12 = float(a.mTiles[1][2].mState);
-        m21 = float(a.mTiles[2][1].mState);
+        float area[5] = {0.f, 0.f, 0.f, 0.f, 0.f};
 
-        //Custom push-only flow
-        float flow = 0;
-        float remaining = m11;
-        if (remaining <= 0) return r;
+        if (y > 0)
+            area[UP] = grid->getTile(x, y-1).mFluid;
+        area[LEFT] = grid->getTile(grid->wrapX(x-1), y).mFluid;
+        area[CENTER] = grid->getTile(x, y).mFluid;
+        area[RIGHT] = grid->getTile(grid->wrapX(x+1), y).mFluid;
+        if (y < grid->getSizeY()-1)
+            area[DOWN] = grid->getTile(x, y+1).mFluid;
 
-        //The block below this one
-        if (remaining > 0 && isFluid(a.mTiles[2][1].mMat))
+        areas[i][0] = area[0];
+        areas[i][1] = area[1];
+        areas[i][2] = area[2];
+        areas[i][3] = area[3];
+        areas[i][4] = area[4];
+    }
+
+    for (int i = 0; i < grid->getInterestingTiles(tick).size(); i++)
+    {
+        int x = grid->getInterestingTiles(tick)[i].x;
+        int y = grid->getInterestingTiles(tick)[i].y;
+
+        bool upSolid = true, downSolid = true, leftSolid = true, rightSolid = true, centerSolid = true;
+        if (y > 0)
+            upSolid = !isFluid(grid->getTile(x, y-1).mMat);
+        leftSolid = !isFluid(grid->getTile(grid->wrapX(x-1), y).mMat);
+        centerSolid = !isFluid(grid->getTile(x, y).mMat);
+        rightSolid = !isFluid(grid->getTile(grid->wrapX(x+1), y).mMat);
+        if (y < grid->getSizeY()-1)
+            downSolid = !isFluid(grid->getTile(x, y+1).mMat);
+
+        float upFluid, downFluid, leftFluid, rightFluid, centerFluid;
+        upFluid = areas[i][UP];
+        leftFluid = areas[i][LEFT];
+        centerFluid = areas[i][CENTER];
+        rightFluid = areas[i][RIGHT];
+        downFluid = areas[i][DOWN];
+
+        // Skip inert ground blocks
+        if (centerSolid)
+            continue;
+
+        // Custom push-only flow
+        float Flow = 0;
+        float remaining_mass = centerFluid;
+        if( remaining_mass <= 0 )
+            continue;
+
+        // The block below this one
+        if( !downSolid )
         {
-            flow = fluidStableState(remaining + m21) - m21;
-            if (flow > MinFlow)
-                flow *= 0.5; //leads to smoother flow
+            Flow = fluidStableState( remaining_mass + downFluid ) - downFluid;
+            if( Flow > MinFlow )
+            {
+                //leads to smoother flow
+                Flow *= 0.5f;
+            }
+            Flow = constrain( Flow, 0, std::min(MaxSpeed, remaining_mass) );
 
-            flow = constrain( flow, 0, std::min(MaxSpeed, remaining) );
-
-            r.mTiles[1][1].mState -= flow;
-            r.mTiles[2][1].mState += flow;
-            remaining -= flow;
-            r.mChanged = true;
+            grid->addFluid(x, y, -Flow);
+            grid->addFluid(x, y+1, Flow);
+            remaining_mass -= Flow;
         }
 
-        //Left
-        if (remaining > 0 && isFluid(a.mTiles[1][0].mMat))
-        {
-            //Equalize the amount of water in this block and it's neighbour
-            flow = (m11 - m10)/4;
-            if (flow > MinFlow) flow *= 0.5;
-            flow = constrain(flow, 0, remaining);
+        if ( remaining_mass <= 0 )
+            continue;
 
-            r.mTiles[1][1].mState -= flow;
-            r.mTiles[1][0].mState += flow;
-            remaining -= flow;
-            r.mChanged = true;
+        // Left
+        if ( !leftSolid )
+        {
+            // Equalize the amount of water in this block and it's neighbour
+            Flow = ( centerFluid - leftFluid ) / 4;
+            if ( Flow > MinFlow )
+            {
+                Flow *= 0.5f;
+            }
+            Flow = constrain(Flow, 0, remaining_mass);
+            grid->addFluid(x, y, -Flow);
+            grid->addFluid(x-1, y, Flow);
+            remaining_mass -= Flow;
         }
 
-        //Right
-        if (remaining > 0 && isFluid(a.mTiles[1][2].mMat))
-        {
-            //Equalize the amount of water in this block and it's neighbour
-            flow = (m11 - m12)/4;
-            if (flow > MinFlow) flow *= 0.5;
-            flow = constrain(flow, 0, remaining);
+        if ( remaining_mass <= 0 )
+            continue;
 
-            r.mTiles[1][1].mState -= flow;
-            r.mTiles[1][2].mState += flow;
-            remaining -= flow;
-            r.mChanged = true;
+        // Right
+        if ( !rightSolid )
+        {
+            // Equalize the amount of water in this block and it's neighbour
+            Flow = ( centerFluid - rightFluid ) / 4;
+            if ( Flow > MinFlow )
+            {
+                Flow *= 0.5f;
+            }
+            Flow = constrain(Flow, 0, remaining_mass);
+            grid->addFluid(x, y, -Flow);
+            grid->addFluid(x+1, y, Flow);
+            remaining_mass -= Flow;
         }
 
-        //Up. Only compressed water flows upwards.
-        if (remaining > 0 && isFluid(a.mTiles[0][1].mMat))
-        {
-            flow = remaining - fluidStableState(remaining + m01);
-            if (flow > MinFlow) flow *= 0.5;
-            flow = constrain( flow, 0, std::min(MaxSpeed, remaining) );
+        if ( remaining_mass <= 0 )
+            continue;
 
-            r.mTiles[1][1].mState -= flow;
-            r.mTiles[0][1].mState += flow;
-            remaining -= flow;
-            r.mChanged = true;
+        // The block above this one
+        if( !upSolid )
+        {
+            Flow = remaining_mass - fluidStableState( remaining_mass + upFluid );
+            if( Flow > MinFlow )
+            {
+                //leads to smoother flow
+                Flow *= 0.5f;
+            }
+            Flow = constrain( Flow, 0, std::min(MaxSpeed, remaining_mass) );
+
+            grid->addFluid(x, y, -Flow);
+            grid->addFluid(x, y-1, Flow);
+            remaining_mass -= Flow;
         }
     }
 
-	return r;
-}*/
+    for (int i = 0; i < grid->getInterestingTiles(tick).size(); i++)
+    {
+    }
+}
 
 // ******************************************************************************************************
 // ******************************************************************************************************
@@ -184,12 +250,8 @@ int vert(int top, int bot, int offset)
     int botMaxFill = std::min(MAX_FLUID+(offset+1)*compress, 255);
     if (top > 0 && top <= topMaxFill && bot < botMaxFill)
         flow = std::min<int>(top, botMaxFill-bot);
-
     else if (bot > botMaxFill && top < 255)
-    {
-        //std::cout << "Top: " << top << std::endl << "Bot: " << bot << std::endl << "Max: " << maxFill << std::endl;
         flow = -std::min(bot-botMaxFill, 255-top);
-    }
 
     return flow;
 }
@@ -224,20 +286,6 @@ Area fluidGridOp(Area a)
     if (!isFluid(a.mTiles[1][1].mMat))
         return a;
 
-    if (a.mTiles[1][1].mMat == 4)
-    {
-        if (a.mTiles[0][1].mMat != 4)
-        {
-            a.mTiles[1][1].mSignal = 0;
-            a.mChanged = true;
-        }
-        else if (a.mTiles[1][1].mSignal != a.mTiles[0][1].mSignal+1)
-        {
-            a.mTiles[1][1].mSignal = a.mTiles[0][1].mSignal+1;
-            a.mChanged = true;
-        }
-    }
-
     int mat00 = a.mTiles[0][0].mMat;
     int mat01 = a.mTiles[0][1].mMat;
     int mat02 = a.mTiles[0][2].mMat;
@@ -271,31 +319,24 @@ Area fluidGridOp(Area a)
     int flow = 0;
     if (isFluid(mat21))
         flow -= vert(m11, m21, o11);
-
     if (isFluid(mat01))
         flow += vert(m01, m11, o01);
 
-    int tmpFlow = flow;
-
-    if (isFluid(mat10))
+    // left
+    if (isFluid(mat10) && m11+flow > 0)
     {
-        //flow += horiz(mat11+tmpFlow, mat10, o11, o10);
         int leftVertFlow = 0;
         if (isFluid(mat20))
             leftVertFlow -= vert(m10, m20, o10);
         if (isFluid(mat00))
             leftVertFlow += vert(m00, m10, o00);
 
-        if (m10+leftVertFlow >= m11+tmpFlow+compress)
-            flow += compress;
-        else if (m11+tmpFlow >= m10+leftVertFlow+compress)
-            flow -= compress;
-        //flow += -horiz(m11+tmpFlow, m10 - (isFluid(mat20) ? vert(m10, m20, o10) : 0));
+        // Equalize the amount of water in this block and it's neighbour
+        flow += int( m10 + leftVertFlow - (m11 + flow) ) / 4;
     }
 
-    tmpFlow = flow;
-
-    /*if (isFluid(mat12))
+    // left
+    if (isFluid(mat12) && m11+flow > 0)
     {
         int rightVertFlow = 0;
         if (isFluid(mat22))
@@ -303,12 +344,9 @@ Area fluidGridOp(Area a)
         if (isFluid(mat02))
             rightVertFlow += vert(m02, m12, o02);
 
-        if (m12+rightVertFlow >= m11+tmpFlow+compress)
-            flow += compress;
-        else if (m11+tmpFlow >= m12+rightVertFlow+compress)
-            flow -= compress;
-        //flow += -horiz(m11+tmpFlow, m12 - (isFluid(mat22) ? vert(m12, m22, o12) : 0));
-    }*/
+        // Equalize the amount of water in this block and it's neighbour
+        flow += int( m12 + rightVertFlow - (m11 + flow) ) / 4;
+    }
 
     a.mTiles[1][1].mFluid += flow;
 
@@ -319,7 +357,7 @@ Area fluidGridOp(Area a)
 
     if (a.mTiles[1][1].mMat == 4)
     {
-        if (a.mTiles[0][1].mMat != 4)
+        if (a.mTiles[0][1].mMat != 4 && a.mTiles[0][1].mFluid > compress*2)
         {
             a.mTiles[1][1].mSignal = 0;
             a.mChanged = true;
@@ -330,6 +368,8 @@ Area fluidGridOp(Area a)
             a.mChanged = true;
         }
     }
+    else
+        a.mTiles[1][1].mSignal = 0;
 
     a.mChanged = a.mChanged || flow!=0;
 
@@ -396,68 +436,4 @@ Area fluidGridOp(Area a)
         a.mTiles[1][1].mMat = 0;
 
     return a;
-}
-
-void flowVert(Area& a)
-{
-    /*for (int x = 0; x < 3; x++)
-    {
-        int upMat = a.mTiles[0][x].mMat;
-        int midMat = a.mTiles[1][x].mMat;
-        int downMat = a.mTiles[2][x].mMat;
-
-        int up = a.mTiles[0][x].mFluid;
-        int mid = a.mTiles[1][x].mFluid;
-        int down = a.mTiles[2][x].mFluid;
-
-        int upO = a.mTiles[0][x].mSignal;
-        int midO = a.mTiles[1][x].mSignal;
-        int downO = a.mTiles[2][x].mSignal;
-
-        if (a.mTiles[1][1].mMat == 4)
-        {
-            if (a.mTiles[0][1].mMat != 4)
-            {
-                a.mTiles[1][1].mSignal = 0;
-                a.mChanged = true;
-            }
-            else if (a.mTiles[1][1].mSignal != a.mTiles[0][1].mSignal+1)
-            {
-                a.mTiles[1][1].mSignal = a.mTiles[0][1].mSignal+1;
-                a.mChanged = true;
-            }
-        }
-
-        int o01 = a.mTiles[0][1].mSignal;
-        int o02 = a.mTiles[0][2].mSignal;
-        int o10 = a.mTiles[1][0].mSignal;
-        int o11 = a.mTiles[1][1].mSignal;
-        int o12 = a.mTiles[1][2].mSignal;
-        int o20 = a.mTiles[2][0].mSignal;
-        int o21 = a.mTiles[2][1].mSignal;
-        int o22 = a.mTiles[2][2].mSignal;
-
-        int flow = 0;
-        if (isFluid(mat21))
-            flow -= vert(m11, m21, o11);
-
-        if (isFluid(mat01))
-            flow += vert(m01, m11, o01);
-
-        int tmpFlow = flow;
-
-        if (isFluid(mat10))
-            flow += -horiz(m11+tmpFlow, m10 - (isFluid(mat20) ? vert(m10, m20, o10) : 0));
-        //std::cout << "Flow step 2: " << (isFluid(mat20) ? vert(m10, m20) : 0) << std::endl;
-
-        if (isFluid(mat12))
-            flow += -horiz(m11+tmpFlow, m12 - (isFluid(mat22) ? vert(m12, m22, o12) : 0));
-        //std::cout << "Flow step 2: " << (isFluid(mat22) ? vert(m12, m22) : 0) << std::endl;
-
-        a.mTiles[1][1].mFluid += flow;
-
-        a.mTiles[0][x].mFluid = up;
-        a.mTiles[1][x].mState = mid;
-        a.mTiles[2][x].mState = down;
-    }*/
 }

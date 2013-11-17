@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <bitset>
 #include <cstdlib>
@@ -102,6 +104,9 @@ int main()
     Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", true, 10, itemScript, "door");
     Item::Items.push_back(door);
 
+    Item *water = new Item("water", "Content/Textures/Tiles/dirt.png", false, 1, itemScript, "water");
+    Item::Items.push_back(water);
+
     // Set up the placeables
     HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
     PlaceableComponent::registerClass(placeableScript, "Door");
@@ -113,7 +118,7 @@ int main()
     GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
-    gridSys->addTick(fluidGridOp, 0.05f);
+    gridSys->addTick(fluidGridOp2, 0.005f);
     gridSys->addTick(wireGridOp, 0.01f);
 
     Scene *scene = engine->getScene();
@@ -132,6 +137,7 @@ int main()
     inventory->addItem(0, 1, 1);
     inventory->addItem(1, 0, 999);
     inventory->addItem(2, 2, 10);
+    inventory->addItem(3, 3, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
@@ -154,8 +160,9 @@ int main()
     intent->mapKeyToIntent("8", sf::Keyboard::Num8, BtnState::DOWN);
     intent->mapKeyToIntent("9", sf::Keyboard::Num9, BtnState::DOWN);
 
-    intent->mapMouseBtnToIntent("use", sf::Mouse::Button::Left, BtnState::DOWN);
-    intent->mapMouseBtnToIntent("interact", sf::Mouse::Button::Right, BtnState::DOWN);
+    intent->mapMouseBtnToIntent("useLeft", sf::Mouse::Button::Left, BtnState::DOWN);
+    intent->mapMouseBtnToIntent("useRight", sf::Mouse::Button::Right, BtnState::DOWN);
+    intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 
     int worldW = 1000;
@@ -229,7 +236,6 @@ Tile** newWorld(int seed, int width, int height)
 			if (y > n*100)
 			{
                 tiles[y][x].mMat = p * 3 / 2;
-                tiles[y][x].mState = 0;
 
 				if (tiles[y][x].mMat > 3)
 					tiles[y][x].mMat = 3;
@@ -257,12 +263,13 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
     Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, GridComponent*, const std::string&, int, int, int, int>> placeable(vm);
-    placeable.Func("setGrid", &PlaceableComponent::setGrid);
-    placeable.Func("setClassName", &PlaceableComponent::setClassName);
     Sqrat::RootTable(vm).Bind("PlaceableComponent", placeable);
 
     Sqrat::Class<Tile> tile(vm);
     tile.Var("mMat", &Tile::mMat);
+    tile.Var("mWire", &Tile::mWire);
+    tile.Var("mFluid", &Tile::mFluid);
+    tile.Var("mSignal", &Tile::mSignal);
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
     Sqrat::DerivedClass<GridComponent, Component> grid(vm);
@@ -273,3 +280,359 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("getTile", &GridComponent::getTile);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 }
+
+/*
+
+#include <GL/glut.h>
+#include <vector>
+#include <cstdlib>
+#include <iostream>
+#include <SFML/Window/Window.hpp>
+
+using namespace std;
+
+// simple Eigen::Matrix work-alike
+template< typename T >
+class Matrix
+{
+public:
+    Matrix( const size_t rows, const size_t cols )
+        : mStride( cols )
+        , mHeight( rows )
+        , mStorage( rows * cols )
+    {}
+
+    T& operator()( const size_t row, const size_t col )
+    {
+        return mStorage[ row * mStride + col ];
+    }
+
+    const T& operator()( const size_t row, const size_t col ) const
+    {
+        return mStorage[ row * mStride + col ];
+    }
+
+    size_t rows() const { return mHeight; }
+    size_t cols() const { return mStride; }
+
+private:
+    vector< T > mStorage;
+    size_t mStride;
+    size_t mHeight;
+};
+
+struct Cell
+{
+    enum Type{ AIR, GROUND, WATER };
+
+    Cell()
+        : mType( AIR )
+        , mMass( 0 )
+        , mNewMass( 0 )
+    {}
+
+    Type mType;
+    float mMass;
+    float mNewMass;
+};
+
+const float MaxMass = 1.f;
+const float MinMass = 0.01;
+const float MaxCompress = 0.02;
+const float MaxSpeed = 0.1f;
+const float MinFlow = 0.1;
+
+//Take an amount of water and calculate how it should be split among two
+//vertically adjacent cells. Returns the amount of water that should be in
+//the bottom cell.
+float get_stable_state_b( float total_mass )
+{
+    if ( total_mass <= MaxMass )
+    {
+        return MaxMass;
+    }
+    else if ( total_mass < 2*MaxMass + MaxCompress )
+    {
+        return ((MaxMass + total_mass*MaxCompress)/(MaxMass + MaxMass*MaxCompress))*MaxMass;
+    }
+    else
+    {
+        return (total_mass + MaxCompress)/2;
+    }
+}
+
+template< typename T >
+T constrain( const T& val, const T& minVal, const T& maxVal )
+{
+    return max( minVal, min( val, maxVal ) );
+}
+
+typedef Matrix< Cell > State;
+void stepState( State& cur )
+{
+    for( size_t y = 1; y < cur.rows()-1; ++y )
+    {
+        for( size_t x = 1; x < cur.cols()-1; ++x )
+        {
+            Cell& center = cur( y, x );
+
+            // Skip inert ground blocks
+            if( center.mType == Cell::GROUND )
+                continue;
+
+            // Custom push-only flow
+            float Flow = 0;
+            float remaining_mass = center.mMass;
+            if( remaining_mass <= 0 )
+                continue;
+
+            // The block below this one
+            Cell& below = cur( y-1, x );
+            if( below.mType != Cell::GROUND )
+            {
+                Flow = get_stable_state_b( remaining_mass + below.mMass ) - below.mMass;
+                if( Flow > MinFlow )
+                {
+                    //leads to smoother flow
+                    //Flow /= 2.f;
+                }
+                Flow = constrain( Flow, 0.f, min(MaxSpeed, remaining_mass) );
+
+                center.mNewMass -= Flow;
+                below.mNewMass += Flow;
+                remaining_mass -= Flow;
+            }
+
+            if ( remaining_mass <= 0 )
+                continue;
+
+            // Left
+            Cell& left = cur( y, x-1 );
+            if ( left.mType != Cell::GROUND )
+            {
+                // Equalize the amount of water in this block and it's neighbour
+                Flow = ( center.mMass - left.mMass ) / 4;
+                if ( Flow > MinFlow )
+                {
+                    //Flow /= 2.f;
+                }
+                Flow = constrain(Flow, 0.f, remaining_mass);
+                center.mNewMass -= Flow;
+                left.mNewMass += Flow;
+                remaining_mass -= Flow;
+            }
+
+            if ( remaining_mass <= 0 )
+                continue;
+
+            // Right
+            Cell& right = cur( y, x+1 );
+            if ( right.mType != Cell::GROUND )
+            {
+                // Equalize the amount of water in this block and it's neighbour
+                Flow = ( center.mMass - right.mMass ) / 4;
+                if ( Flow > MinFlow )
+                {
+                    //Flow /= 2.f;
+                }
+                Flow = constrain(Flow, 0.f, remaining_mass);
+                center.mNewMass -= Flow;
+                right.mNewMass += Flow;
+                remaining_mass -= Flow;
+            }
+
+            if ( remaining_mass <= 0 )
+                continue;
+
+            // The block above this one
+            Cell& above = cur( y+1, x );
+            if( above.mType != Cell::GROUND )
+            {
+                Flow = remaining_mass - get_stable_state_b( remaining_mass + above.mMass );
+                if( Flow > MinFlow )
+                {
+                    //leads to smoother flow
+                    //Flow /= 2.f;
+                }
+                Flow = constrain( Flow, 0.f, min(MaxSpeed, remaining_mass) );
+
+                center.mNewMass -= Flow;
+                above.mNewMass += Flow;
+                remaining_mass -= Flow;
+            }
+        }
+    }
+
+    for( size_t y = 0; y < cur.rows(); ++y )
+    {
+        for( size_t x = 0; x < cur.cols(); ++x )
+        {
+            cur( y, x ).mMass = cur( y, x ).mNewMass;
+        }
+    }
+
+    for( size_t y = 0; y < cur.rows(); ++y )
+    {
+        for( size_t x = 0; x < cur.cols(); ++x )
+        {
+            Cell& center = cur( y, x );
+            if( center.mType == Cell::GROUND )
+            {
+                center.mMass = center.mNewMass = 0.0f;
+                continue;
+            }
+            if( center.mMass > MinMass )
+            {
+                center.mType = Cell::WATER;
+            }
+            else
+            {
+                center.mType = Cell::AIR;
+                center.mMass = 0.0f;
+            }
+        }
+    }
+
+    // Remove any water that has left the map
+    for( size_t x = 0; x < cur.cols(); ++x )
+    {
+        cur( 0, x ).mMass = 0;
+        cur( cur.rows()-1, x ).mMass = 0;
+    }
+    for( size_t y = 0; y < cur.rows(); ++y )
+    {
+        cur( y, 0 ).mMass = 0;
+        cur( y, cur.cols()-1 ).mMass = 0;
+    }
+}
+
+void showState( const State& state )
+{
+    glPolygonMode( GL_FRONT, GL_LINE );
+    glBegin( GL_QUADS );
+    glColor3ub( 0, 0, 0 );
+    for( size_t y = 0; y < state.rows(); ++y )
+    {
+        for( size_t x = 0; x < state.cols(); ++x )
+        {
+            glVertex2f( x+0, y+0 );
+            glVertex2f( x+1, y+0 );
+            glVertex2f( x+1, y+1 );
+            glVertex2f( x+0, y+1 );
+        }
+    }
+    glEnd();
+
+    glPolygonMode( GL_FRONT, GL_FILL );
+    glBegin( GL_QUADS );
+    for( size_t y = 0; y < state.rows(); ++y )
+    {
+        for( size_t x = 0; x < state.cols(); ++x )
+        {
+            if( state( y, x ).mType == Cell::AIR )
+                continue;
+
+            float height = 1.0f;
+            if( state( y, x ).mType == Cell::GROUND )
+            {
+                glColor3ub( 152, 118, 84 );
+            }
+            else
+            {
+                glColor3ub( 0, 135, 189 );
+                height = min( 1.f, (float)state( y, x ).mMass/(float)MaxMass );
+            }
+
+            glVertex2f( x+0, y );
+            glVertex2f( x+1, y );
+            glVertex2f( x+1, y + height );
+            glVertex2f( x+0, y + height );
+        }
+    }
+    glEnd();
+}
+
+State state( 20, 20 );
+void mouse( int button, int button_state, int x, int y )
+{
+    float pctX = (float)x / glutGet( GLUT_WINDOW_WIDTH );
+    float pctY = 1.0f - ( (float)y / glutGet( GLUT_WINDOW_HEIGHT ) );
+    size_t cellX = pctX * state.cols();
+    size_t cellY = pctY * state.rows();
+    Cell& cur = state( cellY, cellX );
+
+    if( button_state == GLUT_UP )
+        return;
+
+    if( button == GLUT_LEFT_BUTTON )
+    {
+        cur.mType = ( cur.mType == Cell::GROUND ? Cell::AIR : Cell::GROUND );
+        cur.mMass = cur.mNewMass = 0.0f;
+    }
+
+    if( button == GLUT_RIGHT_BUTTON )
+    {
+        cur.mType = Cell::WATER;
+        cur.mMass = cur.mNewMass = 20.f;
+    }
+}
+
+
+void display()
+{
+    static bool firstTime = true;
+    if( firstTime )
+    {
+        firstTime = false;
+        for( size_t y = 0; y < state.rows(); ++y )
+        {
+            for( size_t x = 0; x < state.cols(); ++x )
+            {
+                state( y, x ).mType = (Cell::Type)( rand() % 3 );
+                state( y, x ).mMass = 1.0f;
+                state( y, x ).mNewMass = 1.0f;
+            }
+        }
+    }
+
+    glClearColor( 1, 1, 1, 1 );
+    glClear( GL_COLOR_BUFFER_BIT );
+
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    glOrtho( 0, state.cols(), 0, state.rows(), -1, 1);
+
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+
+    stepState( state );
+    showState( state );
+
+    glutSwapBuffers();
+
+    glutPostRedisplay();
+}
+
+void timer(int extra)
+{
+    glutTimerFunc(16, timer, 0);
+}
+
+void idle()
+{
+}
+
+int main( int argc, char **argv )
+{
+    glutInit( &argc, argv );
+    glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE );
+    glutInitWindowSize( 640, 480 );
+    glutCreateWindow( "Cells" );
+    glutDisplayFunc( display );
+    glutIdleFunc(idle);
+    glutMouseFunc( mouse );
+    glutTimerFunc(0, timer, 0);
+    glutMainLoop();
+
+    return 0;
+}*/

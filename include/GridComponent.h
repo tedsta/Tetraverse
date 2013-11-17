@@ -19,16 +19,17 @@ enum
 
 struct Tile
 {
-    Tile() : mMat(0), mState(0), mFluid(0), mWire(0), mSignal(0) {}
-    Tile(sf::Uint8 mat, sf::Uint8 state = 0, sf::Uint8 fluid = 0, sf::Uint8 wire = 0, sf::Uint8 signal = 0) :
-        mMat(mat), mState(state), mFluid(fluid), mWire(wire), mSignal(signal) {}
+    Tile() : mMat(0), mFluid(0), mWire(0), mSignal(0) {}
+    Tile(sf::Uint8 mat, sf::Uint8 fluid = 0, sf::Uint8 wire = 0, sf::Uint8 signal = 0) :
+        mMat(mat), mFluid(fluid), mWire(wire), mSignal(signal) {}
 
 	sf::Uint8 mMat;
-	sf::Uint8 mState;
+	sf::Uint8 mFlags; // Least to most significant: Collideable,
 
 	// status
 	sf::Uint8 mComp[MAX_COMPS]; // composit id, quantity
-	sf::Uint8 mFluid;
+	sf::Uint8 mVeggy;
+	float mFluid;
 	sf::Uint8 mWire;
 	sf::Uint8 mSignal;
 };
@@ -63,26 +64,28 @@ class GridComponent : public RenderComponent
         bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
         bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
 
+        void interact(int x, int y);
+        void addFluid(int x, int y, float fluid);
+
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);
         void addPlaceable(Entity* entity);
         Entity* getPlaceableAt(int x, int y);
-        void calcNeighborState(int x, int y);
+        int calcNeighborState(int x, int y);
         int wrapX(int x);
 
-        const std::vector<sf::Vector2i>& getInterestingTiles(int tick) const {return mCTiles[tick];}
-        void clearInteresting(int tick){mCTiles[tick].clear();}
-
-        Tile getTile(int x, int y){return mTiles[y][x];}
-        Area getArea(int x, int y);
-        int getSizeX() const {return mSizeX;}
-        int getSizeY() const {return mSizeY;}
-
-        void addInterestingTile(int x, int y, int tick)
+        void setInteresting(int x, int y, int tick)
         {
             if (std::find(mCTiles[tick].begin(), mCTiles[tick].end(), sf::Vector2i(x, y)) == mCTiles[tick].end())
                 mCTiles[tick].push_back(sf::Vector2i(x, y));
         }
+        const std::vector<sf::Vector2i>& getInterestingTiles(int tick) const {return mCTiles[tick];}
+        void clearInteresting(int tick){mCTiles[tick].clear();}
+
+        const Tile& getTile(int x, int y) const {return mTiles[y][x];}
+        Area getArea(int x, int y);
+        int getSizeX() const {return mSizeX;}
+        int getSizeY() const {return mSizeY;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

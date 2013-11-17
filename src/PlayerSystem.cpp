@@ -103,72 +103,72 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 
     if (intent->isIntentActive("0"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 0;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 0;
     }
     else if (intent->isIntentActive("1"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 1;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 1;
     }
     else if (intent->isIntentActive("2"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 2;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 2;
     }
     else if (intent->isIntentActive("3"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 3;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 3;
     }
     else if (intent->isIntentActive("4"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 4;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 4;
     }
     else if (intent->isIntentActive("5"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 5;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 5;
     }
     else if (intent->isIntentActive("6"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 6;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 6;
     }
     else if (intent->isIntentActive("7"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 7;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 7;
     }
     else if (intent->isIntentActive("8"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 8;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 8;
     }
     else if (intent->isIntentActive("9"))
     {
-        if (intent->isIntentActive("use"))
+        if (intent->isIntentActive("useLeft"))
             player->mLeftHand = 9;
-        else if (intent->isIntentActive("interact"))
+        else if (intent->isIntentActive("useRight"))
             player->mRightHand = 9;
     }
     else if (phys->getGrid()) // We're not setting any hands, so lets use them
@@ -176,7 +176,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		auto pt = reinterpret_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
 		auto grid = reinterpret_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
 
-		if (intent->isIntentActive("use"))
+		if (intent->isIntentActive("useLeft"))
         {
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
@@ -187,7 +187,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
 				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 2), -1);
 		}
-		if (intent->isIntentActive("interact"))
+		if (intent->isIntentActive("useRight"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos += mRndSys->getView().getCenter();
@@ -198,6 +198,15 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
 				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 1), -1);
 		}
+		if (intent->isIntentActive("interact"))
+		{
+			sf::Vector2f mousePos = intent->getMousePos();
+			mousePos += mRndSys->getView().getCenter();
+			mousePos -= mRndSys->getView().getSize()/2.f;
+			sf::Vector2f pos = grid->getTilePos(mousePos);
+            pos.x = grid->wrapX(pos.x);
+            grid->interact(pos.x, pos.y);
+		}
 		if (intent->isIntentActive("test"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
@@ -206,15 +215,16 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			sf::Vector2f pos = grid->getTilePos(mousePos);
             pos.x = grid->wrapX(pos.x);
 
+            //std::cout << "Fluid: " << (grid->getTile(pos.x, pos.y).mFluid) << std::endl;
             Tile wire = grid->getTile(int(pos.x),int(pos.y));
             if(grid->getTile(int(pos.x),int(pos.y)).mWire == 0){
-                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 1, 0), -1);
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mFluid, 1, 0), -1);
             }
             else if(grid->getTile(int(pos.x),int(pos.y)).mWire == 1){
-                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 128, 128), -1);
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mFluid, 128, 128), -1);
             }
             else{
-                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mState, wire.mFluid, 0, 0), -1);
+                grid->setTile(int(pos.x), int(pos.y), Tile(wire.mMat, wire.mFluid, 0, 0), -1);
             }
 		}
 	}

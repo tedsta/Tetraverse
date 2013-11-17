@@ -37,3 +37,14 @@ function door(grid, x, y)
 
     return false;
 }
+
+function water(grid, x, y)
+{
+    local water = Tile();
+    water.mMat = 4;
+    water.mFluid = 1;
+    grid.setTile(x, y, water, -1);
+    return true;
+
+    return false;
+}
