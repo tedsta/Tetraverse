@@ -67,10 +67,10 @@ void SkeletonComponent::update(float dt)
     mSkeleton->update(dt);
 }
 
-const std::string& SkeletonComponent::getCurrentAnimation()
+std::string SkeletonComponent::getCurrentAnimation()
 {
     spTrackEntry* entry = spAnimationState_getCurrent(mSkeleton->state, 0);
-    if (entry)
+    if (entry && entry->animation)
         return entry->animation->name;
     return "";
 }

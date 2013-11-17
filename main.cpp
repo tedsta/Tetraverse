@@ -165,6 +165,8 @@ int main()
     intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 
+    intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
+
     int worldW = 1000;
     int worldH = 1000;
     Tile** tiles = newWorld(0, worldW, worldH);

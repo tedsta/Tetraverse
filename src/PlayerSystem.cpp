@@ -40,39 +40,34 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 
 	skel->update(dt);
 
-	if (!player->mStupidMode)
+    bool runLeft = skel->getCurrentAnimation() == "running" && skel->getSkeleton()->skeleton->flipX;
+    bool runRight = skel->getCurrentAnimation() == "running" && !skel->getSkeleton()->skeleton->flipX;
+
+    if (intent->isIntentActive("left") && skel->getCurrentAnimation() == "")
     {
-        bool runLeft = skel->getCurrentAnimation() == "running" && skel->getSkeleton()->skeleton->flipX;
-        bool runRight = skel->getCurrentAnimation() == "running" && !skel->getSkeleton()->skeleton->flipX;
+        skel->setAnimation(skel->findAnimation("running"), player->mStupidMode);
+        skel->getSkeleton()->skeleton->flipX = true;
+        runLeft = true;
+    }
+    else if (intent->isIntentActive("right") && skel->getCurrentAnimation() == "")
+    {
+        skel->setAnimation(skel->findAnimation("running"), player->mStupidMode);
+        skel->getSkeleton()->skeleton->flipX = false;
+        runRight = true;
+    }
 
-        if (intent->isIntentActive("left") && skel->getCurrentAnimation() == "")
-        {
-            skel->setAnimation(skel->findAnimation("running"), false);
-            skel->getSkeleton()->skeleton->flipX = true;
-            runLeft = true;
-        }
-        else if (intent->isIntentActive("right") && skel->getCurrentAnimation() == "")
-        {
-            skel->setAnimation(skel->findAnimation("running"), false);
-            skel->getSkeleton()->skeleton->flipX = false;
-            runRight = true;
-        }
-
-		if (runLeft && phys->getVelocity().x > -250)
-		{
-			phys->setVelocityX(-100);
-			player->mAnimTime += dt;
-		}
-        else if (runRight && phys->getVelocity().x < 2500)
-        {
-			phys->setVelocityX(100);
-			player->mAnimTime += dt;
-		}
-		else
-			phys->setVelocityX(0);
-	}
-	else
-		phys->setVelocityX(100);
+    if (runLeft && phys->getVelocity().x > -250)
+    {
+        phys->setVelocityX(-100);
+        player->mAnimTime += dt;
+    }
+    else if (runRight && phys->getVelocity().x < 2500)
+    {
+        phys->setVelocityX(100);
+        player->mAnimTime += dt;
+    }
+    else
+        phys->setVelocityX(0);
 
 	if (!player->mStupidMode)
     {
@@ -99,7 +94,10 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 	}
 
 	if (intent->isIntentActive("stupidmode"))
-		player->mStupidMode = !player->mStupidMode;
+    {
+        skel->setAnimation(skel->findAnimation("running"), false);
+        player->mStupidMode = !player->mStupidMode;
+    }
 
     if (intent->isIntentActive("0"))
     {

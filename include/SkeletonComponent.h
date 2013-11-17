@@ -17,7 +17,7 @@ class SkeletonComponent : public RenderComponent
         void addAnimation(spAnimation* animation, bool loop, float delay);
         void clearAnimation();
         void update(float dt);
-        const std::string& getCurrentAnimation();
+        std::string getCurrentAnimation();
 
         spine::SkeletonDrawable* getSkeleton(){return mSkeleton;}
 
