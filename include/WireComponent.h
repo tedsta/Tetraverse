@@ -1,15 +1,13 @@
-#ifndef ELECTRICCOMPONENT_H
-#define ELECTRICCOMPONENT_H
+#ifndef WireCOMPONENT_H
+#define WireCOMPONENT_H
 
 #include "Fission/Rendering/RenderComponent.h"
 
 #define WireMax 255
-class ElectricComponent : public RenderComponent
+class WireComponent : public WireComponent
 {
-    friend class ElectricSystem;
-
     public:
-        ElectricComponent();
+        WireComponent();
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

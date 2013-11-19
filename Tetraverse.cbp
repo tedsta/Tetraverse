@@ -26,9 +26,6 @@
 					<Add library="extlibs\lib\libsquirrel.a" />
 					<Add library="extlibs\lib\libsqstdlib.a" />
 					<Add library="extlibs\lib\libenet.a" />
-					<Add library="glut32" />
-					<Add library="glu32" />
-					<Add library="opengl32" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -148,7 +145,6 @@
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
 		<Unit filename="include/ElectricComponent.h" />
-		<Unit filename="include/ElectricSystem.h" />
 		<Unit filename="include/GridComponent.h" />
 		<Unit filename="include/GridOps.h" />
 		<Unit filename="include/GridSystem.h" />
@@ -165,7 +161,6 @@
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
 		<Unit filename="src/ElectricComponent.cpp" />
-		<Unit filename="src/ElectricSystem.cpp" />
 		<Unit filename="src/GridComponent.cpp" />
 		<Unit filename="src/GridOps.cpp" />
 		<Unit filename="src/GridSystem.cpp" />
