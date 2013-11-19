@@ -1,4 +1,4 @@
-#include "ElectricComponent.h"
+#include "WireComponent.h"
 
 #include <cmath>
 #include <iostream>
@@ -12,23 +12,18 @@ int randStateBot();
 int randStateRight();
 int randStateLeft();
 
-TypeBits ElectricComponent::Type;
+TypeBits WireComponent::Type;
 
-ElectricComponent::ElectricComponent()
+WireComponent::WireComponent()
 {
-        wire = NULL;
-        //out = NULL;
+        red = NULL;
+        black = NULL;
         power = 0;
         drain = 0;
         ground = 0;
 }
 
-void ElectricComponent::render(sf::RenderTarget& target, sf::RenderStates states)
-{
-
-}
-
-void ElectricComponent::update(){
+void WireComponent::update(){
     int total = wire->ground+ground;
     if(wire = NULL){
         if(power - ground >= drain>>1){
@@ -51,7 +46,7 @@ void ElectricComponent::update(){
     return wire->update();
 }
 
-int ElectricComponent::load(int load){
+int WireComponent::load(int load){
     int value = power - ground >= drain + load ? load : power - ground - drain;
     drain += value;
     return value;
