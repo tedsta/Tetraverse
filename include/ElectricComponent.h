@@ -11,9 +11,11 @@ class ElectricComponent : public RenderComponent
     public:
         ElectricComponent();
 
+        void render(sf::RenderTarget& target, sf::RenderStates states);
+
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
-        //static Component* factory() {return new ElectricComponent();}
+        static Component* factory() {return new ElectricComponent();}
         int load(int value);
         void connect(ElectricComponent* wire){};
 

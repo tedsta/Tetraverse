@@ -23,6 +23,11 @@ ElectricComponent::ElectricComponent()
         ground = 0;
 }
 
+void ElectricComponent::render(sf::RenderTarget& target, sf::RenderStates states)
+{
+
+}
+
 void ElectricComponent::update(){
     int total = wire->ground+ground;
     if(wire = NULL){

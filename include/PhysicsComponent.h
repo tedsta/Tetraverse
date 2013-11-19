@@ -12,7 +12,7 @@ class PhysicsComponent : public Component
     friend class PhysicsSystem;
 
     public:
-        PhysicsComponent();
+        PhysicsComponent(int width = 0, int height = 0);
         virtual ~PhysicsComponent();
 
         // Serialization stuff
@@ -26,6 +26,8 @@ class PhysicsComponent : public Component
 
         // Getters
         sf::Vector2f getVelocity(){return mVelocity;}
+        int getWidth(){return mWidth;}
+        int getHeight(){return mHeight;}
         Entity* getGrid(){return mGrid;}
         int getGravityDir(){return mGravityDir;}
         bool getDirCollision(int dir){return mDirCollisions[dir];}
@@ -36,6 +38,8 @@ class PhysicsComponent : public Component
 
     private:
         sf::Vector2f mVelocity;
+        int mWidth;
+        int mHeight;
         Entity* mGrid; // Cached grid
         int mGravityDir; // Direction of gravity
         bool mDirCollisions[4];

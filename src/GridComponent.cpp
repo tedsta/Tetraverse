@@ -278,6 +278,22 @@ bool GridComponent::dirCollision(int left, int top, int right, int bot, int dir,
 	return false;
 }
 
+Tile** GridComponent::slice(int left, int top, int right, int bot)
+{
+    Tile** tiles = new Tile*[bot-top];
+    for (int y = 0; y < bot-top; y++)
+    {
+        tiles[y] = new Tile[right-left];
+        for (int x = 0; x < right-left; x++)
+        {
+            tiles[y][x] = mTiles[top+y][left+x];
+            mTiles[top+y][left+x] = Tile(); // Clear the old tile
+        }
+    }
+
+    return tiles;
+}
+
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 {
 	sf::Transform myInv = mTransform->getTransform().getInverse();

@@ -23,8 +23,16 @@ struct Tile
     Tile(sf::Uint8 mat, sf::Uint8 fluid = 0, sf::Uint8 wire = 0, sf::Uint8 signal = 0) :
         mMat(mat), mFluid(fluid), mWire(wire), mSignal(signal) {}
 
+    bool isInteresting(){return mFlags&1;}
+    void setInteresting(){mFlags|=1;}
+    void clearInteresting(){mFlags&=~1;}
+
+    bool isSolid(){return mFlags&2;}
+    void setSolid(){mFlags|=2;}
+    void clearSolid(){mFlags&=~2;}
+
 	sf::Uint8 mMat;
-	sf::Uint8 mFlags; // Least to most significant: Collideable,
+	sf::Uint8 mFlags;
 
 	// status
 	sf::Uint8 mComp[MAX_COMPS]; // composit id, quantity
@@ -63,6 +71,8 @@ class GridComponent : public RenderComponent
         sf::Vector2f getTilePos(sf::Vector2f pos);
         bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
         bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
+
+        Tile** slice(int left, int top, int right, int bot);
 
         void interact(int x, int y);
         void addFluid(int x, int y, float fluid);

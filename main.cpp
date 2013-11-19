@@ -129,7 +129,7 @@ int main()
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent);
+    player->addComponent(new PhysicsComponent(30, 60));
     player->addComponent(new PlayerComponent);
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
@@ -179,7 +179,7 @@ int main()
         scene->addEntity(planet);
         planet->addComponent(pt);
         planet->addComponent(new GridComponent(pt, worldW, worldH, tiles, 3));
-        planet->addComponent(new ScriptComponent(scriptSys->createScript("test.nut")));
+        planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
         physSys->addGrid(planet);
     }
 
