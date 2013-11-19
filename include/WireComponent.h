@@ -21,6 +21,8 @@ class WireComponent : public RenderComponent
 
     protected:
         void update();
+        WireComponent* red;
+        WireComponent* black;
         WireComponent* wire;
         int power;
         int drain;
