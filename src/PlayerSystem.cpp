@@ -91,6 +91,11 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		}
 
 		mRndSys->getView().setCenter(player->mCam);
+
+        if (intent->isIntentActive("zoomin"))
+            mRndSys->getView().zoom(1.f+dt);
+        if (intent->isIntentActive("zoomout"))
+            mRndSys->getView().zoom(1.f-dt);
 	}
 
 	if (intent->isIntentActive("stupidmode"))
@@ -177,8 +182,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		if (intent->isIntentActive("useLeft"))
         {
 			sf::Vector2f mousePos = intent->getMousePos();
-			mousePos += mRndSys->getView().getCenter();
-			mousePos -= mRndSys->getView().getSize()/2.f;
+            mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
                 inventory->useItem(player->mLeftHand, grid, grid->wrapX(pos.x), pos.y);
@@ -188,8 +192,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		if (intent->isIntentActive("useRight"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
-			mousePos += mRndSys->getView().getCenter();
-			mousePos -= mRndSys->getView().getSize()/2.f;
+			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
                 inventory->useItem(player->mRightHand, grid, grid->wrapX(pos.x), pos.y);
@@ -199,8 +202,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		if (intent->isIntentActive("interact"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
-			mousePos += mRndSys->getView().getCenter();
-			mousePos -= mRndSys->getView().getSize()/2.f;
+			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
             pos.x = grid->wrapX(pos.x);
             grid->interact(pos.x, pos.y);
@@ -208,8 +210,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		if (intent->isIntentActive("test"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
-			mousePos += mRndSys->getView().getCenter();
-			mousePos -= mRndSys->getView().getSize()/2.f;
+			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
             pos.x = grid->wrapX(pos.x);
 

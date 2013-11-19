@@ -49,13 +49,13 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 
 	sf::Vector2f center = states.transform.transformPoint(sf::Vector2f());
 	center -= target.getView().getCenter();
-	center += sf::Vector2f(target.getSize().x, target.getSize().y)/2.f;
+	center += sf::Vector2f(target.getView().getSize().x, target.getView().getSize().y)/2.f;
 	center.x *= -1;
 	center.y *= -1;
 
 	sf::Vector2f centerT = center/tsize;                // Center tiled
-	float ssXT = ceil(target.getSize().x / tsize); // Screen size X in tiles
-	float ssYT = ceil(target.getSize().y / tsize); // Screen size Y in tiles
+	float ssXT = ceil(target.getView().getSize().x / tsize); // Screen size X in tiles
+	float ssYT = ceil(target.getView().getSize().y / tsize); // Screen size Y in tiles
 
 	int left = centerT.x - 1;
 	int top = std::max<int>(centerT.y-1, 0);

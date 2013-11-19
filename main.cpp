@@ -165,6 +165,9 @@ int main()
     intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 
+    intent->mapKeyToIntent("zoomout", sf::Keyboard::Up, BtnState::DOWN);
+    intent->mapKeyToIntent("zoomin", sf::Keyboard::Down, BtnState::DOWN);
+
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
 
     int worldW = 1000;
