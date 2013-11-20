@@ -27,6 +27,9 @@ class System : public IEventListener
         /// \brief Get this system's optional type bits
         TypeBits getOptBits(){return mOptBits;}
 
+        /// \brief Get the active entities
+        const std::set<Entity*>& getActiveEntities(){return mActiveEntities;}
+
     protected:
         /// \brief Called each time before processing any entities.
         virtual void begin(const float dt) {}
@@ -39,9 +42,6 @@ class System : public IEventListener
 
         /// \brief Get the event manager
         EventManager *getEventManager(){return mEventManager;}
-
-        /// \brief Get the active entities
-        const std::set<Entity*>& getActiveEntities(){return mActiveEntities;}
 
     private:
         /// \brief Processes all of the active entities. Used internally.

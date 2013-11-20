@@ -4,6 +4,7 @@
 #include <bitset>
 #include <cstdlib>
 #include <sstream>
+#include <stack>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -77,7 +78,7 @@ int main()
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
     GridSystem *gridSys = new GridSystem(engine->getEventManager());
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager());
-    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager());
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), gridSys);
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render);
 
     engine->addSystem(render);
@@ -95,21 +96,28 @@ int main()
 
     // Set up all the items
     HSQUIRRELVM itemScript = scriptSys->createScript("Content/Scripts/items.nut");
-    Item *dirtBlock = new Item("dirt", "Content/Textures/Tiles/dirt.png", true, 999, itemScript, "dirtBlock");
+    Item *dirtBlock = new Item("dirt", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "dirtBlock");
     Item::Items.push_back(dirtBlock);
 
-    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, 1, itemScript, "crowbar");
+    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, BtnState::DOWN, 1, 1, itemScript, "crowbar");
     Item::Items.push_back(crowbar);
 
-    Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", true, 10, itemScript, "door");
+    Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 10, 1, itemScript, "door");
     Item::Items.push_back(door);
 
-    Item *water = new Item("water", "Content/Textures/Tiles/dirt.png", false, 1, itemScript, "water");
+    Item *water = new Item("water", "Content/Textures/Tiles/dirt.png", false, BtnState::DOWN, 1, 1, itemScript, "water");
     Item::Items.push_back(water);
+
+    Item *thruster = new Item("thruster", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 10, 1, itemScript, "thruster");
+    Item::Items.push_back(thruster);
+
+    Item *gridCutter = new Item("gridCutter", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "gridCutter");
+    Item::Items.push_back(gridCutter);
 
     // Set up the placeables
     HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
     PlaceableComponent::registerClass(placeableScript, "Door");
+    PlaceableComponent::registerClass(placeableScript, "Thruster");
 
     // Set up the materials
     GridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
@@ -123,6 +131,22 @@ int main()
 
     Scene *scene = engine->getScene();
 
+    int worldW = 1000;
+    int worldH = 1000;
+    Tile** tiles = newWorld(0, worldW, worldH);
+
+    for (int i = 0; i < 1; i++)
+    {
+        TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
+
+        Entity *planet = new Entity(engine->getEventManager());
+        scene->addEntity(planet);
+        planet->addComponent(pt);
+        planet->addComponent(new GridComponent(pt, worldW, worldH, true, tiles, 3));
+        planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
+    }
+
+    // Spawn player
     Entity *player = new Entity(engine->getEventManager());
     scene->addEntity(player);
     player->addComponent(new TransformComponent);
@@ -138,12 +162,14 @@ int main()
     inventory->addItem(1, 0, 999);
     inventory->addItem(2, 2, 10);
     inventory->addItem(3, 3, 1);
+    inventory->addItem(4, 4, 1);
+    inventory->addItem(5, 5, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
     //trans->setOrigin(sf::Vector2f(30, 48));
-    trans->setPosition(sf::Vector2f(3.f, 3.f));
+    trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(0, 500));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
@@ -160,8 +186,8 @@ int main()
     intent->mapKeyToIntent("8", sf::Keyboard::Num8, BtnState::DOWN);
     intent->mapKeyToIntent("9", sf::Keyboard::Num9, BtnState::DOWN);
 
-    intent->mapMouseBtnToIntent("useLeft", sf::Mouse::Button::Left, BtnState::DOWN);
-    intent->mapMouseBtnToIntent("useRight", sf::Mouse::Button::Right, BtnState::DOWN);
+    intent->mapMouseBtnToIntent("useLeft", sf::Mouse::Button::Left, BtnState::PRESSED);
+    intent->mapMouseBtnToIntent("useRight", sf::Mouse::Button::Right, BtnState::PRESSED);
     intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 
@@ -169,22 +195,6 @@ int main()
     intent->mapKeyToIntent("zoomin", sf::Keyboard::Down, BtnState::DOWN);
 
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
-
-    int worldW = 1000;
-    int worldH = 1000;
-    Tile** tiles = newWorld(0, worldW, worldH);
-
-    for (int i = 0; i < 1; i++)
-    {
-        TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
-
-        Entity *planet = new Entity(engine->getEventManager());
-        scene->addEntity(planet);
-        planet->addComponent(pt);
-        planet->addComponent(new GridComponent(pt, worldW, worldH, tiles, 3));
-        planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
-        physSys->addGrid(planet);
-    }
 
     float accum = 0;
     int frames = 0;
@@ -261,13 +271,22 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::DerivedClass<TransformComponent, Component, sqext::ConstAlloc<TransformComponent, sf::Vector2f, float, sf::Vector2f>> transform(vm);
     transform.Func("setPosition", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setPosition);
     transform.Func("getPosition", &TransformComponent::getPosition);
+    transform.Func("move", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::move);
+    transform.Func("setOrigin", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setOrigin);
     Sqrat::RootTable(vm).Bind("TransformComponent", transform);
 
     Sqrat::DerivedClass<SpriteComponent, Component, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
     //sprite.Func("setTexture", &SpriteComponent::setTexture);
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
-    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, GridComponent*, const std::string&, int, int, int, int>> placeable(vm);
+    Sqrat::DerivedClass<IntentComponent, Component, sqext::ConstAlloc<IntentComponent>> intent(vm);
+    intent.Func("mapKeyToIntent", &IntentComponent::mapKeyToIntent);
+    intent.Func("mapMouseBtnToEvent", &IntentComponent::mapMouseBtnToIntent);
+    intent.Func("isIntentActive", &IntentComponent::isIntentActive);
+    intent.Func("getMousePos", &IntentComponent::getMousePos);
+    Sqrat::RootTable(vm).Bind("IntentComponent", intent);
+
+    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, Entity*, const std::string&, int, int, int, int>> placeable(vm);
     Sqrat::RootTable(vm).Bind("PlaceableComponent", placeable);
 
     Sqrat::Class<Tile> tile(vm);
@@ -283,361 +302,55 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("getPlaceableAt", &GridComponent::getPlaceableAt);
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
+    grid.Func("sliceInto", &GridComponent::sliceInto);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
+
+    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, int, int>> physics(vm);
+    physics.Func("setVelocity", &PhysicsComponent::setVelocity);
+    physics.Func("setVelocityX", &PhysicsComponent::setVelocityX);
+    physics.Func("setVelocityY", &PhysicsComponent::setVelocityY);
+    Sqrat::RootTable(vm).Bind("PhysicsComponent", physics);
+
+    Sqrat::DerivedClass<PlayerComponent, Component, sqext::ConstAlloc<PlayerComponent>> player(vm);
+    player.Func("getLeftCoordsCount", &PlayerComponent::getLeftCoordsCount);
+    player.Func("pushLeftCoord", &PlayerComponent::pushLeftCoord);
+    player.Func("topLeftCoord", &PlayerComponent::topLeftCoord);
+    player.Func("popLeftCoord", &PlayerComponent::popLeftCoord);
+    player.Func("getRightCoordsCount", &PlayerComponent::getRightCoordsCount);
+    player.Func("pushRightCoord", &PlayerComponent::pushRightCoord);
+    player.Func("topRightCoord", &PlayerComponent::topRightCoord);
+    player.Func("popRightCoord", &PlayerComponent::popRightCoord);
+    Sqrat::RootTable(vm).Bind("PlayerComponent", player);
+
+    // Button states
+    Sqrat::RootTable(vm).SetValue("BtnStateDown", BtnState::DOWN);
+    Sqrat::RootTable(vm).SetValue("BtnStateUp", BtnState::UP);
+    Sqrat::RootTable(vm).SetValue("BtnStatePressed", BtnState::PRESSED);
+    Sqrat::RootTable(vm).SetValue("BtnStateReleased", BtnState::RELEASED);
+
+    // Keyboard keys
+    Sqrat::RootTable(vm).SetValue("KeyW", sf::Keyboard::W);
+    Sqrat::RootTable(vm).SetValue("KeyS", sf::Keyboard::S);
+    Sqrat::RootTable(vm).SetValue("KeyA", sf::Keyboard::A);
+    Sqrat::RootTable(vm).SetValue("KeyD", sf::Keyboard::D);
+    Sqrat::RootTable(vm).SetValue("KeyI", sf::Keyboard::I);
+    Sqrat::RootTable(vm).SetValue("KeyK", sf::Keyboard::K);
+    Sqrat::RootTable(vm).SetValue("KeyJ", sf::Keyboard::J);
+    Sqrat::RootTable(vm).SetValue("KeyL", sf::Keyboard::L);
+
+    // All the component types
+    Sqrat::RootTable(vm).SetValue("TransformComponentType", TransformComponent::Type);
+    Sqrat::RootTable(vm).SetValue("SpriteComponentType", SpriteComponent::Type);
+    Sqrat::RootTable(vm).SetValue("IntentComponentType", IntentComponent::Type);
+    Sqrat::RootTable(vm).SetValue("PlaceableComponentType", PlaceableComponent::Type);
+    Sqrat::RootTable(vm).SetValue("GridComponentType", GridComponent::Type);
+    Sqrat::RootTable(vm).SetValue("PhysicsComponentType", PhysicsComponent::Type);
+
+    // All the component casting functions
+    Sqrat::RootTable(vm).Func("castTransformComponent", componentCast<TransformComponent>);
+    Sqrat::RootTable(vm).Func("castSpriteComponent", componentCast<SpriteComponent>);
+    Sqrat::RootTable(vm).Func("castIntentComponent", componentCast<IntentComponent>);
+    Sqrat::RootTable(vm).Func("castPlaceableComponent", componentCast<PlaceableComponent>);
+    Sqrat::RootTable(vm).Func("castGridComponent", componentCast<GridComponent>);
+    Sqrat::RootTable(vm).Func("castPhysicsComponent", componentCast<PhysicsComponent>);
 }
-
-/*
-
-#include <GL/glut.h>
-#include <vector>
-#include <cstdlib>
-#include <iostream>
-#include <SFML/Window/Window.hpp>
-
-using namespace std;
-
-// simple Eigen::Matrix work-alike
-template< typename T >
-class Matrix
-{
-public:
-    Matrix( const size_t rows, const size_t cols )
-        : mStride( cols )
-        , mHeight( rows )
-        , mStorage( rows * cols )
-    {}
-
-    T& operator()( const size_t row, const size_t col )
-    {
-        return mStorage[ row * mStride + col ];
-    }
-
-    const T& operator()( const size_t row, const size_t col ) const
-    {
-        return mStorage[ row * mStride + col ];
-    }
-
-    size_t rows() const { return mHeight; }
-    size_t cols() const { return mStride; }
-
-private:
-    vector< T > mStorage;
-    size_t mStride;
-    size_t mHeight;
-};
-
-struct Cell
-{
-    enum Type{ AIR, GROUND, WATER };
-
-    Cell()
-        : mType( AIR )
-        , mMass( 0 )
-        , mNewMass( 0 )
-    {}
-
-    Type mType;
-    float mMass;
-    float mNewMass;
-};
-
-const float MaxMass = 1.f;
-const float MinMass = 0.01;
-const float MaxCompress = 0.02;
-const float MaxSpeed = 0.1f;
-const float MinFlow = 0.1;
-
-//Take an amount of water and calculate how it should be split among two
-//vertically adjacent cells. Returns the amount of water that should be in
-//the bottom cell.
-float get_stable_state_b( float total_mass )
-{
-    if ( total_mass <= MaxMass )
-    {
-        return MaxMass;
-    }
-    else if ( total_mass < 2*MaxMass + MaxCompress )
-    {
-        return ((MaxMass + total_mass*MaxCompress)/(MaxMass + MaxMass*MaxCompress))*MaxMass;
-    }
-    else
-    {
-        return (total_mass + MaxCompress)/2;
-    }
-}
-
-template< typename T >
-T constrain( const T& val, const T& minVal, const T& maxVal )
-{
-    return max( minVal, min( val, maxVal ) );
-}
-
-typedef Matrix< Cell > State;
-void stepState( State& cur )
-{
-    for( size_t y = 1; y < cur.rows()-1; ++y )
-    {
-        for( size_t x = 1; x < cur.cols()-1; ++x )
-        {
-            Cell& center = cur( y, x );
-
-            // Skip inert ground blocks
-            if( center.mType == Cell::GROUND )
-                continue;
-
-            // Custom push-only flow
-            float Flow = 0;
-            float remaining_mass = center.mMass;
-            if( remaining_mass <= 0 )
-                continue;
-
-            // The block below this one
-            Cell& below = cur( y-1, x );
-            if( below.mType != Cell::GROUND )
-            {
-                Flow = get_stable_state_b( remaining_mass + below.mMass ) - below.mMass;
-                if( Flow > MinFlow )
-                {
-                    //leads to smoother flow
-                    //Flow /= 2.f;
-                }
-                Flow = constrain( Flow, 0.f, min(MaxSpeed, remaining_mass) );
-
-                center.mNewMass -= Flow;
-                below.mNewMass += Flow;
-                remaining_mass -= Flow;
-            }
-
-            if ( remaining_mass <= 0 )
-                continue;
-
-            // Left
-            Cell& left = cur( y, x-1 );
-            if ( left.mType != Cell::GROUND )
-            {
-                // Equalize the amount of water in this block and it's neighbour
-                Flow = ( center.mMass - left.mMass ) / 4;
-                if ( Flow > MinFlow )
-                {
-                    //Flow /= 2.f;
-                }
-                Flow = constrain(Flow, 0.f, remaining_mass);
-                center.mNewMass -= Flow;
-                left.mNewMass += Flow;
-                remaining_mass -= Flow;
-            }
-
-            if ( remaining_mass <= 0 )
-                continue;
-
-            // Right
-            Cell& right = cur( y, x+1 );
-            if ( right.mType != Cell::GROUND )
-            {
-                // Equalize the amount of water in this block and it's neighbour
-                Flow = ( center.mMass - right.mMass ) / 4;
-                if ( Flow > MinFlow )
-                {
-                    //Flow /= 2.f;
-                }
-                Flow = constrain(Flow, 0.f, remaining_mass);
-                center.mNewMass -= Flow;
-                right.mNewMass += Flow;
-                remaining_mass -= Flow;
-            }
-
-            if ( remaining_mass <= 0 )
-                continue;
-
-            // The block above this one
-            Cell& above = cur( y+1, x );
-            if( above.mType != Cell::GROUND )
-            {
-                Flow = remaining_mass - get_stable_state_b( remaining_mass + above.mMass );
-                if( Flow > MinFlow )
-                {
-                    //leads to smoother flow
-                    //Flow /= 2.f;
-                }
-                Flow = constrain( Flow, 0.f, min(MaxSpeed, remaining_mass) );
-
-                center.mNewMass -= Flow;
-                above.mNewMass += Flow;
-                remaining_mass -= Flow;
-            }
-        }
-    }
-
-    for( size_t y = 0; y < cur.rows(); ++y )
-    {
-        for( size_t x = 0; x < cur.cols(); ++x )
-        {
-            cur( y, x ).mMass = cur( y, x ).mNewMass;
-        }
-    }
-
-    for( size_t y = 0; y < cur.rows(); ++y )
-    {
-        for( size_t x = 0; x < cur.cols(); ++x )
-        {
-            Cell& center = cur( y, x );
-            if( center.mType == Cell::GROUND )
-            {
-                center.mMass = center.mNewMass = 0.0f;
-                continue;
-            }
-            if( center.mMass > MinMass )
-            {
-                center.mType = Cell::WATER;
-            }
-            else
-            {
-                center.mType = Cell::AIR;
-                center.mMass = 0.0f;
-            }
-        }
-    }
-
-    // Remove any water that has left the map
-    for( size_t x = 0; x < cur.cols(); ++x )
-    {
-        cur( 0, x ).mMass = 0;
-        cur( cur.rows()-1, x ).mMass = 0;
-    }
-    for( size_t y = 0; y < cur.rows(); ++y )
-    {
-        cur( y, 0 ).mMass = 0;
-        cur( y, cur.cols()-1 ).mMass = 0;
-    }
-}
-
-void showState( const State& state )
-{
-    glPolygonMode( GL_FRONT, GL_LINE );
-    glBegin( GL_QUADS );
-    glColor3ub( 0, 0, 0 );
-    for( size_t y = 0; y < state.rows(); ++y )
-    {
-        for( size_t x = 0; x < state.cols(); ++x )
-        {
-            glVertex2f( x+0, y+0 );
-            glVertex2f( x+1, y+0 );
-            glVertex2f( x+1, y+1 );
-            glVertex2f( x+0, y+1 );
-        }
-    }
-    glEnd();
-
-    glPolygonMode( GL_FRONT, GL_FILL );
-    glBegin( GL_QUADS );
-    for( size_t y = 0; y < state.rows(); ++y )
-    {
-        for( size_t x = 0; x < state.cols(); ++x )
-        {
-            if( state( y, x ).mType == Cell::AIR )
-                continue;
-
-            float height = 1.0f;
-            if( state( y, x ).mType == Cell::GROUND )
-            {
-                glColor3ub( 152, 118, 84 );
-            }
-            else
-            {
-                glColor3ub( 0, 135, 189 );
-                height = min( 1.f, (float)state( y, x ).mMass/(float)MaxMass );
-            }
-
-            glVertex2f( x+0, y );
-            glVertex2f( x+1, y );
-            glVertex2f( x+1, y + height );
-            glVertex2f( x+0, y + height );
-        }
-    }
-    glEnd();
-}
-
-State state( 20, 20 );
-void mouse( int button, int button_state, int x, int y )
-{
-    float pctX = (float)x / glutGet( GLUT_WINDOW_WIDTH );
-    float pctY = 1.0f - ( (float)y / glutGet( GLUT_WINDOW_HEIGHT ) );
-    size_t cellX = pctX * state.cols();
-    size_t cellY = pctY * state.rows();
-    Cell& cur = state( cellY, cellX );
-
-    if( button_state == GLUT_UP )
-        return;
-
-    if( button == GLUT_LEFT_BUTTON )
-    {
-        cur.mType = ( cur.mType == Cell::GROUND ? Cell::AIR : Cell::GROUND );
-        cur.mMass = cur.mNewMass = 0.0f;
-    }
-
-    if( button == GLUT_RIGHT_BUTTON )
-    {
-        cur.mType = Cell::WATER;
-        cur.mMass = cur.mNewMass = 20.f;
-    }
-}
-
-
-void display()
-{
-    static bool firstTime = true;
-    if( firstTime )
-    {
-        firstTime = false;
-        for( size_t y = 0; y < state.rows(); ++y )
-        {
-            for( size_t x = 0; x < state.cols(); ++x )
-            {
-                state( y, x ).mType = (Cell::Type)( rand() % 3 );
-                state( y, x ).mMass = 1.0f;
-                state( y, x ).mNewMass = 1.0f;
-            }
-        }
-    }
-
-    glClearColor( 1, 1, 1, 1 );
-    glClear( GL_COLOR_BUFFER_BIT );
-
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    glOrtho( 0, state.cols(), 0, state.rows(), -1, 1);
-
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-
-    stepState( state );
-    showState( state );
-
-    glutSwapBuffers();
-
-    glutPostRedisplay();
-}
-
-void timer(int extra)
-{
-    glutTimerFunc(16, timer, 0);
-}
-
-void idle()
-{
-}
-
-int main( int argc, char **argv )
-{
-    glutInit( &argc, argv );
-    glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE );
-    glutInitWindowSize( 640, 480 );
-    glutCreateWindow( "Cells" );
-    glutDisplayFunc( display );
-    glutIdleFunc(idle);
-    glutMouseFunc( mouse );
-    glutTimerFunc(0, timer, 0);
-    glutMainLoop();
-
-    return 0;
-}*/

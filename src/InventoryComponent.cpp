@@ -60,14 +60,14 @@ int InventoryComponent::addItem(int item, int count)
     return count;
 }
 
-bool InventoryComponent::useItem(int slot, GridComponent* grid, int x, int y)
+bool InventoryComponent::useItem(int slot, Entity* grid, std::stack<sf::Vector2f>& coords)
 {
     if (mSlots[slot].mItem == -1)
         return false;
 
     int item = mSlots[slot].mItem;
 
-    bool used = Item::Items[item]->use(grid, x, y);
+    bool used = Item::Items[item]->use(grid, coords);
 
     if (used && Item::Items[item]->getConsumable())
     {
@@ -77,4 +77,12 @@ bool InventoryComponent::useItem(int slot, GridComponent* grid, int x, int y)
     }
 
     return used;
+}
+
+Item* InventoryComponent::getItemAt(int slot)
+{
+    if (mSlots[slot].mItem == -1)
+        return NULL;
+    else
+        return Item::Items[mSlots[slot].mItem];
 }

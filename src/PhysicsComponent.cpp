@@ -4,7 +4,7 @@
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(int width, int height) : mGravityDir(DOWN), mGrid(NULL),
+PhysicsComponent::PhysicsComponent(int width, int height) : mGravityDir(DOWN), mPrimaryGrid(NULL),
     mWidth(width), mHeight(height)
 {
     //ctor

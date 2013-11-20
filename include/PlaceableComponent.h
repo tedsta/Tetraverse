@@ -6,6 +6,7 @@
 #include <Sqrat/sqext.h>
 #include <Fission/Core/Component.h>
 
+class Entity;
 class GridComponent;
 
 class PlaceableComponent : public Component
@@ -13,12 +14,16 @@ class PlaceableComponent : public Component
     friend class PlaceableSystem;
 
     public:
-        PlaceableComponent(GridComponent* grid = NULL, const std::string& className = "", int gridX = 1, int gridY = 1, int width = 1, int height = 1);
+        PlaceableComponent(Entity* grid = NULL, const std::string& className = "", int gridX = 1, int gridY = 1, int width = 1, int height = 1);
         virtual ~PlaceableComponent();
 
         static void registerClass(HSQUIRRELVM vm, const std::string& className);
 
         void interact();
+
+        // Setters
+        void setGrid(Entity* grid);
+        void setGridPos(int x, int y);
 
         // Getters
         int getGridX(){return mGridX;}
@@ -33,7 +38,7 @@ class PlaceableComponent : public Component
     private:
         static std::map<std::string, sqext::SQIClass*> Classes;
 
-        GridComponent* mGrid;
+        Entity* mGrid;
         std::string mClassName;
         sqext::SQIClassInstance* mInst; // The instance of the squirrel class that does the logic
 

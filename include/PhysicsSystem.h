@@ -3,13 +3,13 @@
 
 #include <Fission/Core/System.h>
 
+class GridSystem;
+
 class PhysicsSystem : public System
 {
     public:
-        PhysicsSystem(EventManager *eventManager);
+        PhysicsSystem(EventManager *eventManager, GridSystem* gridSys);
         virtual ~PhysicsSystem();
-
-        void addGrid(Entity* grid){mGrids.push_back(grid);}
 
     protected:
         void begin(const float dt);
@@ -19,7 +19,7 @@ class PhysicsSystem : public System
         void end(const float dt);
 
     private:
-        std::vector<Entity*> mGrids;
+        GridSystem* mGridSys;
 };
 
 #endif // PHYSICSSYSTEM_H

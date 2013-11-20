@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include <Fission/Rendering/TransformComponent.h>
+
+#include "PlaceableComponent.h"
+
 GridSystem::GridSystem(EventManager *eventManager) : System(eventManager, GridComponent::Type)
 {
     //ctor
@@ -28,6 +32,20 @@ void GridSystem::processEntity(Entity *entity, const float dt)
 		grid->mID = mNextGridID;
 		mNextGridID++;
 	}
+
+	// Update all the placeable positions
+	for (auto placeableEnt : grid->mPlaceables)
+    {
+        auto trans = reinterpret_cast<TransformComponent*>(placeableEnt->getComponent(TransformComponent::Type));
+        auto placeable = reinterpret_cast<PlaceableComponent*>(placeableEnt->getComponent(PlaceableComponent::Type));
+
+        sf::Vector2f pos(placeable->getGridX(), placeable->getGridY());
+        pos *= float(TILE_SIZE);
+        pos = grid->mTransform->getTransform().transformPoint(pos);
+        trans->setPosition(pos);
+        trans->setRotation(grid->mTransform->getRotation());
+        trans->setScale(grid->mTransform->getScale());
+    }
 
 	// Iterate through cached interesting tiles that need to be operated on
 	for (unsigned int t = 0; t < mTicks.size(); t++)

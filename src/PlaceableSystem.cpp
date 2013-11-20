@@ -25,7 +25,7 @@ void PlaceableSystem::processEntity(Entity *entity, const float dt)
     try
     {
         if (placeable->mGrid && placeable->mInst)
-            placeable->mInst->call("update", dt);
+            placeable->mInst->call("update", entity, dt);
     }
     catch (Sqrat::Exception e)
     {

@@ -58,7 +58,7 @@ class GridComponent : public RenderComponent
     friend class GridSystem;
 
     public:
-        GridComponent(sf::Transformable* transform = NULL, int sizeX = 0, int sizeY = 0, Tile** tiles = NULL, int tickCount = 0);
+        GridComponent(sf::Transformable* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);
         virtual ~GridComponent();
 
         // Serialization stuff
@@ -71,8 +71,9 @@ class GridComponent : public RenderComponent
         sf::Vector2f getTilePos(sf::Vector2f pos);
         bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
         bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
+        bool contains(sf::Transformable* trans, sf::Vector2f dim);
 
-        Tile** slice(int left, int top, int right, int bot);
+        void sliceInto(Entity* newGrid, int left, int top, int right, int bot);
 
         void interact(int x, int y);
         void addFluid(int x, int y, float fluid);
@@ -80,9 +81,10 @@ class GridComponent : public RenderComponent
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);
         void addPlaceable(Entity* entity);
+        void removePlaceable(Entity* placeable);
         Entity* getPlaceableAt(int x, int y);
         int calcNeighborState(int x, int y);
-        int wrapX(int x);
+        int wrapX(int x) const;
 
         void setInteresting(int x, int y, int tick)
         {
@@ -92,8 +94,9 @@ class GridComponent : public RenderComponent
         const std::vector<sf::Vector2i>& getInterestingTiles(int tick) const {return mCTiles[tick];}
         void clearInteresting(int tick){mCTiles[tick].clear();}
 
-        const Tile& getTile(int x, int y) const {return mTiles[y][x];}
-        Area getArea(int x, int y);
+        bool getWrapX() const {return mWrapX;}
+        Tile getTile(int x, int y) const;
+        Area getArea(int x, int y) const;
         int getSizeX() const {return mSizeX;}
         int getSizeY() const {return mSizeY;}
 
@@ -112,6 +115,7 @@ class GridComponent : public RenderComponent
         int mID;
         int mSizeX;
         int mSizeY;
+        bool mWrapX;
         Tile** mTiles; // 2D array of tiles
         sf::Transformable* mTransform;
         int mTickCount; // The number of tick types

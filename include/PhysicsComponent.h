@@ -1,6 +1,7 @@
 #ifndef PHYSICSCOMPONENT_H
 #define PHYSICSCOMPONENT_H
 
+#include <vector>
 #include <SFML/System/Vector2.hpp>
 
 #include <Fission/Core/Component.h>
@@ -28,7 +29,7 @@ class PhysicsComponent : public Component
         sf::Vector2f getVelocity(){return mVelocity;}
         int getWidth(){return mWidth;}
         int getHeight(){return mHeight;}
-        Entity* getGrid(){return mGrid;}
+        Entity* getPrimaryGrid(){return mPrimaryGrid;}
         int getGravityDir(){return mGravityDir;}
         bool getDirCollision(int dir){return mDirCollisions[dir];}
 
@@ -40,7 +41,8 @@ class PhysicsComponent : public Component
         sf::Vector2f mVelocity;
         int mWidth;
         int mHeight;
-        Entity* mGrid; // Cached grid
+        Entity* mPrimaryGrid; // The grid that contains me best
+        std::vector<Entity*> mGrids; // The other grids to test collisions with
         int mGravityDir; // Direction of gravity
         bool mDirCollisions[4];
 };

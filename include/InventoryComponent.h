@@ -2,10 +2,12 @@
 #define INVENTORYCOMPONENT_H
 
 #include <vector>
+#include <stack>
+#include <SFML/System/Vector2.hpp>
 #include <Fission/Core/Component.h>
 
 class Item;
-class GridComponent;
+class Entity;
 
 class InventoryComponent : public Component
 {
@@ -16,7 +18,9 @@ class InventoryComponent : public Component
         int addItem(int slot, int item, int count);
         int addItem(int item, int count);
 
-        bool useItem(int slot, GridComponent* grid, int mouseX, int mouseY);
+        bool useItem(int slot, Entity* grid, std::stack<sf::Vector2f>& coords);
+
+        Item* getItemAt(int slot);
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

@@ -2,11 +2,15 @@
 
 #include <iostream>
 
+#include <Fission/Core/Entity.h>
+#include "GridComponent.h"
+
 std::map<std::string, sqext::SQIClass*> PlaceableComponent::Classes;
 TypeBits PlaceableComponent::Type;
 
-PlaceableComponent::PlaceableComponent(GridComponent* grid, const std::string& className, int gridX, int gridY, int width, int height) :
-    mGrid(grid), mClassName(className), mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
+PlaceableComponent::PlaceableComponent(Entity* grid, const std::string& className, int gridX, int gridY, int width, int height) :
+    mGrid(grid), mClassName(className),
+    mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
 {
     if (grid && mClassName.size() > 0)
         mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(grid, gridX, gridY));
@@ -28,6 +32,19 @@ void PlaceableComponent::interact()
     {
         std::cout << "Squirrel error: " << e.Message() << std::endl;
     }
+}
+
+void PlaceableComponent::setGrid(Entity* grid)
+{
+    mGrid = grid;
+    mInst->call("setGrid", grid);
+}
+
+void PlaceableComponent::setGridPos(int x, int y)
+{
+    mGridX = x;
+    mGridY = y;
+    mInst->call("setGridPos", x, y);
 }
 
 void PlaceableComponent::registerClass(HSQUIRRELVM vm, const std::string& className)

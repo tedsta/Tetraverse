@@ -11,18 +11,24 @@
 
 std::vector<Item*> Item::Items;
 
-Item::Item(std::string name, const std::string& texturePath, bool consumable, int maxStack, HSQUIRRELVM vm, std::string useFunc) :
-    mName(name), mTexturePath(texturePath), mConsumable(consumable), mMaxStack(maxStack)
+Item::Item(std::string name, const std::string& texturePath, bool consumable, int useState, int maxStack, int coordCount, HSQUIRRELVM vm, std::string useFunc) :
+    mName(name), mTexturePath(texturePath), mConsumable(consumable), mUseState(useState), mMaxStack(maxStack), mCoordCount(coordCount)
 {
     mUseFunc = Sqrat::RootTable(vm).GetFunction(useFunc.c_str());
 }
 
-bool Item::use(GridComponent* grid, int x, int y)
+bool Item::use(Entity* grid, std::stack<sf::Vector2f>& coords)
 {
     bool used = false;
     try
     {
-        used = mUseFunc.Evaluate<bool>(grid, x, y);
+        Sqrat::Array sqCoords(mUseFunc.GetVM());
+        while (!coords.empty())
+        {
+            sqCoords.Append(coords.top());
+            coords.pop();
+        }
+        used = mUseFunc.Evaluate<bool>(grid, sqCoords);
     }
     catch (Sqrat::Exception e)
     {

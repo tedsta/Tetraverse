@@ -1,5 +1,6 @@
 #include "GridComponent.h"
 
+#include <set>
 #include <cmath>
 #include <iostream>
 
@@ -9,6 +10,7 @@
 #include <Fission/Core/Entity.h>
 #include <Fission/Rendering/TransformComponent.h>
 
+#include "PhysicsComponent.h"
 #include "PlaceableComponent.h"
 
 int randStateCovered(int x, int y);
@@ -20,9 +22,11 @@ int randStateLeft(int x, int y);
 TypeBits GridComponent::Type;
 std::vector<sf::Texture*> GridComponent::TileSheets;
 
-GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, Tile** tiles, int tickCount) :
-    mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mTiles(tiles), mTickCount(tickCount)
+GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
+    mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
 {
+    mTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
+
 	for (int y = 0; y < mSizeY; y++)
 		for (int x = 0; x < mSizeX; x++)
 			calcNeighborState(x, y);
@@ -57,10 +61,21 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 	float ssXT = ceil(target.getView().getSize().x / tsize); // Screen size X in tiles
 	float ssYT = ceil(target.getView().getSize().y / tsize); // Screen size Y in tiles
 
-	int left = centerT.x - 1;
+	int left;
+	int right;
+	if (mWrapX)
+    {
+        left = centerT.x - 1;
+        right = centerT.x + ssXT + 1;
+    }
+    else
+    {
+        left = std::max<int>(centerT.x-1, 0);
+        right = std::min<int>(centerT.x+ssXT+1, mSizeX-1);
+    }
+
 	int top = std::max<int>(centerT.y-1, 0);
-	int right = centerT.x + ssXT + 1;
-	int bot = std::min<int>(centerT.y+ssYT+1, mSizeY);
+	int bot = std::min<int>(centerT.y+ssYT+1, mSizeY-1);
 
     sf::VertexArray verts(sf::Quads, 4);
 	for (int _y = top; _y <= bot; _y++)
@@ -87,10 +102,10 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
             if (mTiles[y][x].mFluid > 0)
             {
                 states.texture = NULL;
-                verts[0].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
-                verts[1].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
-                verts[2].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
-                verts[3].color = sf::Color(255, 0, 0, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[0].color = sf::Color(0, 0, 255, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[1].color = sf::Color(0, 0, 255, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[2].color = sf::Color(0, 0, 255, std::min(mTiles[y][x].mFluid*128.f, 255.f));
+                verts[3].color = sf::Color(0, 0, 255, std::min(mTiles[y][x].mFluid*128.f, 255.f));
                 target.draw(verts, states);
             }
             else
@@ -205,8 +220,18 @@ bool GridComponent::checkCollision(sf::Transformable* trans, sf::Vector2f dim, i
 
 	// Let's be safe about this
 	if (y >= int(mSizeY) || bot < 0)
-        return 0;
+        return false;
 
+    if (!mWrapX)
+    {
+        if (right < 0 || x >= int(mSizeX))
+            return false;
+
+        if (x < 0)
+            x = 0;
+        if (right >= int(mSizeX))
+            right = int(mSizeX) - 1;
+    }
 	if (y < 0)
 		y = 0;
 	if (bot >= int(mSizeY))
@@ -278,20 +303,68 @@ bool GridComponent::dirCollision(int left, int top, int right, int bot, int dir,
 	return false;
 }
 
-Tile** GridComponent::slice(int left, int top, int right, int bot)
+bool GridComponent::contains(sf::Transformable* trans, sf::Vector2f dim)
 {
-    Tile** tiles = new Tile*[bot-top];
-    for (int y = 0; y < bot-top; y++)
+    sf::Transform myInv = mTransform->getTransform().getInverse(); // Inverse of grid's transform
+	sf::Vector2f cOffset = myInv.transformPoint(trans->getPosition());
+	sf::Vector2f offset = cOffset-(dim/2.f);
+	sf::Vector2f tOffset = offset/float(TILE_SIZE);
+
+	int x = floor(tOffset.x);
+	int y = floor(tOffset.y);
+	int right = ceil((offset.x+dim.x)/float(TILE_SIZE)) - 1;
+	int bot = ceil((offset.y+dim.y)/float(TILE_SIZE)) - 1;
+
+	if (y >= 0 && bot < mSizeY && (mWrapX || (x >= 0 && right < mSizeX)))
+        return true;
+    return false;
+}
+
+void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int bot)
+{
+    int width = right-left+1;
+    int height = bot-top+1;
+
+    std::cout << width << " " << height << std::endl;
+
+    std::set<Entity*> placeables;
+
+    Tile** tiles = new Tile*[height];
+    for (int y = 0; y < height; y++)
     {
-        tiles[y] = new Tile[right-left];
-        for (int x = 0; x < right-left; x++)
+        tiles[y] = new Tile[width];
+        for (int x = 0; x < width; x++)
         {
             tiles[y][x] = mTiles[top+y][left+x];
             mTiles[top+y][left+x] = Tile(); // Clear the old tile
+            Entity* placeable = getPlaceableAt(left+x, top+y);
+            if (placeable)
+                placeables.insert(placeable);
         }
     }
 
-    return tiles;
+    sf::Vector2f pos(left, top);
+    pos *= float(TILE_SIZE);
+    pos = mTransform->getTransform().transformPoint(pos);
+
+    TransformComponent* transform = new TransformComponent(pos+sf::Vector2f(width*TILE_SIZE/2.f, height*TILE_SIZE/2.f),
+                                                           mTransform->getRotation(), mTransform->getScale());
+    GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
+    PhysicsComponent* physics = new PhysicsComponent((width)*TILE_SIZE, (height)*TILE_SIZE);
+
+    for (Entity* placeable : placeables)
+    {
+        PlaceableComponent* placeableComp = reinterpret_cast<PlaceableComponent*>(placeable->getComponent(PlaceableComponent::Type));
+        placeableComp->setGrid(newGrid);
+        placeableComp->setGridPos(placeableComp->getGridX()-left, placeableComp->getGridY()-top);
+
+        grid->addPlaceable(placeable);
+        removePlaceable(placeable);
+    }
+
+    newGrid->addComponent(transform);
+    newGrid->addComponent(grid);
+    newGrid->addComponent(physics);
 }
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
@@ -306,6 +379,11 @@ sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 
 void GridComponent::interact(int x, int y)
 {
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return;
+
     Entity *entity = getPlaceableAt(x, y);
     if (entity)
     {
@@ -316,20 +394,20 @@ void GridComponent::interact(int x, int y)
 
 void GridComponent::addFluid(int x, int y, float fluid)
 {
-    if (y < 0 || y >= mSizeY)
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
-
-	x = wrapX(x);
 
 	mTiles[y][x].mFluid += fluid;
 }
 
 void GridComponent::setTile(int x, int y, Tile tile, int tick)
 {
-	if (y < 0 || y >= mSizeY)
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
-
-	x = wrapX(x);
 
 	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid &&
         mTiles[y][x].mWire == tile.mWire && mTiles[y][x].mSignal == tile.mSignal)
@@ -373,8 +451,23 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
 	}
 }
 
+Tile GridComponent::getTile(int x, int y) const
+{
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return Tile();
+
+    return mTiles[y][x];
+}
+
 bool GridComponent::canPlace(int x, int y, int width, int height)
 {
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return false;
+
     for (int i = y; i < y+height; i++)
     {
         for (int j = x; j < x+width; j++)
@@ -402,15 +495,32 @@ void GridComponent::addPlaceable(Entity* entity)
 
     sf::Vector2f pos(placeable->getGridX(), placeable->getGridY());
     pos *= float(TILE_SIZE);
-    mTransform->getTransform().transformPoint(pos);
+    pos = mTransform->getTransform().transformPoint(pos);
     trans->setPosition(pos);
     trans->setRotation(mTransform->getRotation());
     trans->setScale(mTransform->getScale());
     mPlaceables.push_back(entity);
 }
 
+void GridComponent::removePlaceable(Entity* placeable)
+{
+    for (unsigned int i = 0; i < mPlaceables.size(); i++)
+    {
+        if (mPlaceables[i] == placeable)
+        {
+            mPlaceables.erase(mPlaceables.begin()+i);
+            return;
+        }
+    }
+}
+
 Entity* GridComponent::getPlaceableAt(int x, int y)
 {
+    if (mWrapX)
+        x = wrapX(x);
+    else if (x < 0 || x >= mSizeX-1)
+        return NULL;
+
     for (auto entity : mPlaceables)
     {
         PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
@@ -425,8 +535,13 @@ Entity* GridComponent::getPlaceableAt(int x, int y)
 int GridComponent::calcNeighborState(int x, int y)
 {
     x = wrapX(x);
-	int left = wrapX(x - 1);
-	int right = wrapX(x + 1);
+	int left = x - 1;
+	int right = x + 1;
+	if (mWrapX)
+    {
+        left = wrapX(left);
+        right = wrapX(right);
+    }
 
     if (mTiles[y][x].mMat == 0 || mTiles[y][x].mMat == 4)
         return 0;
@@ -435,20 +550,26 @@ int GridComponent::calcNeighborState(int x, int y)
 
 	if (y > 0)
     {
-		a[0][0] = mTiles[y-1][left];
+        if (left >= 0 && left < mSizeX)
+            a[0][0] = mTiles[y-1][left];
 		a[0][1] = mTiles[y-1][x];
-		a[0][2] = mTiles[y-1][right];
+		if (right >= 0 && right < mSizeX)
+            a[0][2] = mTiles[y-1][right];
 	}
 
-	a[1][0] = mTiles[y][left];
+    if (left >= 0 && left < mSizeX)
+        a[1][0] = mTiles[y][left];
 	a[1][1] = mTiles[y][x];
-	a[1][2] = mTiles[y][right];
+	if (right >= 0 && right < mSizeX)
+        a[1][2] = mTiles[y][right];
 
 	if (y < mSizeY-1)
     {
-		a[2][0] = mTiles[y+1][left];
+        if (left >= 0 && left < mSizeX)
+            a[2][0] = mTiles[y+1][left];
 		a[2][1] = mTiles[y+1][x];
-		a[2][2] = mTiles[y+1][right];
+		if (right >= 0 && right < mSizeX)
+            a[2][2] = mTiles[y+1][right];
 	}
 
 	if (a[0][1].mMat == a[1][1].mMat &&
@@ -517,7 +638,7 @@ int GridComponent::calcNeighborState(int x, int y)
 		return 5;
 }
 
-int GridComponent::wrapX(int x)
+int GridComponent::wrapX(int x) const
 {
     if (x < 0)
     {
@@ -531,7 +652,7 @@ int GridComponent::wrapX(int x)
 	return x;
 }
 
-Area GridComponent::getArea(int x, int y)
+Area GridComponent::getArea(int x, int y) const
 {
     int left = wrapX(x - 1);
     int right = wrapX(x + 1);

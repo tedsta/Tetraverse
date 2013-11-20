@@ -10,6 +10,7 @@
 #include "PhysicsComponent.h"
 #include "InventoryComponent.h"
 #include "SkeletonComponent.h"
+#include "ItemComponent.h"
 
 #include <iostream>
 
@@ -107,77 +108,119 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     if (intent->isIntentActive("0"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 0;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 0;
+        }
     }
     else if (intent->isIntentActive("1"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 1;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 1;
+        }
+
     }
     else if (intent->isIntentActive("2"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 2;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 2;
+        }
     }
     else if (intent->isIntentActive("3"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 3;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 3;
+        }
     }
     else if (intent->isIntentActive("4"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 4;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 4;
+        }
     }
     else if (intent->isIntentActive("5"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 5;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 5;
+        }
     }
     else if (intent->isIntentActive("6"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 6;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 6;
+        }
     }
     else if (intent->isIntentActive("7"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 7;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 7;
+        }
     }
     else if (intent->isIntentActive("8"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 8;
+        }
+
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 8;
+        }
     }
     else if (intent->isIntentActive("9"))
     {
         if (intent->isIntentActive("useLeft"))
+        {
             player->mLeftHand = 9;
+        }
         else if (intent->isIntentActive("useRight"))
+        {
             player->mRightHand = 9;
+        }
     }
-    else if (phys->getGrid()) // We're not setting any hands, so lets use them
+    else if (phys->getPrimaryGrid()) // We're not setting any hands, so lets use them
     {
-		auto pt = reinterpret_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
-		auto grid = reinterpret_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
+		auto pt = reinterpret_cast<TransformComponent*>(phys->getPrimaryGrid()->getComponent(TransformComponent::Type));
+		auto grid = reinterpret_cast<GridComponent*>(phys->getPrimaryGrid()->getComponent(GridComponent::Type));
 
 		if (intent->isIntentActive("useLeft"))
         {
@@ -185,9 +228,11 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
             mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
-                inventory->useItem(player->mLeftHand, grid, grid->wrapX(pos.x), pos.y);
-			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
-				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 2), -1);
+            {
+                player->pushLeftCoord(sf::Vector2f(pos.x, pos.y));
+                if (player->getLeftCoordsCount() == inventory->getItemAt(player->mLeftHand)->getCoordCount())
+                    inventory->useItem(player->mLeftHand, phys->getPrimaryGrid(), player->mLeftCoords);
+            }
 		}
 		if (intent->isIntentActive("useRight"))
 		{
@@ -195,16 +240,17 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
 			if (pos.y >= 0 && pos.y < grid->getSizeY())
-                inventory->useItem(player->mRightHand, grid, grid->wrapX(pos.x), pos.y);
-			//if (length(mousePos - trans->getPosition()) < 16*10) //16 pixels per tile, 10 tiles
-				//grid->setTile(int(pos.x), int(pos.y), Tile(0, 0, 0, 1), -1);
+            {
+                player->pushRightCoord(sf::Vector2f(pos.x, pos.y));
+                if (player->getRightCoordsCount() == inventory->getItemAt(player->mRightHand)->getCoordCount())
+                    inventory->useItem(player->mRightHand, phys->getPrimaryGrid(), player->mRightCoords);
+            }
 		}
 		if (intent->isIntentActive("interact"))
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
 			sf::Vector2f pos = grid->getTilePos(mousePos);
-            pos.x = grid->wrapX(pos.x);
             grid->interact(pos.x, pos.y);
 		}
 		if (intent->isIntentActive("test"))
