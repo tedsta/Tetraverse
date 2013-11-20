@@ -39,6 +39,8 @@ class PlayerComponent : public Component
         bool mStupidMode;
         int mLeftHand;
         int mRightHand;
+        int mLeftHandState;
+        int mRightHandState;
         std::stack<sf::Vector2f> mLeftCoords;
         std::stack<sf::Vector2f> mRightCoords;
 };

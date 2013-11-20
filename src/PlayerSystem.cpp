@@ -222,7 +222,28 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 		auto pt = reinterpret_cast<TransformComponent*>(phys->getPrimaryGrid()->getComponent(TransformComponent::Type));
 		auto grid = reinterpret_cast<GridComponent*>(phys->getPrimaryGrid()->getComponent(GridComponent::Type));
 
-		if (intent->isIntentActive("useLeft"))
+        if (player->mLeftHandState == BtnState::PRESSED)
+            player->mLeftHandState = BtnState::DOWN;
+        if (player->mLeftHandState == BtnState::RELEASED)
+            player->mLeftHandState = BtnState::UP;
+
+        if (intent->isIntentActive("useLeft"))
+            player->mLeftHandState = BtnState::PRESSED;
+        if (intent->isIntentActive("useLeftRelease"))
+            player->mLeftHandState = BtnState::RELEASED;
+
+
+        if (player->mRightHandState == BtnState::PRESSED)
+            player->mRightHandState = BtnState::DOWN;
+        if (player->mRightHandState == BtnState::RELEASED)
+            player->mRightHandState = BtnState::UP;
+
+        if (intent->isIntentActive("useRight"))
+            player->mRightHandState = BtnState::PRESSED;
+        if (intent->isIntentActive("useRightRelease"))
+            player->mRightHandState = BtnState::RELEASED;
+
+		if (inventory->getItemAt(player->mLeftHand) && player->mLeftHandState == inventory->getItemAt(player->mLeftHand)->getUseState())
         {
 			sf::Vector2f mousePos = intent->getMousePos();
             mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());
@@ -234,7 +255,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
                     inventory->useItem(player->mLeftHand, phys->getPrimaryGrid(), player->mLeftCoords);
             }
 		}
-		if (intent->isIntentActive("useRight"))
+		if (inventory->getItemAt(player->mRightHand) && player->mRightHandState == inventory->getItemAt(player->mRightHand)->getUseState())
 		{
 			sf::Vector2f mousePos = intent->getMousePos();
 			mousePos = mRndSys->getWindow().mapPixelToCoords(sf::Vector2i(mousePos.x, mousePos.y), mRndSys->getView());

@@ -187,7 +187,9 @@ int main()
     intent->mapKeyToIntent("9", sf::Keyboard::Num9, BtnState::DOWN);
 
     intent->mapMouseBtnToIntent("useLeft", sf::Mouse::Button::Left, BtnState::PRESSED);
+    intent->mapMouseBtnToIntent("useLeftRelease", sf::Mouse::Button::Left, BtnState::RELEASED);
     intent->mapMouseBtnToIntent("useRight", sf::Mouse::Button::Right, BtnState::PRESSED);
+    intent->mapMouseBtnToIntent("useRightRelease", sf::Mouse::Button::Right, BtnState::RELEASED);
     intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
     intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
 

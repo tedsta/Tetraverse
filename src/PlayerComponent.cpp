@@ -1,8 +1,11 @@
 #include "PlayerComponent.h"
 
+#include <Fission/Input/Defs.h>
+
 TypeBits PlayerComponent::Type;
 
-PlayerComponent::PlayerComponent() : mLeftHand(0), mRightHand(1), mStupidMode(false)
+PlayerComponent::PlayerComponent() : mLeftHand(0), mRightHand(1),
+    mLeftHandState(BtnState::UP), mRightHandState(BtnState::UP), mStupidMode(false)
 {
     //ctor
 }
