@@ -71,7 +71,9 @@ class GridComponent : public RenderComponent
         sf::Vector2f getTilePos(sf::Vector2f pos);
         bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
         bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
+        void fixGridCollision(GridComponent* other, int dir);
         bool contains(sf::Transformable* trans, sf::Vector2f dim);
+        bool intersects(sf::Transformable* trans, sf::Vector2f dim);
 
         void sliceInto(Entity* newGrid, int left, int top, int right, int bot);
 
@@ -94,11 +96,20 @@ class GridComponent : public RenderComponent
         const std::vector<sf::Vector2i>& getInterestingTiles(int tick) const {return mCTiles[tick];}
         void clearInteresting(int tick){mCTiles[tick].clear();}
 
+        void addChild(Entity* child){mChildren.push_back(child);}
+
+        // Setters
+        void setVelocity(const sf::Vector2f& vel){mVelocity=vel;}
+        void setVelocityX(float x){mVelocity.x=x;}
+        void setVelocityY(float y){mVelocity.y=y;}
+
+        // Getters
         bool getWrapX() const {return mWrapX;}
         Tile getTile(int x, int y) const;
         Area getArea(int x, int y) const;
         int getSizeX() const {return mSizeX;}
         int getSizeY() const {return mSizeY;}
+        const sf::Vector2f& getVelocity() const {return mVelocity;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
@@ -118,9 +129,11 @@ class GridComponent : public RenderComponent
         bool mWrapX;
         Tile** mTiles; // 2D array of tiles
         sf::Transformable* mTransform;
+        sf::Vector2f mVelocity; // Grid velocity
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
         std::vector<Entity*> mPlaceables;
+        std::vector<Entity*> mChildren; // All of the entities in this grid
 
         static std::vector<sf::Texture*> TileSheets;
 };

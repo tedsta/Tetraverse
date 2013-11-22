@@ -208,7 +208,7 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 
 bool GridComponent::checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix)
 {
-	sf::Transform myInv = mTransform->getTransform().getInverse(); // Inverse of grid's transform
+	sf::Transform myInv = mTransform->getInverseTransform(); // Inverse of grid's transform
 	sf::Vector2f cOffset = myInv.transformPoint(trans->getPosition());
 	sf::Vector2f offset = cOffset-(dim/2.f);
 	sf::Vector2f tOffset = offset/float(TILE_SIZE);
@@ -266,7 +266,7 @@ bool GridComponent::checkCollision(sf::Transformable* trans, sf::Vector2f dim, i
 			fix -= float(TILE_SIZE);
 	}
 
-	if (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE)
+	if (mWrapX && (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE))
     {
 		cOffset.x = fmod(cOffset.x, mSizeX*TILE_SIZE);
 		sf::Transform t = mTransform->getTransform();
@@ -303,6 +303,130 @@ bool GridComponent::dirCollision(int left, int top, int right, int bot, int dir,
 	return false;
 }
 
+void GridComponent::fixGridCollision(GridComponent* other, int dir)
+{
+    if (other->mWrapX)
+        return;
+
+    sf::Vector2f dim(other->mSizeX*TILE_SIZE, other->mSizeY*TILE_SIZE);
+
+    sf::Transform myInv = mTransform->getInverseTransform(); // Inverse of grid's transform
+	sf::Vector2f cOffset = myInv.transformPoint(other->mTransform->getPosition()); // Center offset
+	sf::Vector2f offset = cOffset-(dim/2.f);
+
+    if (mWrapX && (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE))
+    {
+		cOffset.x = fmod(cOffset.x, mSizeX*TILE_SIZE);
+		sf::Transform t = mTransform->getTransform();
+		other->mTransform->setPosition(t.transformPoint(cOffset));
+	}
+
+    sf::Vector2f alignment;
+    switch (dir)
+    {
+    case UP:
+        alignment.y = -fmod(offset.y, TILE_SIZE);
+        break;
+    case DOWN:
+        alignment.y = float(TILE_SIZE)-fmod(offset.y, TILE_SIZE);
+        break;
+    case LEFT:
+        alignment.x = -fmod(offset.x, TILE_SIZE);
+        break;
+    case RIGHT:
+        alignment.x = float(TILE_SIZE)-fmod(offset.x, TILE_SIZE);
+        break;
+    }
+    offset += alignment;
+
+    sf::Vector2f fix;
+    bool col = false;
+    bool colNow = false;
+    do
+    {
+        int left = (offset.x+fix.x)/TILE_SIZE;
+        int top = (offset.y+fix.y)/TILE_SIZE;
+        int right = ((offset.x+fix.x+dim.x)/TILE_SIZE) - 1;
+        int bot = ((offset.y+fix.y+dim.y)/TILE_SIZE) - 1;
+
+        int oLeft = 0;
+        int oTop = 0;
+        int oRight = other->mSizeX-1;
+        int oBot = other->mSizeY-1;
+
+        // Let's be safe about this
+        if (top >= int(mSizeY) || bot < 0)
+            break;
+        if (top < 0)
+        {
+            oTop -= top;
+            top = 0;
+        }
+        if (bot >= mSizeY)
+        {
+            oBot -= bot-(mSizeY-1);
+            bot = mSizeY-1;
+        }
+
+        if (!mWrapX)
+        {
+            if (right < 0 || left >= int(mSizeX))
+                break;
+            if (left < 0)
+            {
+                oLeft -= left;
+                left = 0;
+            }
+            if (right >= int(mSizeX))
+            {
+                oRight -= right-(mSizeX-1);
+                right = int(mSizeX) - 1;
+            }
+        }
+
+        colNow = false;
+        for (int y = 0; y <= bot-top; y++)
+        {
+            for (int x = 0; x <= right-left; x++)
+            {
+                if (mTiles[top+y][wrapX(left+x)].mMat != 0 && other->mTiles[oTop+y][oLeft+x].mMat != 0)
+                {
+                    col = true;
+                    colNow = true;
+                    switch (dir)
+                    {
+                    case UP:
+                        fix.y += TILE_SIZE;
+                        break;
+                    case DOWN:
+                        fix.y -= TILE_SIZE;
+                        break;
+                    case LEFT:
+                        fix.x += TILE_SIZE;
+                        break;
+                    case RIGHT:
+                        fix.x -= TILE_SIZE;
+                        break;
+                    }
+                    // ghetto break out of loops
+                    x = right-left+1;
+                    y = bot-top+1;
+                }
+            }
+        }
+    } while (colNow);
+
+    if (col)
+    {
+        if (fix.x != 0)
+            other->mVelocity.x = 0;
+        if (fix.y != 0)
+            other->mVelocity.y = 0;
+
+        other->mTransform->move(alignment+fix);
+    }
+}
+
 bool GridComponent::contains(sf::Transformable* trans, sf::Vector2f dim)
 {
     sf::Transform myInv = mTransform->getTransform().getInverse(); // Inverse of grid's transform
@@ -316,6 +440,23 @@ bool GridComponent::contains(sf::Transformable* trans, sf::Vector2f dim)
 	int bot = ceil((offset.y+dim.y)/float(TILE_SIZE)) - 1;
 
 	if (y >= 0 && bot < mSizeY && (mWrapX || (x >= 0 && right < mSizeX)))
+        return true;
+    return false;
+}
+
+bool GridComponent::intersects(sf::Transformable* trans, sf::Vector2f dim)
+{
+    sf::Transform myInv = mTransform->getTransform().getInverse(); // Inverse of grid's transform
+	sf::Vector2f cOffset = myInv.transformPoint(trans->getPosition());
+	sf::Vector2f offset = cOffset-(dim/2.f);
+	sf::Vector2f tOffset = offset/float(TILE_SIZE);
+
+	int x = floor(tOffset.x);
+	int y = floor(tOffset.y);
+	int right = ceil((offset.x+dim.x)/float(TILE_SIZE)) - 1;
+	int bot = ceil((offset.y+dim.y)/float(TILE_SIZE)) - 1;
+
+	if (bot >= 0 && y < mSizeY && (mWrapX || (right >= 0 && x < mSizeX)))
         return true;
     return false;
 }
@@ -350,7 +491,7 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     TransformComponent* transform = new TransformComponent(pos+sf::Vector2f(width*TILE_SIZE/2.f, height*TILE_SIZE/2.f),
                                                            mTransform->getRotation(), mTransform->getScale());
     GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
-    PhysicsComponent* physics = new PhysicsComponent((width)*TILE_SIZE, (height)*TILE_SIZE);
+    //PhysicsComponent* physics = new PhysicsComponent((width)*TILE_SIZE, (height)*TILE_SIZE);
 
     for (Entity* placeable : placeables)
     {
@@ -364,7 +505,7 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
 
     newGrid->addComponent(transform);
     newGrid->addComponent(grid);
-    newGrid->addComponent(physics);
+    //newGrid->addComponent(physics);
 }
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)

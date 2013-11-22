@@ -54,18 +54,18 @@ class Thruster extends Placeable
 
     function update(entity, dt)
     {
-        local gridPhys = castPhysicsComponent(grid.getComponent(PhysicsComponentType));
+        local gridComp = castGridComponent(grid.getComponent(GridComponentType));
         local intent = castIntentComponent(entity.getComponent(IntentComponentType));
         local mousePos = intent.getMousePos();
 
         if (intent.isIntentActive("up"))
-            gridPhys.setVelocityY(-400);
+            gridComp.setVelocityY(-400);
         if (intent.isIntentActive("down"))
-            gridPhys.setVelocityY(400);
+            gridComp.setVelocityY(400);
         if (intent.isIntentActive("left"))
-            gridPhys.setVelocityX(-200);
+            gridComp.setVelocityX(-200);
         if (intent.isIntentActive("right"))
-            gridPhys.setVelocityX(200);
+            gridComp.setVelocityX(200);
     }
 
     function interact()

@@ -109,10 +109,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 0)
+                player->clearLeftCoords();
             player->mLeftHand = 0;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 0)
+                player->clearRightCoords();
             player->mRightHand = 0;
         }
     }
@@ -120,10 +124,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 1)
+                player->clearLeftCoords();
             player->mLeftHand = 1;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 1)
+                player->clearRightCoords();
             player->mRightHand = 1;
         }
 
@@ -132,10 +140,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 2)
+                player->clearLeftCoords();
             player->mLeftHand = 2;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 2)
+                player->clearRightCoords();
             player->mRightHand = 2;
         }
     }
@@ -143,10 +155,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 3)
+                player->clearLeftCoords();
             player->mLeftHand = 3;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 3)
+                player->clearRightCoords();
             player->mRightHand = 3;
         }
     }
@@ -154,10 +170,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 4)
+                player->clearLeftCoords();
             player->mLeftHand = 4;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 4)
+                player->clearRightCoords();
             player->mRightHand = 4;
         }
     }
@@ -165,10 +185,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 5)
+                player->clearLeftCoords();
             player->mLeftHand = 5;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 5)
+                player->clearRightCoords();
             player->mRightHand = 5;
         }
     }
@@ -176,10 +200,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 6)
+                player->clearLeftCoords();
             player->mLeftHand = 6;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 6)
+                player->clearRightCoords();
             player->mRightHand = 6;
         }
     }
@@ -187,10 +215,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 7)
+                player->clearLeftCoords();
             player->mLeftHand = 7;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 7)
+                player->clearRightCoords();
             player->mRightHand = 7;
         }
     }
@@ -198,11 +230,15 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 8)
+                player->clearLeftCoords();
             player->mLeftHand = 8;
         }
 
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 8)
+                player->clearRightCoords();
             player->mRightHand = 8;
         }
     }
@@ -210,10 +246,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
     {
         if (intent->isIntentActive("useLeft"))
         {
+            if (player->mLeftHand != 9)
+                player->clearLeftCoords();
             player->mLeftHand = 9;
         }
         else if (intent->isIntentActive("useRight"))
         {
+            if (player->mRightHand != 9)
+                player->clearRightCoords();
             player->mRightHand = 9;
         }
     }

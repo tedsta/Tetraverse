@@ -18,11 +18,13 @@ class PlayerComponent : public Component
         void pushLeftCoord(sf::Vector2f coord){mLeftCoords.push(coord);}
         const sf::Vector2f& topLeftCoord(){return mLeftCoords.top();}
         void popLeftCoord(){mLeftCoords.pop();}
+        void clearLeftCoords(){while (!mLeftCoords.empty()) mLeftCoords.pop();}
 
         int getRightCoordsCount(){return mRightCoords.size();}
         void pushRightCoord(sf::Vector2f coord){mRightCoords.push(coord);}
         const sf::Vector2f& topRightCoord(){return mRightCoords.top();}
         void popRightCoord(){mRightCoords.pop();}
+        void clearRightCoords(){while (!mRightCoords.empty()) mRightCoords.pop();}
 
         // Serialization stuff
         void serialize(sf::Packet &packet);

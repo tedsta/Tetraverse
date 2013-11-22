@@ -4,6 +4,7 @@
 #include <Fission/Core/System.h>
 
 class GridSystem;
+class PhysicsComponent;
 
 class PhysicsSystem : public System
 {
@@ -19,6 +20,8 @@ class PhysicsSystem : public System
         void end(const float dt);
 
     private:
+        void calculateLocalTransform(PhysicsComponent* phys);
+
         GridSystem* mGridSys;
 };
 

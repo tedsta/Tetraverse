@@ -85,10 +85,10 @@ int main()
     engine->addSystem(input);
     engine->addSystem(intentSys);
     engine->addSystem(scriptSys);
-    engine->addSystem(gridSys);
-    engine->addSystem(placeableSys);
-    engine->addSystem(physSys);
     engine->addSystem(playerSys);
+    engine->addSystem(placeableSys);
+    engine->addSystem(gridSys);
+    engine->addSystem(physSys);
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -126,13 +126,13 @@ int main()
     GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
-    gridSys->addTick(fluidGridOp2, 0.005f);
+    gridSys->addTick(fluidGridOp2, 0.002f);
     gridSys->addTick(wireGridOp, 0.01f);
 
     Scene *scene = engine->getScene();
 
-    int worldW = 1000;
-    int worldH = 1000;
+    int worldW = 200;
+    int worldH = 200;
     Tile** tiles = newWorld(0, worldW, worldH);
 
     for (int i = 0; i < 1; i++)
@@ -143,7 +143,7 @@ int main()
         scene->addEntity(planet);
         planet->addComponent(pt);
         planet->addComponent(new GridComponent(pt, worldW, worldH, true, tiles, 3));
-        planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
+        //planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
     }
 
     // Spawn player
@@ -169,7 +169,7 @@ int main()
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
     //trans->setOrigin(sf::Vector2f(30, 48));
-    trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(0, 500));
+    trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(1000, 1000));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
@@ -305,6 +305,9 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
     grid.Func("sliceInto", &GridComponent::sliceInto);
+    grid.Func("setVelocity", &GridComponent::setVelocity);
+    grid.Func("setVelocityX", &GridComponent::setVelocityX);
+    grid.Func("setVelocityY", &GridComponent::setVelocityY);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
     Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, int, int>> physics(vm);

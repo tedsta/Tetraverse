@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
 #include <Fission/Core/Component.h>
 
@@ -38,6 +39,7 @@ class PhysicsComponent : public Component
         static Component* factory() {return new PhysicsComponent;}
 
     private:
+        sf::Transformable mRelTransform; // Transform relative to my primary grid
         sf::Vector2f mVelocity;
         int mWidth;
         int mHeight;
