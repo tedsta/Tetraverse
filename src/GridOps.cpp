@@ -66,6 +66,7 @@ const float MaxCompress = 0.05f; //How much excess water a cell can store, compa
 const float MinMass = 0.0001;
 const float MinFlow = 0.01;
 const float MaxSpeed = 1;
+const float MinChange = 0.0001;
 
 //Returns the amount of water that should be in the bottom cell.
 float fluidStableState(float mass)
@@ -239,7 +240,7 @@ void fluidGridOp2(GridComponent* grid, int tick)
         int left = grid->wrapX(x-1);
         int right = grid->wrapX(x+1);
 
-        if (y > 0 && grid->getTile(x, y-1).mFluid != areas[i][UP])
+        if (y > 0 && abs(grid->getTile(x, y-1).mFluid - areas[i][UP]) > MinChange)
             grid->setInteresting(x, y-1, tick);
         if (grid->getTile(left, y).mFluid != areas[i][LEFT])
             grid->setInteresting(left, y, tick);
