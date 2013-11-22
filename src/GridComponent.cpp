@@ -78,6 +78,7 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 	int bot = std::min<int>(centerT.y+ssYT+1, mSizeY-1);
 
     sf::VertexArray verts(sf::Quads, 4);
+    sf::VertexArray outline(sf::LinesStrip, 5);
 	for (int _y = top; _y <= bot; _y++)
 	{
 		for (int _x = left; _x <= right; _x++)
@@ -98,6 +99,21 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 			verts[3] = sf::Vertex(start+sf::Vector2f(tsize, 0),
 				sf::Color(255, 255, 255, 255),
 				sf::Vector2f(tsize, 0));
+			outline[0] = sf::Vertex(start,
+				sf::Color(255, 255, 255, 255),
+				sf::Vector2f());
+			outline[1] = sf::Vertex(start+sf::Vector2f(0, tsize),
+				sf::Color(255, 255, 255, 255),
+				sf::Vector2f(0, tsize));
+			outline[2] = sf::Vertex(start+sf::Vector2f(tsize, tsize),
+				sf::Color(255, 255, 255, 255),
+				sf::Vector2f(tsize, tsize));
+			outline[3] = sf::Vertex(start+sf::Vector2f(tsize, 0),
+				sf::Color(255, 255, 255, 255),
+				sf::Vector2f(tsize, 0));
+            outline[3] = sf::Vertex(start,
+				sf::Color(255, 255, 255, 255),
+				sf::Vector2f());
 
             if (mTiles[y][x].mFluid > 0)
             {
@@ -202,6 +218,27 @@ void GridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 					rt.Render(verts[:], sf::Quads, states)
 				}
 			}*/
+
+
+			for(int j = 0; j < mCTiles.size();j++){
+                for (int i = 0; i < getInterestingTiles(j).size(); i++)
+                    {
+                        int u = getInterestingTiles(j)[i].x;
+                        int v = getInterestingTiles(j)[i].y;
+                        if (u == x && v == y)
+                        {
+                            verts.setPrimitiveType(sf::LinesStrip);
+                            states.texture = NULL;
+                            outline[0].color = sf::Color(255, 0, 0, 255);
+                            outline[1].color = sf::Color(255, 0, 0, 255);
+                            outline[2].color = sf::Color(255, 0, 0, 255);
+                            outline[3].color = sf::Color(255, 0, 0, 255);
+                            outline[4].color = sf::Color(255, 0, 0, 255);
+                            target.draw(verts, states);
+                             verts.setPrimitiveType(sf::Quads);
+                        }
+                }
+			}
 		}
 	}
 }
