@@ -6,7 +6,7 @@
 
 #include "PlaceableComponent.h"
 
-GridSystem::GridSystem(EventManager *eventManager) : System(eventManager, GridComponent::Type)
+GridSystem::GridSystem(EventManager *eventManager, float lockStep) : System(eventManager, lockStep, GridComponent::Type)
 {
     //ctor
 }

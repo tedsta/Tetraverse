@@ -14,8 +14,8 @@
 
 #include <iostream>
 
-PlayerSystem::PlayerSystem(EventManager *eventManager, RenderSystem* rndSys) :
-    System(eventManager, TransformComponent::Type|PlayerComponent::Type|PhysicsComponent::Type|IntentComponent::Type),
+PlayerSystem::PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, float lockStep) :
+    System(eventManager, lockStep, TransformComponent::Type|PlayerComponent::Type|PhysicsComponent::Type|IntentComponent::Type),
     mRndSys(rndSys)
 {
     //ctor

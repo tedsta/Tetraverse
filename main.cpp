@@ -74,15 +74,15 @@ int main()
 
     Connection* conn = new Connection(engine->getEventManager());
 
-    RenderSystem *render = new RenderSystem(engine->getEventManager(), ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
+    RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
                                             GridComponent::Type|SkeletonComponent::Type);
-    InputSystem *input = new InputSystem(engine->getEventManager(), &render->getWindow());
-    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), conn);
-    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
-    GridSystem *gridSys = new GridSystem(engine->getEventManager());
-    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager());
-    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager());
-    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render);
+    InputSystem *input = new InputSystem(engine->getEventManager(), 0.016f, &render->getWindow());
+    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 0.016f, conn);
+    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 0.016f, engine);
+    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 0.016f);
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 0.016f);
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 0.016f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 0.016f);
 
     engine->addSystem(render);
     engine->addSystem(input);
@@ -201,8 +201,6 @@ int main()
 
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
 
-    float lockStep = 0.016f;
-    float lockAccum = 0;
     float accum = 0;
     int frames = 0;
 
@@ -213,14 +211,7 @@ int main()
 
         float dt = clock.getElapsedTime().asSeconds();
         clock.restart();
-        lockAccum += dt;
         accum += dt;
-
-        if (lockAccum >= lockStep)
-        {
-            engine->update(lockStep);
-            lockAccum = 0;
-        }
 
         if (accum >= 1.f)
         {
@@ -233,6 +224,8 @@ int main()
             frames = 0;
         }
         frames++;
+
+        engine->update(dt);
     }
 
     delete engine;

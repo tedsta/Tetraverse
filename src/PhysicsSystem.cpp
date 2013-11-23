@@ -7,8 +7,8 @@
 #include "GridComponent.h"
 #include "PhysicsComponent.h"
 
-PhysicsSystem::PhysicsSystem(EventManager *eventManager) :
-    System(eventManager, TransformComponent::Type|PhysicsComponent::Type, 0)
+PhysicsSystem::PhysicsSystem(EventManager *eventManager, float lockStep) :
+    System(eventManager, lockStep, TransformComponent::Type|PhysicsComponent::Type, 0)
 {
     world = new phys::PhysicsWorld(0.016f, 10);
 }

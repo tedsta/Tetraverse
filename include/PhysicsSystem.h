@@ -11,7 +11,7 @@ class PhysicsComponent;
 class PhysicsSystem : public System
 {
     public:
-        PhysicsSystem(EventManager *eventManager);
+        PhysicsSystem(EventManager *eventManager, float lockStep);
         virtual ~PhysicsSystem();
 
         phys::PhysicsWorld* getWorld(){return world;}

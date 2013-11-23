@@ -8,7 +8,7 @@ class RenderSystem;
 class PlayerSystem : public System
 {
     public:
-        PlayerSystem(EventManager *eventManager, RenderSystem* rndSys);
+        PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, float lockStep);
         virtual ~PlayerSystem();
 
     protected:

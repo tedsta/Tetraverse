@@ -6,7 +6,7 @@
 class PlaceableSystem : public System
 {
     public:
-        PlaceableSystem(EventManager *eventManager);
+        PlaceableSystem(EventManager *eventManager, float lockStep);
         virtual ~PlaceableSystem();
     protected:
         void begin(const float dt);

@@ -15,7 +15,7 @@ class System : public IEventListener
     friend class Scene;
 
     public:
-        System(EventManager *eventManager, TypeBits typeBits, TypeBits optBits = 0);
+        System(EventManager *eventManager, float _lockStep, TypeBits typeBits, TypeBits optBits = 0);
         virtual ~System();
 
         /// \brief Event listener event handling callback.
@@ -58,6 +58,10 @@ class System : public IEventListener
 
         /// The active entities this system should process.
         std::set<Entity*> mActiveEntities;
+
+        // Used by engine for lockstep
+        float lockStep;
+        float dtAccumulator;
 };
 
 #endif // SYSTEM_H

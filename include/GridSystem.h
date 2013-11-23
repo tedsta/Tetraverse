@@ -52,7 +52,7 @@ struct Tick
 class GridSystem : public System
 {
     public:
-        GridSystem(EventManager *eventManager);
+        GridSystem(EventManager *eventManager, float lockStep);
         virtual ~GridSystem();
 
         void addTick(GridOp op, float delay){mTicks.push_back(Tick(op, delay));}

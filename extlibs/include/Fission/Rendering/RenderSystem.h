@@ -11,7 +11,7 @@ class DebugDisplay;
 class RenderSystem : public System
 {
     public:
-        RenderSystem(EventManager *eventManager, sf::Font* debugFont = NULL, TypeBits renderableTypeBits = 0);
+        RenderSystem(EventManager *eventManager, float lockStep, sf::Font* debugFont = NULL, TypeBits renderableTypeBits = 0);
         virtual ~RenderSystem();
 
         // Setters

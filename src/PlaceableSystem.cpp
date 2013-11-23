@@ -4,7 +4,7 @@
 
 #include "PlaceableComponent.h"
 
-PlaceableSystem::PlaceableSystem(EventManager *eventManager) : System(eventManager, PlaceableComponent::Type)
+PlaceableSystem::PlaceableSystem(EventManager *eventManager, float lockStep) : System(eventManager, lockStep, PlaceableComponent::Type)
 {
     //ctor
 }
