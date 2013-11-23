@@ -144,7 +144,7 @@ namespace phys
       m->normal = -m->normal;
     }
 
-    float FindAxisLeastPenetration( sf::Uint32 *faceIndex, RigidBody *a, RigidBody *b )
+    float findAxisLeastPenetration( sf::Uint32 *faceIndex, RigidBody *a, RigidBody *b )
     {
         PolygonShape *A = reinterpret_cast<PolygonShape*>(a->getShape());
         PolygonShape *B = reinterpret_cast<PolygonShape*>(b->getShape());
@@ -187,7 +187,7 @@ namespace phys
         return bestDistance;
     }
 
-    void FindIncidentFace( sf::Vector2f *v, RigidBody* Ref, RigidBody* Inc, sf::Uint32 referenceIndex )
+    void findIncidentFace( sf::Vector2f *v, RigidBody* Ref, RigidBody* Inc, sf::Uint32 referenceIndex )
     {
         PolygonShape *RefPoly = reinterpret_cast<PolygonShape*>(Ref->getShape());
         PolygonShape *IncPoly = reinterpret_cast<PolygonShape*>(Inc->getShape());
@@ -217,7 +217,7 @@ namespace phys
         v[1] = IncPoly->getU() * IncPoly->getVertices()[incidentFace] + Inc->getPosition();
     }
 
-    int Clip( sf::Vector2f n, float c, sf::Vector2f *face )
+    int clip( sf::Vector2f n, float c, sf::Vector2f *face )
     {
         sf::Uint32 sp = 0;
         sf::Vector2f out[2] = {
@@ -260,13 +260,13 @@ namespace phys
 
         // Check for a separating axis with A's face planes
         sf::Uint32 faceA;
-        float penetrationA = FindAxisLeastPenetration( &faceA, a, b );
+        float penetrationA = findAxisLeastPenetration( &faceA, a, b );
         if(penetrationA >= 0.0f)
             return;
 
         // Check for a separating axis with B's face planes
         sf::Uint32 faceB;
-        float penetrationB = FindAxisLeastPenetration( &faceB, b, a );
+        float penetrationB = findAxisLeastPenetration( &faceB, b, a );
         if(penetrationB >= 0.0f)
             return;
 
@@ -301,7 +301,7 @@ namespace phys
 
         // World space incident face
         sf::Vector2f incidentFace[2];
-        FindIncidentFace( incidentFace, Ref, Inc, referenceIndex );
+        findIncidentFace( incidentFace, Ref, Inc, referenceIndex );
 
         //        y
         //        ^  ->n       ^
@@ -339,10 +339,10 @@ namespace phys
         float posSide =  dot( sidePlaneNormal, v2 );
 
         // Clip incident face to reference face side planes
-        if(Clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
+        if(clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
             return; // Due to floating point error, possible to not have required points
 
-        if(Clip(  sidePlaneNormal, posSide, incidentFace ) < 2)
+        if(clip(  sidePlaneNormal, posSide, incidentFace ) < 2)
             return; // Due to floating point error, possible to not have required points
 
         // Flip

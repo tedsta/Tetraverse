@@ -1,18 +1,23 @@
 #include "PhysicsComponent.h"
 
+#include "phys/Shape.h"
+
+#include "PhysicsSystem.h"
 #include "GridComponent.h"
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(int width, int height) : mGravityDir(DOWN), mPrimaryGrid(NULL),
-    mWidth(width), mHeight(height)
+PhysicsComponent::PhysicsComponent(PhysicsSystem* physSys, int width, int height) : grid(NULL)
 {
-    //ctor
+    phys::PolygonShape* shape = new phys::PolygonShape();
+    shape->setBox(width/2, height/2);
+    body = new phys::RigidBody(shape, 1.f);
+    physSys->getWorld()->addRigidBody(body);
 }
 
 PhysicsComponent::~PhysicsComponent()
 {
-    //dtor
+    delete body;
 }
 
 void PhysicsComponent::serialize(sf::Packet &packet)

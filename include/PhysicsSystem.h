@@ -3,14 +3,18 @@
 
 #include <Fission/Core/System.h>
 
+#include "phys/PhysicsWorld.h"
+
 class GridSystem;
 class PhysicsComponent;
 
 class PhysicsSystem : public System
 {
     public:
-        PhysicsSystem(EventManager *eventManager, GridSystem* gridSys);
+        PhysicsSystem(EventManager *eventManager);
         virtual ~PhysicsSystem();
+
+        phys::PhysicsWorld* getWorld(){return world;}
 
     protected:
         void begin(const float dt);
@@ -20,9 +24,7 @@ class PhysicsSystem : public System
         void end(const float dt);
 
     private:
-        void calculateLocalTransform(PhysicsComponent* phys);
-
-        GridSystem* mGridSys;
+        phys::PhysicsWorld* world;
 };
 
 #endif // PHYSICSSYSTEM_H

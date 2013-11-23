@@ -8,7 +8,6 @@ namespace phys
     {
         angularVelocity = 0;
         torque = 0;
-        rotation = 0;
         staticFriction = 0.5f;
         dynamicFriction = 0.3f;
         restitution = 0.2f;

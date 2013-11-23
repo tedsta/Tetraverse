@@ -30,6 +30,9 @@
 #include <Fission/Script/ScriptSystem.h>
 #include <Fission/Script/ScriptComponent.h>
 
+#include "phys/PhysicsWorld.h"
+#include "phys/RigidBody.h"
+#include "phys/Shape.h"
 
 #include "GridComponent.h"
 #include "PhysicsComponent.h"
@@ -78,7 +81,7 @@ int main()
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), engine);
     GridSystem *gridSys = new GridSystem(engine->getEventManager());
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager());
-    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), gridSys);
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager());
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render);
 
     engine->addSystem(render);
@@ -153,7 +156,7 @@ int main()
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(30, 60));
+    player->addComponent(new PhysicsComponent(physSys, 30, 60));
     player->addComponent(new PlayerComponent);
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
@@ -198,6 +201,8 @@ int main()
 
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
 
+    float lockStep = 0.016f;
+    float lockAccum = 0;
     float accum = 0;
     int frames = 0;
 
@@ -208,7 +213,14 @@ int main()
 
         float dt = clock.getElapsedTime().asSeconds();
         clock.restart();
+        lockAccum += dt;
         accum += dt;
+
+        if (lockAccum >= lockStep)
+        {
+            engine->update(lockStep);
+            lockAccum = 0;
+        }
 
         if (accum >= 1.f)
         {
@@ -217,14 +229,10 @@ int main()
             fps << frames;
             fps >> sFps;
             render->getDebugDisplay()->setMessage("FPS", sFps);
-            //std::cout << "FPS: " << frames << std::endl;
             accum = 0;
             frames = 0;
         }
-
         frames++;
-
-        engine->update(dt);
     }
 
     delete engine;
@@ -310,10 +318,12 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("setVelocityY", &GridComponent::setVelocityY);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
-    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, int, int>> physics(vm);
-    physics.Func("setVelocity", &PhysicsComponent::setVelocity);
-    physics.Func("setVelocityX", &PhysicsComponent::setVelocityX);
-    physics.Func("setVelocityY", &PhysicsComponent::setVelocityY);
+    Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, float>> rigidbody(vm);
+    rigidbody.Func("setVelocity", &phys::RigidBody::setVelocity);
+    rigidbody.Func("getVelocity", &phys::RigidBody::getVelocity);
+    Sqrat::RootTable(vm).Bind("RigidBody", rigidbody);
+
+    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, PhysicsSystem*, int, int>> physics(vm);
     Sqrat::RootTable(vm).Bind("PhysicsComponent", physics);
 
     Sqrat::DerivedClass<PlayerComponent, Component, sqext::ConstAlloc<PlayerComponent>> player(vm);

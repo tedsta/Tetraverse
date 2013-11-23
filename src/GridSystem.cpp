@@ -34,54 +34,6 @@ void GridSystem::processEntity(Entity *entity, const float dt)
 		mNextGridID++;
 	}
 
-	// Move the grid
-    if (grid->mVelocity.x != 0)
-    {
-        trans->move(sf::Vector2f(grid->mVelocity.x, 0)*dt);
-        for (auto otherEnt : getActiveEntities())
-        {
-            if (otherEnt == entity)
-                continue;
-
-            auto otherGrid = static_cast<GridComponent*>(otherEnt->getComponent(GridComponent::Type));
-            if (grid->mSizeX*grid->mSizeY > otherGrid->mSizeX*otherGrid->mSizeY)
-                continue;
-
-            int hdir = NO_DIR;
-            if (grid->mVelocity.x-otherGrid->mVelocity.x > 0)
-                hdir = RIGHT;
-            else if (grid->mVelocity.x-otherGrid->mVelocity.x < 0)
-                hdir = LEFT;
-
-            if (hdir != NO_DIR)
-                otherGrid->fixGridCollision(grid, hdir);
-        }
-    }
-
-    if (grid->mVelocity.y != 0)
-    {
-        trans->move(sf::Vector2f(0, grid->mVelocity.y)*dt);
-        for (auto otherEnt : getActiveEntities())
-        {
-            if (otherEnt == entity)
-                continue;
-
-            auto otherGrid = static_cast<GridComponent*>(otherEnt->getComponent(GridComponent::Type));
-            if (grid->mSizeX*grid->mSizeY > otherGrid->mSizeX*otherGrid->mSizeY)
-                continue;
-
-            int vdir = NO_DIR;
-            if (grid->mVelocity.y-otherGrid->mVelocity.y > 0)
-                vdir = DOWN;
-            else if (grid->mVelocity.y-otherGrid->mVelocity.y < 0)
-                vdir = UP;
-
-            if (vdir != NO_DIR)
-                otherGrid->fixGridCollision(grid, vdir);
-        }
-    }
-
-
 	// Update all the placeable positions
 	for (auto placeableEnt : grid->mPlaceables)
     {

@@ -57,28 +57,28 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
         runRight = true;
     }
 
-    if (runLeft && phys->getVelocity().x > -250)
+    if (runLeft && phys->getBody()->getVelocity().x > -250)
     {
-        phys->setVelocityX(-100);
+        phys->getBody()->setVelocity(sf::Vector2f(-100, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;
     }
-    else if (runRight && phys->getVelocity().x < 2500)
+    else if (runRight && phys->getBody()->getVelocity().x < 2500)
     {
-        phys->setVelocityX(100);
+        phys->getBody()->setVelocity(sf::Vector2f(100, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;
     }
     else
-        phys->setVelocityX(0);
+        phys->getBody()->setVelocity(sf::Vector2f(0, phys->getBody()->getVelocity().y));
 
 	if (!player->mStupidMode)
     {
-		if (intent->isIntentActive("up") && phys->getVelocity().y > -250)
-			phys->setVelocityY(-175);
+		if (intent->isIntentActive("up") && phys->getBody()->getVelocity().y > -250)
+			phys->getBody()->setVelocity(sf::Vector2f(phys->getBody()->getVelocity().x, -175));
 	}
 	else
     {
-		if ((phys->getDirCollision(LEFT) || phys->getDirCollision(RIGHT)) && phys->getVelocity().y > -250)
-			phys->setVelocityY(-175);
+		//if ((phys->getDirCollision(LEFT) || phys->getDirCollision(RIGHT)) && phys->getVelocity().y > -250)
+			//phys->setVelocityY(-175);
 	}
 
 	if (mRndSys)
@@ -257,10 +257,10 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
             player->mRightHand = 9;
         }
     }
-    else if (phys->getPrimaryGrid()) // We're not setting any hands, so lets use them
+    else if (phys->getGrid()) // We're not setting any hands, so lets use them
     {
-		auto pt = reinterpret_cast<TransformComponent*>(phys->getPrimaryGrid()->getComponent(TransformComponent::Type));
-		auto grid = reinterpret_cast<GridComponent*>(phys->getPrimaryGrid()->getComponent(GridComponent::Type));
+		auto pt = reinterpret_cast<TransformComponent*>(phys->getGrid()->getComponent(TransformComponent::Type));
+		auto grid = reinterpret_cast<GridComponent*>(phys->getGrid()->getComponent(GridComponent::Type));
 
         if (player->mLeftHandState == BtnState::PRESSED)
             player->mLeftHandState = BtnState::DOWN;
@@ -292,7 +292,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
             {
                 player->pushLeftCoord(sf::Vector2f(pos.x, pos.y));
                 if (player->getLeftCoordsCount() == inventory->getItemAt(player->mLeftHand)->getCoordCount())
-                    inventory->useItem(player->mLeftHand, phys->getPrimaryGrid(), player->mLeftCoords);
+                    inventory->useItem(player->mLeftHand, phys->getGrid(), player->mLeftCoords);
             }
 		}
 		if (inventory->getItemAt(player->mRightHand) && player->mRightHandState == inventory->getItemAt(player->mRightHand)->getUseState())
@@ -304,7 +304,7 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
             {
                 player->pushRightCoord(sf::Vector2f(pos.x, pos.y));
                 if (player->getRightCoordsCount() == inventory->getItemAt(player->mRightHand)->getCoordCount())
-                    inventory->useItem(player->mRightHand, phys->getPrimaryGrid(), player->mRightCoords);
+                    inventory->useItem(player->mRightHand, phys->getGrid(), player->mRightCoords);
             }
 		}
 		if (intent->isIntentActive("interact"))

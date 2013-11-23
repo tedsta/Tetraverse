@@ -69,11 +69,6 @@ class GridComponent : public RenderComponent
         void render(sf::RenderTarget& target, sf::RenderStates states);
 
         sf::Vector2f getTilePos(sf::Vector2f pos);
-        bool checkCollision(sf::Transformable* trans, sf::Vector2f dim, int dir, float& fix);
-        bool dirCollision(int left, int top, int right, int bot, int dir, int& fix);
-        void fixGridCollision(GridComponent* other, int dir);
-        bool contains(sf::Transformable* trans, sf::Vector2f dim);
-        bool intersects(sf::Transformable* trans, sf::Vector2f dim);
 
         void sliceInto(Entity* newGrid, int left, int top, int right, int bot);
 

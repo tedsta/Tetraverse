@@ -3,7 +3,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <Fission/Core/Math.h>
+#include "PhysMath.h"
 
 namespace phys
 {
@@ -29,6 +29,11 @@ namespace phys
             void setStatic()
             {
                 mass = inverseMass = 0.f;
+                inertia = inverseInertia = 0.f;
+            }
+
+            void setFixedRotation()
+            {
                 inertia = inverseInertia = 0.f;
             }
 
