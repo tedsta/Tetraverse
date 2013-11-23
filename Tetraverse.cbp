@@ -61,18 +61,6 @@
 			<Add directory="extlibs/src/spine-c/include" />
 			<Add directory="extlibs/src/spine-sfml/src" />
 		</Compiler>
-		<Linker>
-			<Add library="extlibs\lib\libFission.a" />
-			<Add library="extlibs\lib\libsfml-audio.a" />
-			<Add library="extlibs\lib\libsfml-network.a" />
-			<Add library="extlibs\lib\libsfml-graphics.a" />
-			<Add library="extlibs\lib\libsfml-window.a" />
-			<Add library="extlibs\lib\libsfml-system.a" />
-			<Add library="extlibs\lib\libBox2D.a" />
-			<Add library="extlibs\lib\libsquirrel.a" />
-			<Add library="extlibs\lib\libsqstdlib.a" />
-			<Add library="extlibs\lib\libenet.a" />
-		</Linker>
 		<Unit filename="extlibs/include/Sqrat/sqext.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -157,6 +145,14 @@
 		<Unit filename="include/PlayerSystem.h" />
 		<Unit filename="include/SkeletonComponent.h" />
 		<Unit filename="include/WireComponent.h" />
+		<Unit filename="include/phys/Collision.h" />
+		<Unit filename="include/phys/CollisionDispatcher.h" />
+		<Unit filename="include/phys/Manifold.h" />
+		<Unit filename="include/phys/Mat2.h" />
+		<Unit filename="include/phys/PhysMath.h" />
+		<Unit filename="include/phys/PhysicsWorld.h" />
+		<Unit filename="include/phys/RigidBody.h" />
+		<Unit filename="include/phys/Shape.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
@@ -173,6 +169,13 @@
 		<Unit filename="src/PlayerSystem.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />
 		<Unit filename="src/WireComponent.cpp" />
+		<Unit filename="src/phys/Collision.cpp" />
+		<Unit filename="src/phys/CollisionDispatcher.cpp" />
+		<Unit filename="src/phys/Manifold.cpp" />
+		<Unit filename="src/phys/Mat2.cpp" />
+		<Unit filename="src/phys/PhysicsWorld.cpp" />
+		<Unit filename="src/phys/RigidBody.cpp" />
+		<Unit filename="src/phys/Shape.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -1,8 +1,3 @@
-/*
-Theodore DeRego
-Copyright 2012
-*/
-
 #ifndef MATH_H_INCLUDED
 #define MATH_H_INCLUDED
 
