@@ -4,6 +4,6 @@
 #include "phys/Manifold.h"
 #include "phys/RigidBody.h"
 
-void gridToPolygon( phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b );
+void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b);
 
 #endif // COLLISION_H

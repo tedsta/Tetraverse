@@ -11,6 +11,7 @@ class SkeletonComponent : public RenderComponent
         virtual ~SkeletonComponent();
 
         void render(sf::RenderTarget& target, sf::RenderStates states);
+        void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 
         spAnimation* findAnimation(const std::string& name);
         void setAnimation(spAnimation* animation, bool loop);

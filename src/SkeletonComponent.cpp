@@ -42,6 +42,11 @@ void SkeletonComponent::render(sf::RenderTarget& target, sf::RenderStates states
     mSkeleton->draw(target, states);
 }
 
+void SkeletonComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates states)
+{
+    //mSkeleton->draw(target, states);
+}
+
 spAnimation* SkeletonComponent::findAnimation(const std::string& name)
 {
     return spSkeletonData_findAnimation(mSkeleton->skeleton->data, name.c_str());

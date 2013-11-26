@@ -41,11 +41,13 @@
 #include "PlaceableComponent.h"
 #include "InventoryComponent.h"
 #include "ItemComponent.h"
+#include "LightComponent.h"
 
 #include "GridSystem.h"
 #include "PlaceableSystem.h"
 #include "PhysicsSystem.h"
 #include "PlayerSystem.h"
+#include "LightSystem.h"
 
 #include "GridOps.h"
 
@@ -71,6 +73,7 @@ int main()
     PlaceableComponent::Type = ComponentFactories::add(PlaceableComponent::factory);
     InventoryComponent::Type = ComponentFactories::add(InventoryComponent::factory);
     ItemComponent::Type = ComponentFactories::add(ItemComponent::factory);
+    LightComponent::Type = ComponentFactories::add(LightComponent::factory);
 
     Connection* conn = new Connection(engine->getEventManager());
 
@@ -83,6 +86,7 @@ int main()
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 0.016f);
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 0.016f);
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 0.016f);
+    LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
     engine->addSystem(render);
     engine->addSystem(input);
@@ -92,6 +96,7 @@ int main()
     engine->addSystem(placeableSys);
     engine->addSystem(gridSys);
     engine->addSystem(physSys);
+    engine->addSystem(lightSys);
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -158,6 +163,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(physSys, 30, 60));
     player->addComponent(new PlayerComponent);
+    player->addComponent(new LightComponent(200.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 

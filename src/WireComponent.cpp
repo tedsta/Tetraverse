@@ -25,6 +25,8 @@ WireComponent::WireComponent()
 
 void WireComponent::render(sf::RenderTarget& target, sf::RenderStates states){}
 
+void WireComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates states){}
+
 void WireComponent::update(){
     int total = wire->ground+ground;
     if(wire = NULL){

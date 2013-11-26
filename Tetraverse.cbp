@@ -138,6 +138,8 @@
 		<Unit filename="include/GridSystem.h" />
 		<Unit filename="include/InventoryComponent.h" />
 		<Unit filename="include/ItemComponent.h" />
+		<Unit filename="include/LightComponent.h" />
+		<Unit filename="include/LightSystem.h" />
 		<Unit filename="include/PhysicsComponent.h" />
 		<Unit filename="include/PhysicsSystem.h" />
 		<Unit filename="include/PlaceableComponent.h" />
@@ -163,6 +165,8 @@
 		<Unit filename="src/GridSystem.cpp" />
 		<Unit filename="src/InventoryComponent.cpp" />
 		<Unit filename="src/ItemComponent.cpp" />
+		<Unit filename="src/LightComponent.cpp" />
+		<Unit filename="src/LightSystem.cpp" />
 		<Unit filename="src/PhysicsComponent.cpp" />
 		<Unit filename="src/PhysicsSystem.cpp" />
 		<Unit filename="src/PlaceableComponent.cpp" />

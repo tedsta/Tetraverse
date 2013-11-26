@@ -10,6 +10,7 @@ class WireComponent : public RenderComponent
         WireComponent();
 
         void render(sf::RenderTarget& target, sf::RenderStates states);
+        void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

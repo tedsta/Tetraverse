@@ -67,6 +67,7 @@ class GridComponent : public RenderComponent
 
         // Renderable components gotto render...
         void render(sf::RenderTarget& target, sf::RenderStates states);
+        void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 
         sf::Vector2f getTilePos(sf::Vector2f pos);
 
