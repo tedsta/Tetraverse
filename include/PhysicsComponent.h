@@ -24,6 +24,9 @@ class PhysicsComponent : public Component
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
 
+        // Setters
+        void setGrid(Entity* g){grid=g;}
+
         // Getters
         phys::RigidBody* getBody(){return body;}
         Entity* getGrid(){return grid;}

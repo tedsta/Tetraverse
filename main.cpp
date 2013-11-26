@@ -143,16 +143,13 @@ int main()
     int worldH = 200;
     Tile** tiles = newWorld(0, worldW, worldH);
 
-    for (int i = 0; i < 1; i++)
-    {
-        TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
+    TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
 
-        Entity *planet = new Entity(engine->getEventManager());
-        scene->addEntity(planet);
-        planet->addComponent(pt);
-        planet->addComponent(new GridComponent(pt, worldW, worldH, true, tiles, 3));
-        //planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
-    }
+    Entity *planet = new Entity(engine->getEventManager());
+    scene->addEntity(planet);
+    planet->addComponent(pt);
+    planet->addComponent(new GridComponent(pt, worldW, worldH, true, tiles, 3));
+    //planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
 
     // Spawn player
     Entity *player = new Entity(engine->getEventManager());
@@ -166,6 +163,8 @@ int main()
     player->addComponent(new LightComponent(200.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
+
+    reinterpret_cast<PhysicsComponent*>(player->getComponent(PhysicsComponent::Type))->setGrid(planet);
 
     inventory->addItem(0, 1, 1);
     inventory->addItem(1, 0, 999);

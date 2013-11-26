@@ -5,7 +5,7 @@ TypeBits LightComponent::Type;
 LightComponent::LightComponent(float _radius) : radius(_radius)
 {
     // Set up the light mask
-    lightMask.create(radius*2/4 + 50, radius*2/4 + 50);
+    lightMask.create(radius*2/4, radius*2/4);
     sf::View view = lightMask.getDefaultView();
     view.zoom(4.f);
     lightMask.setView(view);

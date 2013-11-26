@@ -24,7 +24,7 @@ LightSystem::~LightSystem()
 
 void LightSystem::begin(const float dt)
 {
-    lightMask.clear(sf::Color::Transparent);
+    lightMask.clear(sf::Color::Black);
     lightMask.setView(rndSys->getView());
 }
 
@@ -57,7 +57,7 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     light->lightMask.draw(light->lightMaskClear);
     light->lightMask.display();
 
-    light->shadowMap.clear(sf::Color::Transparent);
+    light->shadowMap.clear(sf::Color::Black);
     light->lightMaskSprite.setOrigin(0, 0);
     shadowMapGen.setParameter("u_texture", sf::Shader::CurrentTexture);
     shadowMapGen.setParameter("resolution", light->lightMask.getSize().x, light->lightMask.getSize().y);
@@ -80,6 +80,7 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     lightMask.draw(light->lightMaskSprite, states);*/
 
     states = sf::RenderStates::Default;
+    states.blendMode = sf::BlendMode::BlendNone;
     states.transform = transform->getTransform();
     shadowRnd.setParameter("u_texture", sf::Shader::CurrentTexture);
     shadowRnd.setParameter("resolution", light->lightMask.getSize().x, light->lightMask.getSize().y);
