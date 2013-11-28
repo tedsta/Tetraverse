@@ -5,6 +5,9 @@
 #include <SFML/System/Vector2.hpp>
 #include <Fission/Rendering/RenderComponent.h>
 
+#include "phys/Manifold.h"
+#include "phys/RigidBody.h"
+
 #define MAX_COMPS 4
 #define TILE_SIZE 16
 
@@ -56,6 +59,9 @@ class Entity;
 class GridComponent : public RenderComponent
 {
     friend class GridSystem;
+    friend class GridShape;
+
+    friend void gridToPolygon(phys::Manifold* m, phys::RigidBody* a, phys::RigidBody* b);
 
     public:
         GridComponent(sf::Transformable* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);

@@ -80,7 +80,7 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     lightMask.draw(light->lightMaskSprite, states);*/
 
     states = sf::RenderStates::Default;
-    states.blendMode = sf::BlendMode::BlendNone;
+    states.blendMode = sf::BlendMode::BlendMultiply;
     states.transform = transform->getTransform();
     shadowRnd.setParameter("u_texture", sf::Shader::CurrentTexture);
     shadowRnd.setParameter("resolution", light->lightMask.getSize().x, light->lightMask.getSize().y);

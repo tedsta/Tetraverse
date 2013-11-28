@@ -19,19 +19,21 @@ namespace phys
             {
                 Polygon,
                 Circle,
-                Count
+                Custom
             };
 
-            Shape();
+            Shape() : u(0.f) {}
             virtual ~Shape();
 
             virtual void computeMass(RigidBody* body, float density) = 0;
-            virtual void setRotation(float rot) = 0;
+            virtual void setRotation(float rot){u.set(rot);}
             virtual int getType() const = 0;
             const sf::FloatRect& getLocalBounds(){return boundingBox;}
+            const Mat2& getU(){return u;}
 
         protected:
             sf::FloatRect boundingBox; // local bounding box
+            Mat2 u;
     };
 
     class CircleShape : public Shape
@@ -53,11 +55,9 @@ namespace phys
     class PolygonShape : public Shape
     {
         public:
-            PolygonShape() : u(0.f) {}
+            PolygonShape(){}
 
             void computeMass(RigidBody* body, float density);
-
-            void setRotation(float rot);
 
             void setBox(float hw, float hh);
             void set(sf::Vector2f* vertices, sf::Uint32 count);
@@ -66,12 +66,12 @@ namespace phys
             int getType() const {return Polygon;}
             const std::vector<sf::Vector2f>& getVertices(){return vertices;}
             const std::vector<sf::Vector2f>& getNormals(){return normals;}
-            const Mat2& getU(){return u;}
+
+            std::vector<sf::Vector2f> transformedVertices;
 
         private:
             std::vector<sf::Vector2f> vertices;
             std::vector<sf::Vector2f> normals;
-            Mat2 u;
     };
 }
 

@@ -43,7 +43,11 @@ function door(gridEnt, coords)
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("robot.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(gridEnt, "Door", x, y, 4, 6));
+        entity.addComponentSq(LightComponent(200));
         grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+
         return true;
     }
 
@@ -73,6 +77,7 @@ function thruster(gridEnt, coords)
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/thruster.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
+
         return true;
     }
 

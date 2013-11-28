@@ -13,8 +13,8 @@ class RenderComponent : public Component
         RenderComponent() : lit(true) {}
         virtual ~RenderComponent() {}
 
-        virtual void render(sf::RenderTarget& target, sf::RenderStates states) = 0;
-        virtual void renderShadow(sf::RenderTarget& target, sf::RenderStates states) = 0;
+        virtual void render(sf::RenderTarget& target, sf::RenderStates states){}
+        virtual void renderShadow(sf::RenderTarget& target, sf::RenderStates states){}
 
         void setLit(bool _lit){lit=_lit;}
 

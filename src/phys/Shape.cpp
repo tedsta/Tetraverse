@@ -7,11 +7,6 @@
 
 namespace phys
 {
-    Shape::Shape()
-    {
-        //ctor
-    }
-
     Shape::~Shape()
     {
         //dtor
@@ -81,15 +76,11 @@ namespace phys
         body->inverseInertia = body->inertia ? 1.0f / body->inertia : 0.0f;
     }
 
-    void PolygonShape::setRotation(float rot)
-    {
-        u.set(rot);
-    }
-
      // Half width and half height
     void PolygonShape::setBox(float hw, float hh)
     {
         vertices.resize(4);
+        transformedVertices.resize(4);
         normals.resize(4);
         vertices[0] = sf::Vector2f(-hw, -hh);
         vertices[1] = sf::Vector2f( hw, -hh);
@@ -168,6 +159,7 @@ namespace phys
             if (nextHullIndex == rightMost)
             {
                 vertices.resize(outCount);
+                transformedVertices.resize(outCount);
                 normals.resize(outCount);
                 break;
             }

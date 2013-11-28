@@ -19,6 +19,7 @@ class LightComponent : public Component
         };
 
         LightComponent(float _radius = 0.f);
+        LightComponent(const LightComponent& other){}
         virtual ~LightComponent();
 
         static TypeBits Type;
