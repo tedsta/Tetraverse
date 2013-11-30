@@ -68,6 +68,7 @@ namespace phys
             const std::vector<sf::Vector2f>& getNormals(){return normals;}
 
             std::vector<sf::Vector2f> transformedVertices;
+            std::vector<sf::Vector2f> transformedNormals;
 
         private:
             std::vector<sf::Vector2f> vertices;

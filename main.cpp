@@ -96,7 +96,7 @@ int main()
     engine->addSystem(placeableSys);
     engine->addSystem(gridSys);
     engine->addSystem(physSys);
-    engine->addSystem(lightSys);
+    //engine->addSystem(lightSys);
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -144,12 +144,13 @@ int main()
     Tile** tiles = newWorld(0, worldW, worldH);
 
     TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
+    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
 
     Entity *planet = new Entity(engine->getEventManager());
     scene->addEntity(planet);
     planet->addComponent(pt);
-    planet->addComponent(new GridComponent(pt, worldW, worldH, true, tiles, 3));
-    //planet->addComponent(new PhysicsComponent(worldW*TILE_SIZE, worldH*TILE_SIZE));
+    planet->addComponent(pg);
+    planet->addComponent(new PhysicsComponent(physSys, pg));
 
     // Spawn player
     Entity *player = new Entity(engine->getEventManager());
@@ -160,7 +161,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(physSys, 30, 60));
     player->addComponent(new PlayerComponent);
-    player->addComponent(new LightComponent(200.f));
+    player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 

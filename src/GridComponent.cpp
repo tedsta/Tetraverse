@@ -25,7 +25,7 @@ std::vector<sf::Texture*> GridComponent::TileSheets;
 GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
     mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
 {
-    mTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
+    //mTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
 
 	for (int y = 0; y < mSizeY; y++)
 		for (int x = 0; x < mSizeX; x++)

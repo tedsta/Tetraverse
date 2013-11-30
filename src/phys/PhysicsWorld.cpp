@@ -4,7 +4,7 @@
 
 namespace phys
 {
-    const sf::Vector2f gravity = sf::Vector2f(0, 100.f);
+    const sf::Vector2f gravity = sf::Vector2f(0, 20.f);
 
     void PhysicsWorld::integrateForces( RigidBody *b, float dt )
     {

@@ -57,14 +57,14 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
         runRight = true;
     }
 
-    if (runLeft && phys->getBody()->getVelocity().x > -250)
+    if (runLeft && phys->getBody()->getVelocity().x > -10)
     {
-        phys->getBody()->setVelocity(sf::Vector2f(-100, phys->getBody()->getVelocity().y));
+        phys->getBody()->setVelocity(sf::Vector2f(-10, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;
     }
-    else if (runRight && phys->getBody()->getVelocity().x < 2500)
+    else if (runRight && phys->getBody()->getVelocity().x < 10)
     {
-        phys->getBody()->setVelocity(sf::Vector2f(100, phys->getBody()->getVelocity().y));
+        phys->getBody()->setVelocity(sf::Vector2f(10, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;
     }
     else
@@ -72,8 +72,8 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
 
 	if (!player->mStupidMode)
     {
-		if (intent->isIntentActive("up") && phys->getBody()->getVelocity().y > -250)
-			phys->getBody()->setVelocity(sf::Vector2f(phys->getBody()->getVelocity().x, -175));
+		if (intent->isIntentActive("up") && phys->getBody()->getVelocity().y > -15)
+			phys->getBody()->setVelocity(sf::Vector2f(phys->getBody()->getVelocity().x, -15));
 	}
 	else
     {

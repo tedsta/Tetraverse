@@ -132,7 +132,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
-		<Unit filename="include/Collision.h" />
 		<Unit filename="include/GridComponent.h" />
 		<Unit filename="include/GridOps.h" />
 		<Unit filename="include/GridSystem.h" />
@@ -147,6 +146,7 @@
 		<Unit filename="include/PlayerComponent.h" />
 		<Unit filename="include/PlayerSystem.h" />
 		<Unit filename="include/SkeletonComponent.h" />
+		<Unit filename="include/TetraCollision.h" />
 		<Unit filename="include/WireComponent.h" />
 		<Unit filename="include/phys/Collision.h" />
 		<Unit filename="include/phys/CollisionDispatcher.h" />
@@ -159,7 +159,6 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
-		<Unit filename="src/Collision.cpp" />
 		<Unit filename="src/GridComponent.cpp" />
 		<Unit filename="src/GridOps.cpp" />
 		<Unit filename="src/GridSystem.cpp" />
@@ -174,6 +173,7 @@
 		<Unit filename="src/PlayerComponent.cpp" />
 		<Unit filename="src/PlayerSystem.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />
+		<Unit filename="src/TetraCollision.cpp" />
 		<Unit filename="src/WireComponent.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
 		<Unit filename="src/phys/CollisionDispatcher.cpp" />

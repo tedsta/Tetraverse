@@ -82,6 +82,7 @@ namespace phys
         vertices.resize(4);
         transformedVertices.resize(4);
         normals.resize(4);
+        transformedNormals.resize(4);
         vertices[0] = sf::Vector2f(-hw, -hh);
         vertices[1] = sf::Vector2f( hw, -hh);
         vertices[2] = sf::Vector2f( hw,  hh);
@@ -161,6 +162,7 @@ namespace phys
                 vertices.resize(outCount);
                 transformedVertices.resize(outCount);
                 normals.resize(outCount);
+                transformedNormals.resize(outCount);
                 break;
             }
         }

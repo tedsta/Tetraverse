@@ -1,5 +1,5 @@
-#ifndef COLLISION_H
-#define COLLISION_H
+#ifndef TETRA_COLLISION_H
+#define TETRA_COLLISION_H
 
 #include "phys/Manifold.h"
 #include "phys/RigidBody.h"
@@ -18,14 +18,21 @@ namespace Shape
     };
 }
 
+sf::Vector2f calcSupportPoint(sf::Vector2f* vertices, int vertexCount, sf::Vector2f dir);
 void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b);
+void polygonToGrid(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b);
 
 class GridShape : public phys::Shape
 {
     public:
         GridShape(GridComponent* _grid) : grid(_grid) {}
 
+        void computeMass(phys::RigidBody* body, float density)
+        {
+        }
+
         GridComponent* getGrid(){return grid;}
+        int getType() const {return ::Shape::Grid;}
 
     private:
         GridComponent* grid;

@@ -11,6 +11,7 @@
 
 class Entity;
 class PhysicsSystem;
+class GridComponent;
 
 class PhysicsComponent : public Component
 {
@@ -18,6 +19,7 @@ class PhysicsComponent : public Component
 
     public:
         PhysicsComponent(PhysicsSystem* physSys = NULL, int width = 16, int height = 16);
+        PhysicsComponent(PhysicsSystem* physSys, GridComponent* gridCmp);
         virtual ~PhysicsComponent();
 
         // Serialization stuff
