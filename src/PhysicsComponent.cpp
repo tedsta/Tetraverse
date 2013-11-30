@@ -8,10 +8,10 @@
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(PhysicsSystem* physSys, int width, int height) : grid(NULL)
+PhysicsComponent::PhysicsComponent(PhysicsSystem* physSys, float width, float height) : grid(NULL)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
-    shape->setBox((width/2)/PTU, (height/2)/PTU);
+    shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
     body = new phys::RigidBody(shape, 1.f);
     physSys->getWorld()->addRigidBody(body);
     body->setFixedRotation();

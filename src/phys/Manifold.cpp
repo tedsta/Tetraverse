@@ -47,7 +47,7 @@ namespace phys
             // The idea is if the only thing moving this object is gravity,
             // then the collision should be performed without any restitution
             if(lengthSqr(rv) < lengthSqr(dt * gravity) + EPSILON)
-            restitution = 0.0f;
+                restitution = 0.0f;
         }
     }
 

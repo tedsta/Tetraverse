@@ -144,7 +144,7 @@ int main()
     Tile** tiles = newWorld(0, worldW, worldH);
 
     TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
-    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
+    GridComponent* pg = new GridComponent(pt, worldW, worldH, false, tiles, 3);
 
     Entity *planet = new Entity(engine->getEventManager());
     scene->addEntity(planet);
@@ -178,7 +178,7 @@ int main()
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
     //trans->setOrigin(sf::Vector2f(30, 48));
-    trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(1000, 1000));
+    //trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(1000, 1000));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);

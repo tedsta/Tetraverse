@@ -157,10 +157,10 @@ void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
             botRight.y = v.y;
     }
 
-    int left = floor(topLeft.x/(PTU/TILE_SIZE));
-    int top = floor(topLeft.y/(PTU/TILE_SIZE));
-    int right = ceil(botRight.x/(PTU/TILE_SIZE));
-    int bot = ceil(botRight.y/(PTU/TILE_SIZE));
+    int left = floor(topLeft.x/(PTU/TILE_SIZE))-1;
+    int top = floor(topLeft.y/(PTU/TILE_SIZE))-1;
+    int right = ceil(botRight.x/(PTU/TILE_SIZE))+1;
+    int bot = ceil(botRight.y/(PTU/TILE_SIZE))+1;
 
     if (!grid->getGrid()->mWrapX)
     {
@@ -182,9 +182,9 @@ void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
 
     sf::Vector2f tileNormals[4];
     tileNormals[0] = sf::Vector2f(-1, 0);
-    tileNormals[1] = sf::Vector2f(0, -1);
+    tileNormals[1] = sf::Vector2f(0, 1);
     tileNormals[2] = sf::Vector2f(1, 0);
-    tileNormals[3] = sf::Vector2f(0, 1);
+    tileNormals[3] = sf::Vector2f(0, -1);
 
     for (int y = top; y < bot; y++)
     {
@@ -207,13 +207,13 @@ void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
             int faceA;
             float penetrationA = findAxisLeastPenetration(&faceA, poly->transformedVertices.data(),
                                                           poly->transformedNormals.data(), poly->transformedVertices.size(), tVerts, 4);
-            if(penetrationA >= 0.0f)
+            if(penetrationA >= 0.0f || phys::equal(penetrationA, 0.f))
                 continue;
 
             // Check for a separating axis with B's face planes
             int faceB;
             float penetrationB = findAxisLeastPenetration(&faceB, tVerts, tileNormals, 4, poly->transformedVertices.data(), poly->transformedVertices.size());
-            if(penetrationB >= 0.0f)
+            if(penetrationB >= 0.0f || phys::equal(penetrationB, 0.f))
                 continue;
 
             if (penetrationA < smallestPenetration || penetrationB < smallestPenetration)
