@@ -186,9 +186,9 @@ void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
     tileNormals[2] = sf::Vector2f(1, 0);
     tileNormals[3] = sf::Vector2f(0, -1);
 
-    for (int y = top; y < bot; y++)
+    for (int y = top; y <= bot; y++)
     {
-        for (int _x = left; _x < right; _x++)
+        for (int _x = left; _x <= right; _x++)
         {
             int x = _x;
             if (grid->getGrid()->mWrapX)
