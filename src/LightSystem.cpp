@@ -11,10 +11,18 @@ LightSystem::LightSystem(EventManager *eventManager, RenderSystem* _rndSys, floa
 {
     lightMask.create(rndSys->getWindow().getSize().x, rndSys->getWindow().getSize().y);
     lightMaskSprite.setTexture(lightMask.getTexture());
-    rndSys->addAdditionalSprite(&lightMaskSprite);
+
+    hBlurMask.create(lightMask.getSize().x, lightMask.getSize().y);
+    hBlurMaskSprite.setTexture(hBlurMask.getTexture());
+    vBlurMask.create(lightMask.getSize().x, lightMask.getSize().y);
+    vBlurMaskSprite.setTexture(vBlurMask.getTexture());
+
+    rndSys->addAdditionalSprite(&vBlurMaskSprite);
 
     shadowMapGen.loadFromFile("Content/Shaders/shadowMapGen.frag", sf::Shader::Fragment);
     shadowRnd.loadFromFile("Content/Shaders/shadowRnd.frag", sf::Shader::Fragment);
+    hBlur.loadFromFile("Content/Shaders/hblur.vert", "Content/Shaders/blur.frag");
+    vBlur.loadFromFile("Content/Shaders/vblur.vert", "Content/Shaders/blur.frag");
 }
 
 LightSystem::~LightSystem()
@@ -66,19 +74,6 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     light->shadowMap.draw(light->lightMaskSprite, states);
     light->shadowMap.display();
 
-    /*light->lightMask.clear(sf::Color::Transparent);
-
-    states = sf::RenderStates::Default;
-    light->lightMask.draw(light->shadowMapSprite, states);
-
-    light->lightMask.draw(light->lightMaskClear);
-    light->lightMask.display();*/
-
-    /*states = sf::RenderStates::Default;
-    states.transform = transform->getTransform();
-    light->lightMaskSprite.setOrigin(light->lightMask.getSize().x/2, light->lightMask.getSize().y/2);
-    lightMask.draw(light->lightMaskSprite, states);*/
-
     states = sf::RenderStates::Default;
     states.blendMode = sf::BlendMode::BlendMultiply;
     states.transform = transform->getTransform();
@@ -92,4 +87,20 @@ void LightSystem::processEntity(Entity *entity, const float dt)
 void LightSystem::end(const float dt)
 {
     lightMask.display();
+
+    hBlurMask.clear(sf::Color::Transparent);
+    sf::RenderStates states = sf::RenderStates::Default;
+    hBlur.setParameter("s_texture", sf::Shader::CurrentTexture);
+    states.shader = &hBlur;
+    states.blendMode = sf::BlendMode::BlendNone;
+    hBlurMask.draw(lightMaskSprite, states);
+    hBlurMask.display();
+
+    vBlurMask.clear(sf::Color::Transparent);
+    states = sf::RenderStates::Default;
+    vBlur.setParameter("s_texture", sf::Shader::CurrentTexture);
+    states.shader = &vBlur;
+    states.blendMode = sf::BlendMode::BlendNone;
+    vBlurMask.draw(hBlurMaskSprite, states);
+    vBlurMask.display();
 }

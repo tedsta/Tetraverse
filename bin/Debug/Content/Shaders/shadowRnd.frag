@@ -30,7 +30,7 @@ void main(void) {
 	//now we use a simple gaussian blur
 	float sum = 0.0;
 	
-	sum += sample(vec2(tc.x - 4.0*blur, tc.y), r) * 0.05;
+	/*sum += sample(vec2(tc.x - 4.0*blur, tc.y), r) * 0.05;
 	sum += sample(vec2(tc.x - 3.0*blur, tc.y), r) * 0.09;
 	sum += sample(vec2(tc.x - 2.0*blur, tc.y), r) * 0.12;
 	sum += sample(vec2(tc.x - 1.0*blur, tc.y), r) * 0.15;
@@ -40,7 +40,9 @@ void main(void) {
 	sum += sample(vec2(tc.x + 1.0*blur, tc.y), r) * 0.15;
 	sum += sample(vec2(tc.x + 2.0*blur, tc.y), r) * 0.12;
 	sum += sample(vec2(tc.x + 3.0*blur, tc.y), r) * 0.09;
-	sum += sample(vec2(tc.x + 4.0*blur, tc.y), r) * 0.05;
+	sum += sample(vec2(tc.x + 4.0*blur, tc.y), r) * 0.05;*/
+	
+	sum = center;
 	
 	//sum of 1.0 -> in light, 0.0 -> in shadow
  	

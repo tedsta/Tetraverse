@@ -96,7 +96,7 @@ int main()
     engine->addSystem(placeableSys);
     engine->addSystem(gridSys);
     engine->addSystem(physSys);
-    //engine->addSystem(lightSys);
+    engine->addSystem(lightSys);
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -144,7 +144,7 @@ int main()
     Tile** tiles = newWorld(0, worldW, worldH);
 
     TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
-    GridComponent* pg = new GridComponent(pt, worldW, worldH, false, tiles, 3);
+    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
 
     Entity *planet = new Entity(engine->getEventManager());
     scene->addEntity(planet);

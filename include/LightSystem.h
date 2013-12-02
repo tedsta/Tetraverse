@@ -27,8 +27,15 @@ class LightSystem : public System
         sf::RenderTexture lightMask; // The final light mask to be rendered
         sf::Sprite lightMaskSprite;
 
+        sf::RenderTexture hBlurMask;
+        sf::Sprite hBlurMaskSprite;
+        sf::RenderTexture vBlurMask;
+        sf::Sprite vBlurMaskSprite;
+
         sf::Shader shadowMapGen;
         sf::Shader shadowRnd;
+        sf::Shader hBlur;
+        sf::Shader vBlur;
 };
 
 #endif // LIGHTSYSTEM_H
