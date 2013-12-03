@@ -353,7 +353,7 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     pos *= float(TILE_SIZE);
     pos = mTransform->getTransform().transformPoint(pos);
 
-    TransformComponent* transform = new TransformComponent(pos+sf::Vector2f(width*TILE_SIZE/2.f, height*TILE_SIZE/2.f),
+    TransformComponent* transform = new TransformComponent(pos,
                                                            mTransform->getRotation(), mTransform->getScale());
     GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
     //PhysicsComponent* physics = new PhysicsComponent((width)*TILE_SIZE, (height)*TILE_SIZE);

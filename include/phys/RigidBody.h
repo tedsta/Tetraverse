@@ -40,6 +40,8 @@ namespace phys
             // Setters
             void setPosition(const sf::Vector2f& pos){position=pos;}
             void setVelocity(const sf::Vector2f& vel){velocity=vel;}
+            void setVelocityX(int x){velocity.x=x;}
+            void setVelocityY(int y){velocity.y=y;}
             void setRotation(float rot);
             void setAngularVelocity(float vel){angularVelocity=vel;}
             void setTorque(float t){torque=t;}

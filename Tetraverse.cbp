@@ -145,6 +145,7 @@
 		<Unit filename="include/PlaceableSystem.h" />
 		<Unit filename="include/PlayerComponent.h" />
 		<Unit filename="include/PlayerSystem.h" />
+		<Unit filename="include/SignalComponent.h" />
 		<Unit filename="include/SkeletonComponent.h" />
 		<Unit filename="include/TetraCollision.h" />
 		<Unit filename="include/WireComponent.h" />
@@ -172,6 +173,7 @@
 		<Unit filename="src/PlaceableSystem.cpp" />
 		<Unit filename="src/PlayerComponent.cpp" />
 		<Unit filename="src/PlayerSystem.cpp" />
+		<Unit filename="src/SignalComponent.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />
 		<Unit filename="src/TetraCollision.cpp" />
 		<Unit filename="src/WireComponent.cpp" />

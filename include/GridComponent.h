@@ -100,18 +100,12 @@ class GridComponent : public RenderComponent
 
         void addChild(Entity* child){mChildren.push_back(child);}
 
-        // Setters
-        void setVelocity(const sf::Vector2f& vel){mVelocity=vel;}
-        void setVelocityX(float x){mVelocity.x=x;}
-        void setVelocityY(float y){mVelocity.y=y;}
-
         // Getters
         bool getWrapX() const {return mWrapX;}
         Tile getTile(int x, int y) const;
         Area getArea(int x, int y) const;
         int getSizeX() const {return mSizeX;}
         int getSizeY() const {return mSizeY;}
-        const sf::Vector2f& getVelocity() const {return mVelocity;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
@@ -131,7 +125,6 @@ class GridComponent : public RenderComponent
         bool mWrapX;
         Tile** mTiles; // 2D array of tiles
         sf::Transformable* mTransform;
-        sf::Vector2f mVelocity; // Grid velocity
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
         std::vector<Entity*> mPlaceables;

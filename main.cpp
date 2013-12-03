@@ -317,17 +317,17 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
     grid.Func("sliceInto", &GridComponent::sliceInto);
-    grid.Func("setVelocity", &GridComponent::setVelocity);
-    grid.Func("setVelocityX", &GridComponent::setVelocityX);
-    grid.Func("setVelocityY", &GridComponent::setVelocityY);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
     Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, float>> rigidbody(vm);
     rigidbody.Func("setVelocity", &phys::RigidBody::setVelocity);
+    rigidbody.Func("setVelocityX", &phys::RigidBody::setVelocityX);
+    rigidbody.Func("setVelocityY", &phys::RigidBody::setVelocityY);
     rigidbody.Func("getVelocity", &phys::RigidBody::getVelocity);
     Sqrat::RootTable(vm).Bind("RigidBody", rigidbody);
 
     Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, PhysicsSystem*, int, int>> physics(vm);
+    physics.Func("getBody", &PhysicsComponent::getBody);
     Sqrat::RootTable(vm).Bind("PhysicsComponent", physics);
 
     Sqrat::DerivedClass<PlayerComponent, Component, sqext::ConstAlloc<PlayerComponent>> player(vm);
