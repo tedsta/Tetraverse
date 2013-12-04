@@ -36,20 +36,16 @@ class Door extends Placeable
 
     function update(entity, dt)
     {
+        local light = castLightComponent(entity.getComponent(LightComponentType));
         local signal = castSignalComponent(entity.getComponent(SignalComponentType));
         if (signal.hasSignal())
         {
             local sig = signal.getInt();
             if (sig == 0)
-            {
-                print("off\n")
                 on = false;
-            }
             else if (sig == 1)
-            {
-                print("on\n")
                 on = true;
-            }
+            light.setActive(on);
         }
     }
 

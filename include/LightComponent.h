@@ -22,6 +22,10 @@ class LightComponent : public Component
         LightComponent(const LightComponent& other){}
         virtual ~LightComponent();
 
+        void setActive(bool a){active=a;}
+
+        bool getActive(){return active;}
+
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
         static Component* factory() {return new LightComponent;}
@@ -37,6 +41,7 @@ class LightComponent : public Component
 
         float radius;
         sf::Color color;
+        bool active;
 };
 
 #endif // LIGHTCOMPONENT_H

@@ -348,6 +348,8 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).Bind("PlayerComponent", player);
 
     Sqrat::DerivedClass<LightComponent, Component, sqext::ConstAlloc<LightComponent, float>> light(vm);
+    light.Func("setActive", &LightComponent::setActive);
+    light.Func("getActive", &LightComponent::getActive);
     Sqrat::RootTable(vm).Bind("LightComponent", light);
 
     Sqrat::DerivedClass<SignalComponent, Component, sqext::ConstAlloc<SignalComponent>> signal(vm);

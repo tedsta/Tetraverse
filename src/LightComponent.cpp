@@ -2,7 +2,7 @@
 
 TypeBits LightComponent::Type;
 
-LightComponent::LightComponent(float _radius) : radius(_radius)
+LightComponent::LightComponent(float _radius) : radius(_radius), active(true)
 {
     // Set up the light mask
     lightMask.create(radius*2/4, radius*2/4);
