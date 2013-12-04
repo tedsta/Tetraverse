@@ -34,7 +34,7 @@ class Door extends Placeable
         base.constructor(_entity, _grid, _x, _y);
     }
 
-    function update(entity, dt)
+    function update(dt)
     {
         local light = castLightComponent(entity.getComponent(LightComponentType));
         local signal = castSignalComponent(entity.getComponent(SignalComponentType));
@@ -59,11 +59,6 @@ class Door extends Placeable
             signal.fireInt(1);
         else
             signal.fireInt(0);
-
-        local tile = gridComp.getTile(x, y);
-        tile.mWire = 128;
-        tile.mSignal = 128;
-        gridComp.setTile(x, y, tile, -1);
     }
 };
 
@@ -74,7 +69,7 @@ class Thruster extends Placeable
         base.constructor(_entity, _grid, _x, _y);
     }
 
-    function update(entity, dt)
+    function update(dt)
     {
         local gridComp = castGridComponent(grid.getComponent(GridComponentType));
         local intent = castIntentComponent(entity.getComponent(IntentComponentType));
