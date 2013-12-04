@@ -21,9 +21,9 @@ class SignalComponent : public Component
 
         void addOutput(SignalComponent* output){outputs.push_back(output);}
 
-        void fireSignal(int i);
-        void fireSignal(float f);
-        void fireSignal(const sf::Vector2f& v);
+        void fireInt(int i);
+        void fireFloat(float f);
+        void fireVector(const sf::Vector2f& v);
 
         bool hasSignal(){return type!=SignalComponent::None;}
         int getInt();

@@ -1,7 +1,7 @@
 #ifndef ITEMCOMPONENT_H
 #define ITEMCOMPONENT_H
 
-#include <stack>
+#include <queue>
 #include <Sqrat/sqrat.h>
 #include <SFML/Graphics/Texture.hpp>
 #include <Fission/Core/Component.h>
@@ -16,7 +16,7 @@ class Item
     public:
         Item(std::string name, const std::string& texturePath, bool consumable, int useState, int maxStack, int coordCount, HSQUIRRELVM vm, std::string useFunc);
 
-        bool use(Entity* grid, std::stack<sf::Vector2f>& coords);
+        bool use(Entity* grid, std::queue<sf::Vector2f>& coords);
         Entity* spawn(Scene* scene, sf::Vector2f pos);
 
         // Getters

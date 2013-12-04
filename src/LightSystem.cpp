@@ -43,12 +43,12 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     auto transform = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     auto light = reinterpret_cast<LightComponent*>(entity->getComponent(LightComponent::Type));
 
-    sf::FloatRect fRect = transform->getTransform().transformRect(light->lightMaskSprite.getLocalBounds());
+    sf::FloatRect fRect = transform->getTransform().transformRect(light->lightMaskSprite.getGlobalBounds());
     sf::IntRect lightRect(fRect.left, fRect.top, fRect.width, fRect.height);
     if (!lightMask.getViewport(lightMask.getView()).intersects(lightRect))
     {
         std::cout << "aww yeah\n";
-        //return;
+        return;
     }
 
     light->lightMask.clear(sf::Color::Transparent);

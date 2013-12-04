@@ -2,7 +2,7 @@
 #define INVENTORYCOMPONENT_H
 
 #include <vector>
-#include <stack>
+#include <queue>
 #include <SFML/System/Vector2.hpp>
 #include <Fission/Core/Component.h>
 
@@ -18,7 +18,7 @@ class InventoryComponent : public Component
         int addItem(int slot, int item, int count);
         int addItem(int item, int count);
 
-        bool useItem(int slot, Entity* grid, std::stack<sf::Vector2f>& coords);
+        bool useItem(int slot, Entity* grid, std::queue<sf::Vector2f>& coords);
 
         Item* getItemAt(int slot);
 

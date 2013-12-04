@@ -42,6 +42,7 @@
 #include "InventoryComponent.h"
 #include "ItemComponent.h"
 #include "LightComponent.h"
+#include "SignalComponent.h"
 
 #include "GridSystem.h"
 #include "PlaceableSystem.h"
@@ -74,6 +75,7 @@ int main()
     InventoryComponent::Type = ComponentFactories::add(InventoryComponent::factory);
     ItemComponent::Type = ComponentFactories::add(ItemComponent::factory);
     LightComponent::Type = ComponentFactories::add(LightComponent::factory);
+    SignalComponent::Type = ComponentFactories::add(SignalComponent::factory);
 
     Connection* conn = new Connection(engine->getEventManager());
 
@@ -121,6 +123,9 @@ int main()
 
     Item *gridCutter = new Item("gridCutter", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "gridCutter");
     Item::Items.push_back(gridCutter);
+
+    Item *wirer = new Item("wirer", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "wirer");
+    Item::Items.push_back(wirer);
 
     // Set up the placeables
     HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
@@ -173,6 +178,7 @@ int main()
     inventory->addItem(3, 3, 1);
     inventory->addItem(4, 4, 1);
     inventory->addItem(5, 5, 1);
+    inventory->addItem(6, 6, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
@@ -300,7 +306,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     intent.Func("getMousePos", &IntentComponent::getMousePos);
     Sqrat::RootTable(vm).Bind("IntentComponent", intent);
 
-    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, Entity*, const std::string&, int, int, int, int>> placeable(vm);
+    Sqrat::DerivedClass<PlaceableComponent, Component, sqext::ConstAlloc<PlaceableComponent, Entity*, Entity*, const std::string&, int, int, int, int>> placeable(vm);
     Sqrat::RootTable(vm).Bind("PlaceableComponent", placeable);
 
     Sqrat::Class<Tile> tile(vm);
@@ -333,16 +339,27 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::DerivedClass<PlayerComponent, Component, sqext::ConstAlloc<PlayerComponent>> player(vm);
     player.Func("getLeftCoordsCount", &PlayerComponent::getLeftCoordsCount);
     player.Func("pushLeftCoord", &PlayerComponent::pushLeftCoord);
-    player.Func("topLeftCoord", &PlayerComponent::topLeftCoord);
+    player.Func("frontLeftCoord", &PlayerComponent::frontLeftCoord);
     player.Func("popLeftCoord", &PlayerComponent::popLeftCoord);
     player.Func("getRightCoordsCount", &PlayerComponent::getRightCoordsCount);
     player.Func("pushRightCoord", &PlayerComponent::pushRightCoord);
-    player.Func("topRightCoord", &PlayerComponent::topRightCoord);
+    player.Func("frontRightCoord", &PlayerComponent::frontRightCoord);
     player.Func("popRightCoord", &PlayerComponent::popRightCoord);
     Sqrat::RootTable(vm).Bind("PlayerComponent", player);
 
     Sqrat::DerivedClass<LightComponent, Component, sqext::ConstAlloc<LightComponent, float>> light(vm);
     Sqrat::RootTable(vm).Bind("LightComponent", light);
+
+    Sqrat::DerivedClass<SignalComponent, Component, sqext::ConstAlloc<SignalComponent>> signal(vm);
+    signal.Func("addOutput", &SignalComponent::addOutput);
+    signal.Func("fireInt", &SignalComponent::fireInt);
+    signal.Func("fireFloat", &SignalComponent::fireFloat);
+    signal.Func("fireVector", &SignalComponent::fireVector);
+    signal.Func("hasSignal", &SignalComponent::hasSignal);
+    signal.Func("getInt", &SignalComponent::getInt);
+    signal.Func("getFloat", &SignalComponent::getFloat);
+    signal.Func("getVector", &SignalComponent::getVector);
+    Sqrat::RootTable(vm).Bind("SignalComponent", signal);
 
     // Button states
     Sqrat::RootTable(vm).SetValue("BtnStateDown", BtnState::DOWN);
@@ -368,6 +385,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).SetValue("GridComponentType", GridComponent::Type);
     Sqrat::RootTable(vm).SetValue("PhysicsComponentType", PhysicsComponent::Type);
     Sqrat::RootTable(vm).SetValue("LightComponentType", LightComponent::Type);
+    Sqrat::RootTable(vm).SetValue("SignalComponentType", SignalComponent::Type);
 
     // All the component casting functions
     Sqrat::RootTable(vm).Func("castTransformComponent", componentCast<TransformComponent>);
@@ -377,4 +395,5 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).Func("castGridComponent", componentCast<GridComponent>);
     Sqrat::RootTable(vm).Func("castPhysicsComponent", componentCast<PhysicsComponent>);
     Sqrat::RootTable(vm).Func("castLightComponent", componentCast<LightComponent>);
+    Sqrat::RootTable(vm).Func("castSignalComponent", componentCast<SignalComponent>);
 }

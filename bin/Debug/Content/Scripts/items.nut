@@ -42,8 +42,9 @@ function door(gridEnt, coords)
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("robot.png", 1, 1));
-        entity.addComponentSq(PlaceableComponent(gridEnt, "Door", x, y, 4, 6));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 4, 6));
         entity.addComponentSq(LightComponent(200));
+        entity.addComponentSq(SignalComponent());
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
@@ -75,7 +76,7 @@ function thruster(gridEnt, coords)
         entity.addComponentSq(transform);
         entity.addComponentSq(intent);
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/thruster.png", 1, 1));
-        entity.addComponentSq(PlaceableComponent(gridEnt, "Thruster", x, y, 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
 
         return true;
@@ -131,6 +132,32 @@ function gridCutter(gridEnt, coords)
 
     local entity = engine.getScene().createEntity();
     grid.sliceInto(entity, x1, y1, x2, y2);
+
+    return true;
+}
+
+function wirer(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+
+    local first = grid.getPlaceableAt(coords[0].x, coords[0].y);
+    local second = grid.getPlaceableAt(coords[1].x, coords[1].y);
+
+    print("meh\n");
+    if (first != null && second != null)
+    {
+        print("almost\n");
+        local firstSignal = castSignalComponent(first.getComponent(SignalComponentType));
+        local secondSignal = castSignalComponent(second.getComponent(SignalComponentType));
+
+        if (firstSignal != null && secondSignal != null)
+        {
+            print("I'm an electrician!\n");
+            firstSignal.addOutput(secondSignal);
+        }
+
+        return true;
+    }
 
     return false;
 }

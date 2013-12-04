@@ -1,11 +1,13 @@
 class Placeable
 {
     grid = null;
+    entity = null;
     x = 0;
     y = 0;
 
-    constructor(_grid, _x, _y)
+    constructor(_entity, _grid, _x, _y)
     {
+        entity = _entity;
         grid = _grid;
         x = _x;
         y = _y;
@@ -25,18 +27,42 @@ class Placeable
 
 class Door extends Placeable
 {
-    constructor(_grid, _x, _y)
+    on = true;
+
+    constructor(_entity, _grid, _x, _y)
     {
-        base.constructor(_grid, _x, _y);
+        base.constructor(_entity, _grid, _x, _y);
     }
 
     function update(entity, dt)
     {
+        local signal = castSignalComponent(entity.getComponent(SignalComponentType));
+        if (signal.hasSignal())
+        {
+            local sig = signal.getInt();
+            if (sig == 0)
+            {
+                print("off\n")
+                on = false;
+            }
+            else if (sig == 1)
+            {
+                print("on\n")
+                on = true;
+            }
+        }
     }
 
     function interact()
     {
         local gridComp = castGridComponent(grid.getComponent(GridComponentType));
+        local signal = castSignalComponent(entity.getComponent(SignalComponentType));
+
+        on = !on;
+        if (on)
+            signal.fireInt(1);
+        else
+            signal.fireInt(0);
 
         local tile = gridComp.getTile(x, y);
         tile.mWire = 128;
@@ -47,9 +73,9 @@ class Door extends Placeable
 
 class Thruster extends Placeable
 {
-    constructor(_grid, _x, _y)
+    constructor(_entity, _grid, _x, _y)
     {
-        base.constructor(_grid, _x, _y);
+        base.constructor(_entity, _grid, _x, _y);
     }
 
     function update(entity, dt)

@@ -17,7 +17,7 @@ Item::Item(std::string name, const std::string& texturePath, bool consumable, in
     mUseFunc = Sqrat::RootTable(vm).GetFunction(useFunc.c_str());
 }
 
-bool Item::use(Entity* grid, std::stack<sf::Vector2f>& coords)
+bool Item::use(Entity* grid, std::queue<sf::Vector2f>& coords)
 {
     bool used = false;
     try
@@ -25,7 +25,7 @@ bool Item::use(Entity* grid, std::stack<sf::Vector2f>& coords)
         Sqrat::Array sqCoords(mUseFunc.GetVM());
         while (!coords.empty())
         {
-            sqCoords.Append(coords.top());
+            sqCoords.Append(coords.front());
             coords.pop();
         }
         used = mUseFunc.Evaluate<bool>(grid, sqCoords);

@@ -12,19 +12,19 @@ SignalComponent::~SignalComponent()
     //dtor
 }
 
-void SignalComponent::fireSignal(int i)
+void SignalComponent::fireInt(int i)
 {
     for (auto output : outputs)
         output->receiveSignal(i);
 }
 
-void SignalComponent::fireSignal(float f)
+void SignalComponent::fireFloat(float f)
 {
     for (auto output : outputs)
         output->receiveSignal(f);
 }
 
-void SignalComponent::fireSignal(const sf::Vector2f& v)
+void SignalComponent::fireVector(const sf::Vector2f& v)
 {
     for (auto output : outputs)
         output->receiveSignal(v);

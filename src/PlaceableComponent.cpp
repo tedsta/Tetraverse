@@ -8,12 +8,12 @@
 std::map<std::string, sqext::SQIClass*> PlaceableComponent::Classes;
 TypeBits PlaceableComponent::Type;
 
-PlaceableComponent::PlaceableComponent(Entity* grid, const std::string& className, int gridX, int gridY, int width, int height) :
-    mGrid(grid), mClassName(className),
+PlaceableComponent::PlaceableComponent(Entity* entity, Entity* grid, const std::string& className, int gridX, int gridY, int width, int height) :
+    mEntity(entity), mGrid(grid), mClassName(className),
     mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
 {
     if (grid && mClassName.size() > 0)
-        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(grid, gridX, gridY));
+        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(entity, grid, gridX, gridY));
 }
 
 PlaceableComponent::~PlaceableComponent()

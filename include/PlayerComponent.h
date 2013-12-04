@@ -1,7 +1,7 @@
 #ifndef PLAYERCOMPONENT_H
 #define PLAYERCOMPONENT_H
 
-#include <stack>
+#include <queue>
 #include <SFML/System/Vector2.hpp>
 
 #include <Fission/Core/Component.h>
@@ -16,13 +16,13 @@ class PlayerComponent : public Component
 
         int getLeftCoordsCount(){return mLeftCoords.size();}
         void pushLeftCoord(sf::Vector2f coord){mLeftCoords.push(coord);}
-        const sf::Vector2f& topLeftCoord(){return mLeftCoords.top();}
+        const sf::Vector2f& frontLeftCoord(){return mLeftCoords.front();}
         void popLeftCoord(){mLeftCoords.pop();}
         void clearLeftCoords(){while (!mLeftCoords.empty()) mLeftCoords.pop();}
 
         int getRightCoordsCount(){return mRightCoords.size();}
         void pushRightCoord(sf::Vector2f coord){mRightCoords.push(coord);}
-        const sf::Vector2f& topRightCoord(){return mRightCoords.top();}
+        const sf::Vector2f& frontRightCoord(){return mRightCoords.front();}
         void popRightCoord(){mRightCoords.pop();}
         void clearRightCoords(){while (!mRightCoords.empty()) mRightCoords.pop();}
 
@@ -43,8 +43,8 @@ class PlayerComponent : public Component
         int mRightHand;
         int mLeftHandState;
         int mRightHandState;
-        std::stack<sf::Vector2f> mLeftCoords;
-        std::stack<sf::Vector2f> mRightCoords;
+        std::queue<sf::Vector2f> mLeftCoords;
+        std::queue<sf::Vector2f> mRightCoords;
 };
 
 #endif // PLAYERCOMPONENT_H

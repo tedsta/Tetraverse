@@ -60,7 +60,7 @@ int InventoryComponent::addItem(int item, int count)
     return count;
 }
 
-bool InventoryComponent::useItem(int slot, Entity* grid, std::stack<sf::Vector2f>& coords)
+bool InventoryComponent::useItem(int slot, Entity* grid, std::queue<sf::Vector2f>& coords)
 {
     if (mSlots[slot].mItem == -1)
         return false;
