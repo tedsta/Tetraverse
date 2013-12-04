@@ -10,6 +10,7 @@
 namespace phys
 {
     class RigidBody;
+    class Constraint;
 
     class PhysicsWorld
     {
@@ -20,6 +21,7 @@ namespace phys
             void step();
 
             void addRigidBody(RigidBody* body){bodies.push_back(body);}
+            void addConstraint(Constraint* constraint){constraints.push_back(constraint);}
 
         private:
             void integrateForces( RigidBody *b, float dt );
@@ -28,6 +30,7 @@ namespace phys
             float dt;
             sf::Uint32 iterations;
             std::vector<RigidBody*> bodies;
+            std::vector<Constraint*> constraints;
             std::vector<Manifold> contacts;
     };
 }

@@ -1,6 +1,7 @@
 #include "phys/PhysicsWorld.h"
 
 #include "phys/RigidBody.h"
+#include "phys/Constraint.h"
 
 namespace phys
 {
@@ -68,6 +69,10 @@ namespace phys
         for(sf::Uint32 j = 0; j < iterations; ++j)
             for(auto& contact : contacts)
                 contact.applyImpulse();
+
+        // Solve constraints
+        for (auto constraint : constraints)
+            constraint->solve(dt);
 
         // Integrate velocities
         for(auto b : bodies)

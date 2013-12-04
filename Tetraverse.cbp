@@ -151,6 +151,7 @@
 		<Unit filename="include/WireComponent.h" />
 		<Unit filename="include/phys/Collision.h" />
 		<Unit filename="include/phys/CollisionDispatcher.h" />
+		<Unit filename="include/phys/Constraint.h" />
 		<Unit filename="include/phys/Manifold.h" />
 		<Unit filename="include/phys/Mat2.h" />
 		<Unit filename="include/phys/PhysMath.h" />
@@ -179,6 +180,7 @@
 		<Unit filename="src/WireComponent.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
 		<Unit filename="src/phys/CollisionDispatcher.cpp" />
+		<Unit filename="src/phys/Constraint.cpp" />
 		<Unit filename="src/phys/Manifold.cpp" />
 		<Unit filename="src/phys/Mat2.cpp" />
 		<Unit filename="src/phys/PhysicsWorld.cpp" />

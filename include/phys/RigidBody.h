@@ -15,6 +15,7 @@ namespace phys
         friend class CircleShape;
         friend class PolygonShape;
         friend class PhysicsWorld;
+        friend class Constraint;
 
         public:
             RigidBody(Shape* _shape, float density);
@@ -26,6 +27,9 @@ namespace phys
                 velocity += inverseMass * impulse;
                 angularVelocity += inverseInertia * cross(contactVector, impulse);
             }
+            void addVelocity(const sf::Vector2f& vel){velocity+=vel;}
+            void addAngularVelocity(float vel){angularVelocity+=vel;}
+
             void setStatic()
             {
                 mass = inverseMass = 0.f;
@@ -55,6 +59,10 @@ namespace phys
             float getRotation(){return rotation;}
             float getAngularVelocity(){return angularVelocity;}
             float getTorque(){return torque;}
+            float getInertia(){return inertia;}
+            float getInverseInertia(){return inverseInertia;}
+            float getMass(){return mass;}
+            float getInverseMass(){return inverseMass;}
             float getStaticFriction(){return staticFriction;}
             float getDynamicFriction(){return dynamicFriction;}
             float getRestitution(){return restitution;}
