@@ -46,6 +46,7 @@ class Door extends Placeable
             else if (sig == 1)
                 on = true;
             light.setActive(on);
+            signal.fireInt(sig);
         }
     }
 
