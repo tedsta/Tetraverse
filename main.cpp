@@ -127,10 +127,14 @@ int main()
     Item *wirer = new Item("wirer", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "wirer");
     Item::Items.push_back(wirer);
 
+    Item *light = new Item("light", "Content/Textures/Placeables/light.png", false, BtnState::PRESSED, 1, 1, itemScript, "light");
+    Item::Items.push_back(light);
+
     // Set up the placeables
     HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
     PlaceableComponent::registerClass(placeableScript, "Door");
     PlaceableComponent::registerClass(placeableScript, "Thruster");
+    PlaceableComponent::registerClass(placeableScript, "Light");
 
     // Set up the materials
     GridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
@@ -166,7 +170,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(physSys, 30, 60));
     player->addComponent(new PlayerComponent);
-    player->addComponent(new LightComponent(500.f));
+ //   player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
@@ -179,6 +183,7 @@ int main()
     inventory->addItem(4, 4, 1);
     inventory->addItem(5, 5, 1);
     inventory->addItem(6, 6, 1);
+    inventory->addItem(7, 7, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));

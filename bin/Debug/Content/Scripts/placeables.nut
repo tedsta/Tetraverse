@@ -90,3 +90,21 @@ class Thruster extends Placeable
     {
     }
 };
+
+class Light extends Placeable
+{
+    constructor(_entity, _grid, _x, _y)
+    {
+        base.constructor(_entity, _grid, _x, _y);
+    }
+
+    function update(dt)
+    {
+        local light = castLightComponent(entity.getComponent(LightComponentType));
+        //light.setActive(on);
+    }
+
+    function interact()
+    {
+    }
+};
