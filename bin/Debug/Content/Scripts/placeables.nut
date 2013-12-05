@@ -90,3 +90,49 @@ class Thruster extends Placeable
     {
     }
 };
+
+class Light extends Placeable
+{
+    constructor(_entity, _grid, _x, _y)
+    {
+        base.constructor(_entity, _grid, _x, _y);
+    }
+
+    function update(dt)
+    {
+        local light = castLightComponent(entity.getComponent(LightComponentType));
+    }
+
+    function interact()
+    {
+    }
+};
+
+class Swtch extends Placeable
+{
+    on = false;
+
+    constructor(_entity, _grid, _x, _y)
+    {
+        base.constructor(_entity, _grid, _x, _y);
+    }
+
+    function update(dt)
+    {
+        local light = castLightComponent(entity.getComponent(LightComponentType));
+        local signal = castSignalComponent(entity.getComponent(SignalComponentType));
+
+    }
+
+    function interact()
+    {
+        local gridComp = castGridComponent(grid.getComponent(GridComponentType));
+        local signal = castSignalComponent(entity.getComponent(SignalComponentType));
+
+        on = !on;
+        if (on)
+            signal.fireInt(1);
+        else
+            signal.fireInt(0);
+    }
+};

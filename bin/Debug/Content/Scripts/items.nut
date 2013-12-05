@@ -161,3 +161,53 @@ function wirer(gridEnt, coords)
 
     return false;
 }
+function light(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    if (grid.canPlace(x, y, 1, 1) == true)
+    {
+        local transform = TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1));
+        transform.setOrigin(Vector2f(8, 12));
+
+        local entity = engine.getScene().createEntity();
+        entity.addComponentSq(transform);
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/light.png", 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Light", x, y, 1,1));
+        entity.addComponentSq(LightComponent(170));
+        entity.addComponentSq(SignalComponent());
+        grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+
+        return true;
+    }
+
+    return false;
+}
+
+function swtch(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    if (grid.canPlace(x, y, 1, 1))
+    {
+        local entity = engine.getScene().createEntity();
+        entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/switch.png", 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
+        entity.addComponentSq(LightComponent(15));
+        entity.addComponentSq(SignalComponent());
+        grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+
+        return true;
+    }
+
+    return false;
+}
