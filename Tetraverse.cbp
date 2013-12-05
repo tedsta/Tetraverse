@@ -162,6 +162,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
+		<Unit filename="src/BackGridComponent.cpp" />
 		<Unit filename="src/FrontGridComponent.cpp" />
 		<Unit filename="src/GridComponent.cpp" />
 		<Unit filename="src/GridOps.cpp" />
