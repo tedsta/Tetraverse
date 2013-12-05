@@ -30,7 +30,7 @@ void main(void) {
 		float caster = data.a;
 		if (caster > THRESHOLD) {
 			distance = min(distance, dst);
-			//NOTE: we could probably use "break" or "return" here
+			break;
   		}
   } 
   gl_FragColor = vec4(vec3(distance), 1.0);

@@ -46,17 +46,17 @@ void LightSystem::processEntity(Entity *entity, const float dt)
     if (!light->getActive())
         return;
 
-    sf::FloatRect lightRect = transform->getTransform().transformRect(light->lightMaskSprite.getGlobalBounds());
+    sf::FloatRect lightRect = transform->getTransform().transformRect(light->shadowMapSprite.getGlobalBounds());
     sf::IntRect viewRectI = lightMask.getViewport(lightMask.getView());
-    sf::FloatRect viewRect(viewRectI.left, viewRectI.height, viewRectI.width, viewRectI.height);
-    viewRect = rndSys->getView().getInverseTransform().transformRect(viewRect);
+    sf::FloatRect viewRect(viewRectI.left, viewRectI.top, viewRectI.width, viewRectI.height);
+    viewRect.left -= viewRect.width/2;
+    viewRect.top -= viewRect.height/2;
+    viewRect.left += lightMask.getView().getCenter().x;
+    viewRect.top += lightMask.getView().getCenter().y;
     if (!viewRect.intersects(lightRect))
     {
-        //std::cout << "aww yeah\n";
-        //return;
+        return;
     }
-
-    //std::cout << viewRect.left << std::endl;
 
     light->lightMask.clear(sf::Color::Transparent);
     for (auto rEntity : rndSys->getActiveEntities())

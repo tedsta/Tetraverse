@@ -180,7 +180,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(physSys, 30, 60));
     player->addComponent(new PlayerComponent);
- //   player->addComponent(new LightComponent(500.f));
+    player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
