@@ -21,8 +21,10 @@ PhysicsComponent::PhysicsComponent(PhysicsSystem* physSys, GridComponent* gridCm
 {
     GridShape* shape = new GridShape(gridCmp);
     body = new phys::RigidBody(shape, 1.f);
-    body->setStatic();
     physSys->getWorld()->addRigidBody(body);
+
+    if (gridCmp->getWrapX())
+        body->setStatic();
 }
 
 PhysicsComponent::~PhysicsComponent()

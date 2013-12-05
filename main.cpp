@@ -35,6 +35,8 @@
 #include "phys/Shape.h"
 
 #include "GridComponent.h"
+#include "FrontGridComponent.h"
+#include "BackGridComponent.h"
 #include "PhysicsComponent.h"
 #include "SkeletonComponent.h"
 #include "PlayerComponent.h"
@@ -68,6 +70,8 @@ int main()
     ScriptComponent::Type = ComponentFactories::add(ScriptComponent::factory);
     IntentComponent::Type = ComponentFactories::add(IntentComponent::factory);
     GridComponent::Type = ComponentFactories::add(GridComponent::factory);
+    BackGridComponent::Type = ComponentFactories::add(BackGridComponent::factory);
+    FrontGridComponent::Type = ComponentFactories::add(FrontGridComponent::factory);
     PhysicsComponent::Type = ComponentFactories::add(PhysicsComponent::factory);
     SkeletonComponent::Type = ComponentFactories::add(SkeletonComponent::factory);
     PlayerComponent::Type = ComponentFactories::add(PlayerComponent::factory);
@@ -80,7 +84,7 @@ int main()
     Connection* conn = new Connection(engine->getEventManager());
 
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
-                                            GridComponent::Type|SkeletonComponent::Type);
+                                            FrontGridComponent::Type|SkeletonComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), 0.016f, &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 0.016f, conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 0.016f, engine);
@@ -155,6 +159,8 @@ int main()
     scene->addEntity(planet);
     planet->addComponent(pt);
     planet->addComponent(pg);
+    planet->addComponent(new BackGridComponent(pg));
+    planet->addComponent(new FrontGridComponent(pg));
     planet->addComponent(new PhysicsComponent(physSys, pg));
 
     // Spawn player

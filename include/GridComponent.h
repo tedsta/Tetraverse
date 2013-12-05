@@ -22,7 +22,7 @@ enum
 
 struct Tile
 {
-    Tile() : mMat(0), mFluid(0), mWire(0), mSignal(0) {}
+    Tile() : mMat(0), mBack(0), mFluid(0), mWire(0), mSignal(0) {}
     Tile(sf::Uint8 mat, sf::Uint8 fluid = 0, sf::Uint8 wire = 0, sf::Uint8 signal = 0) :
         mMat(mat), mFluid(fluid), mWire(wire), mSignal(signal) {}
 
@@ -35,6 +35,7 @@ struct Tile
     void clearSolid(){mFlags&=~2;}
 
 	sf::Uint8 mMat;
+	sf::Uint8 mBack;
 	sf::Uint8 mFlags;
 
 	// status
@@ -59,6 +60,8 @@ class Entity;
 class GridComponent : public RenderComponent
 {
     friend class GridSystem;
+    friend class FrontGridComponent;
+    friend class BackGridComponent;
     friend class GridShape;
 
     friend void gridToPolygon(phys::Manifold* m, phys::RigidBody* a, phys::RigidBody* b);
@@ -70,10 +73,6 @@ class GridComponent : public RenderComponent
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
-
-        // Renderable components gotto render...
-        void render(sf::RenderTarget& target, sf::RenderStates states);
-        void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 
         sf::Vector2f getTilePos(sf::Vector2f pos);
 
@@ -124,6 +123,7 @@ class GridComponent : public RenderComponent
         int mSizeY;
         bool mWrapX;
         Tile** mTiles; // 2D array of tiles
+        sf::Uint8** mBackWall;
         sf::Transformable* mTransform;
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates

@@ -23,6 +23,8 @@ class PlaceableComponent : public Component
 
         // Setters
         void setGrid(Entity* grid);
+        void setGridX(int x){mGridX=x;}
+        void setGridY(int y){mGridY=y;}
         void setGridPos(int x, int y);
 
         // Getters
