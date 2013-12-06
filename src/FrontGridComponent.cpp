@@ -52,10 +52,10 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 
                 sf::Vector2f cOffset = mGrid->mTransform->getInverseTransform().transformPoint(rTrans->getPosition());
 
-                if (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE)
+                if (cOffset.x >= 0 || cOffset.x+(dim.x/2) <= mGrid->mSizeX*TILE_SIZE)
                 {
-                    cOffset.x = fmod(cOffset.x, mSizeX*TILE_SIZE);
-                    sf::Transform t = mTransform->getTransform();
+                    cOffset.x = fmod(cOffset.x, mGrid->mSizeX*TILE_SIZE);
+                    sf::Transform t = mGrid->mTransform->getTransform();
                     trans->setPosition(t.transformPoint(cOffset));
                 }
             }

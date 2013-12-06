@@ -35,8 +35,8 @@ void PhysicsSystem::begin(const float dt)
         auto trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
         auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
 
-        //phys->getBody()->setPosition(trans->getPosition()/PTU);
-        //phys->getBody()->setRotation(trans->getRotation());
+        phys->getBody()->setPosition(trans->getPosition()/PTU);
+        phys->getBody()->setRotation(trans->getRotation());
     }
 
     world->step();

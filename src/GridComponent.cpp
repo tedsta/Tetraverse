@@ -10,6 +10,7 @@
 #include <Fission/Core/Entity.h>
 #include <Fission/Rendering/TransformComponent.h>
 
+#include "PhysicsSystem.h"
 #include "PhysicsComponent.h"
 #include "PlaceableComponent.h"
 
@@ -21,6 +22,7 @@ int randStateLeft(int x, int y);
 
 TypeBits GridComponent::Type;
 std::vector<sf::Texture*> GridComponent::TileSheets;
+PhysicsSystem* GridComponent::PhysSys;
 
 GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
     mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)

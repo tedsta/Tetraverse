@@ -19,6 +19,7 @@ class RenderComponent : public Component
         void setLit(bool _lit){lit=_lit;}
 
         bool getLit(){return lit;}
+        virtual sf::FloatRect getBounds() const {return sf::FloatRect(0, 0, 0, 0);}
 
     private:
         bool lit;

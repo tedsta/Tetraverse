@@ -56,6 +56,7 @@ struct Area
 };
 
 class Entity;
+class PhysicsSystem;
 
 class GridComponent : public RenderComponent
 {
@@ -116,6 +117,8 @@ class GridComponent : public RenderComponent
                 TileSheets.resize(mat+1);
             TileSheets[mat] = sheet;
         }
+
+        static PhysicsSystem* PhysSys;
 
     private:
         int mID;

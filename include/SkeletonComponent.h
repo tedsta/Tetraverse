@@ -21,6 +21,7 @@ class SkeletonComponent : public RenderComponent
         std::string getCurrentAnimation();
 
         spine::SkeletonDrawable* getSkeleton(){return mSkeleton;}
+        sf::FloatRect getBounds() const {return sf::FloatRect(0, 0, 0, 0);}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

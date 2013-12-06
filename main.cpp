@@ -105,6 +105,7 @@ int main()
     engine->addSystem(lightSys);
 
     FrontGridComponent::RndSys = render;
+    GridComponent::PhysSys = physSys;
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -176,7 +177,7 @@ int main()
     // Spawn player
     Entity *player = new Entity(engine->getEventManager());
     scene->addEntity(player);
-    player->addComponent(new TransformComponent);
+    player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);

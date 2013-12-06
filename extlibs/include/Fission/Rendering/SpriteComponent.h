@@ -35,6 +35,7 @@ class SpriteComponent : public RenderComponent
         /// \brief Get the SFML sprite.
         const sf::Sprite& getSprite() const {return mSprite;}
         const sf::Vector2f& getFrameDim() const {return mFrameDim;}
+        sf::FloatRect getBounds() const {return sf::FloatRect(0, 0, mFrameDim.x, mFrameDim.y);}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
