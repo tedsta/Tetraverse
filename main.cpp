@@ -104,6 +104,8 @@ int main()
     engine->addSystem(physSys);
     engine->addSystem(lightSys);
 
+    FrontGridComponent::RndSys = render;
+
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
     scriptSys->addBinder(bindSquirrel);

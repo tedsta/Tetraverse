@@ -57,12 +57,12 @@ void PlayerSystem::processEntity(Entity *entity, const float dt)
         runRight = true;
     }
 
-    if (runLeft && phys->getBody()->getVelocity().x > -10)
+    if (runLeft && phys->getBody()->getVelocity().x > -25)
     {
         phys->getBody()->setVelocity(sf::Vector2f(-10, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;
     }
-    else if (runRight && phys->getBody()->getVelocity().x < 10)
+    else if (runRight && phys->getBody()->getVelocity().x < 25)
     {
         phys->getBody()->setVelocity(sf::Vector2f(10, phys->getBody()->getVelocity().y));
         player->mAnimTime += dt;

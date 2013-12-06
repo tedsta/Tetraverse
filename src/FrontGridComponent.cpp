@@ -3,9 +3,14 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <Fission/Rendering/RenderSystem.h>
+#include <Fission/Rendering/TransformComponent.h>
+#include <Fission/Rendering/RenderComponent.h>
+
 #include "GridComponent.h"
 
 TypeBits FrontGridComponent::Type;
+RenderSystem* FrontGridComponent::RndSys;
 
 FrontGridComponent::FrontGridComponent(GridComponent* grid) : mGrid(grid)
 {
@@ -30,6 +35,32 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 	sf::Vector2f centerT = center/tsize;                // Center tiled
 	float ssXT = ceil(target.getView().getSize().x / tsize); // Screen size X in tiles
 	float ssYT = ceil(target.getView().getSize().y / tsize); // Screen size Y in tiles
+
+    /*if (mGrid->mWrapX)
+    {
+        for (auto rEnt : RndSys->getActiveEntities())
+        {
+            auto rTrans = reinterpret_cast<TransformComponent*>(rEnt->getComponent(TransformComponent::Type));
+            std::vector<Component*> rndCmpnts = rEnt->getComponents(RndSys->getOptBits());
+
+            for (auto cmpnt : rndCmpnts)
+            {
+                if (cmpnt == this)
+                    continue;
+
+                auto rRnd = reinterpret_cast<RenderComponent*>(cmpnt);
+
+                sf::Vector2f cOffset = mGrid->mTransform->getInverseTransform().transformPoint(rTrans->getPosition());
+
+                if (cOffset.x-(dim.x/2) <= 0 || cOffset.x+(dim.x/2) >= mSizeX*TILE_SIZE)
+                {
+                    cOffset.x = fmod(cOffset.x, mSizeX*TILE_SIZE);
+                    sf::Transform t = mTransform->getTransform();
+                    trans->setPosition(t.transformPoint(cOffset));
+                }
+            }
+        }
+    }*/
 
 	int left;
 	int right;

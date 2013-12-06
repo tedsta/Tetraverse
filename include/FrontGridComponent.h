@@ -3,6 +3,7 @@
 
 #include <Fission/Rendering/RenderComponent.h>
 
+class RenderSystem;
 class GridComponent;
 
 class FrontGridComponent : public RenderComponent
@@ -17,6 +18,8 @@ class FrontGridComponent : public RenderComponent
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
         static Component* factory() {return new FrontGridComponent;}
+
+        static RenderSystem* RndSys; // FrontGridComponents depend on render system
 
     private:
         GridComponent* mGrid;
