@@ -18,43 +18,11 @@ Area veggyGridOp(Area a)
 	return a;
 }
 
-Area wireGridOp(Area a)
+bool veggyTest(const Tile& oldTile, const Tile& newTile)
 {
-    int wire = a.mTiles[1][1].mWire;
-    int signal = a.mTiles[1][1].mSignal;
-    if (wire >= 1)
-    {
-        if (wire  < a.mTiles[0][1].mWire-1){
-            a.mTiles[1][1].mWire = a.mTiles[0][1].mWire;
-            a.mTiles[1][1].mSignal = a.mTiles[0][1].mSignal;
-            a.mChanged = true;
-        }
-
-        if (wire  < a.mTiles[1][0].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[1][0].mWire) {
-            a.mTiles[1][1].mWire = a.mTiles[1][0].mWire;
-            a.mTiles[1][1].mSignal = a.mTiles[1][0].mSignal;
-            a.mChanged = true;
-        }
-        if (wire  < a.mTiles[2][1].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[2][1].mWire){
-            a.mTiles[1][1].mWire = a.mTiles[2][1].mWire;
-            a.mTiles[1][1].mSignal = a.mTiles[2][1].mSignal;
-            a.mChanged = true;
-        }
-        if (wire  < a.mTiles[1][2].mWire-1 && a.mTiles[1][1].mWire  < a.mTiles[1][2].mWire){
-            a.mTiles[1][1].mWire = a.mTiles[1][2].mWire;
-            a.mTiles[1][1].mSignal = a.mTiles[1][2].mSignal;
-            a.mChanged = true;
-        }
-    }
-    if(!a.mChanged && a.mTiles[1][1].mWire > 1 ){
-            a.mTiles[1][1].mWire -= 1;
-            a.mChanged = true;
-        }
-    if(a.mTiles[1][1].mWire <= 1){
-        a.mTiles[1][1].mSignal = 0;
-    }
-
-	return a;
+    if ((newTile.mMat == 1 || newTile.mMat == 3) && oldTile.mMat != newTile.mMat)
+        return true;
+    return false;
 }
 
 // ******************************************************************************************************
@@ -84,7 +52,7 @@ float constrain( const float& val, const float& minVal, const float& maxVal )
     return std::max( minVal, std::min( val, maxVal ) );
 }
 
-void fluidGridOp2(GridComponent* grid, int tick)
+void fluidGridOp(GridComponent* grid, int tick)
 {
     //return;
 
@@ -253,208 +221,9 @@ void fluidGridOp2(GridComponent* grid, int tick)
     }
 }
 
-// ******************************************************************************************************
-// ******************************************************************************************************
-// ******************************************************************************************************
-// ******************************************************************************************************
-// ******************************************************************************************************
-
-#define MAX_FLUID 127
-#define compress 3
-
-int vert(int top, int bot, int offset)
+bool fluidTest(const Tile& oldTile, const Tile& newTile)
 {
-    int total = top+bot;
-    int flow = 0;
-
-    int topMaxFill = std::min(MAX_FLUID+offset*compress, 255);
-    int botMaxFill = std::min(MAX_FLUID+(offset+1)*compress, 255);
-    if (top > 0 && top <= topMaxFill && bot < botMaxFill)
-        flow = std::min<int>(top, botMaxFill-bot);
-    else if (bot > botMaxFill && top < 255)
-        flow = -std::min(bot-botMaxFill, 255-top);
-
-    return flow;
-}
-
-int horiz(int p, int s, int po, int so)
-{
-    int pMaxFill = std::min(MAX_FLUID+po*compress, 255);
-    int sMaxFill = std::min(MAX_FLUID+so*compress, 255);
-    int flow = 0;
-
-    if (p > s && po > so)
-    {
-        flow = -compress;
-    }
-    else if (s > p && so > po)
-        flow = compress;
-
-    /*if (top > 0 && top <= topMaxFill && bot < botMaxFill)
-        flow = std::min<int>(top, botMaxFill-bot);
-
-    else if (bot > botMaxFill && top < 255)
-    {
-        //std::cout << "Top: " << top << std::endl << "Bot: " << bot << std::endl << "Max: " << maxFill << std::endl;
-        flow = -std::min(bot-botMaxFill, 255-top);
-    }*/
-
-    return flow;
-}
-
-Area fluidGridOp(Area a)
-{
-    if (!isFluid(a.mTiles[1][1].mMat))
-        return a;
-
-    int mat00 = a.mTiles[0][0].mMat;
-    int mat01 = a.mTiles[0][1].mMat;
-    int mat02 = a.mTiles[0][2].mMat;
-    int mat10 = a.mTiles[1][0].mMat;
-    int mat11 = a.mTiles[1][1].mMat;
-    int mat12 = a.mTiles[1][2].mMat;
-    int mat20 = a.mTiles[2][0].mMat;
-    int mat21 = a.mTiles[2][1].mMat;
-    int mat22 = a.mTiles[2][2].mMat;
-
-    int m00 = a.mTiles[0][0].mFluid;
-    int m01 = a.mTiles[0][1].mFluid;
-    int m02 = a.mTiles[0][2].mFluid;
-    int m10 = a.mTiles[1][0].mFluid;
-    int m11 = a.mTiles[1][1].mFluid;
-    int m12 = a.mTiles[1][2].mFluid;
-    int m20 = a.mTiles[2][0].mFluid;
-    int m21 = a.mTiles[2][1].mFluid;
-    int m22 = a.mTiles[2][2].mFluid;
-
-    int o00 = a.mTiles[0][0].mSignal;
-    int o01 = a.mTiles[0][1].mSignal;
-    int o02 = a.mTiles[0][2].mSignal;
-    int o10 = a.mTiles[1][0].mSignal;
-    int o11 = a.mTiles[1][1].mSignal;
-    int o12 = a.mTiles[1][2].mSignal;
-    int o20 = a.mTiles[2][0].mSignal;
-    int o21 = a.mTiles[2][1].mSignal;
-    int o22 = a.mTiles[2][2].mSignal;
-
-    int flow = 0;
-    if (isFluid(mat21))
-        flow -= vert(m11, m21, o11);
-    if (isFluid(mat01))
-        flow += vert(m01, m11, o01);
-
-    // left
-    if (isFluid(mat10) && m11+flow > 0)
-    {
-        int leftVertFlow = 0;
-        if (isFluid(mat20))
-            leftVertFlow -= vert(m10, m20, o10);
-        if (isFluid(mat00))
-            leftVertFlow += vert(m00, m10, o00);
-
-        // Equalize the amount of water in this block and it's neighbour
-        flow += int( m10 + leftVertFlow - (m11 + flow) ) / 4;
-    }
-
-    // left
-    if (isFluid(mat12) && m11+flow > 0)
-    {
-        int rightVertFlow = 0;
-        if (isFluid(mat22))
-            rightVertFlow -= vert(m12, m22, o12);
-        if (isFluid(mat02))
-            rightVertFlow += vert(m02, m12, o02);
-
-        // Equalize the amount of water in this block and it's neighbour
-        flow += int( m12 + rightVertFlow - (m11 + flow) ) / 4;
-    }
-
-    a.mTiles[1][1].mFluid += flow;
-
-    if (a.mTiles[1][1].mFluid > 0)
-        a.mTiles[1][1].mMat = 4;
-    else
-        a.mTiles[1][1].mMat = 0;
-
-    if (a.mTiles[1][1].mMat == 4)
-    {
-        if (a.mTiles[0][1].mMat != 4 && a.mTiles[0][1].mFluid > compress*2)
-        {
-            a.mTiles[1][1].mSignal = 0;
-            a.mChanged = true;
-        }
-        else if (a.mTiles[1][1].mSignal != a.mTiles[0][1].mSignal+1)
-        {
-            a.mTiles[1][1].mSignal = a.mTiles[0][1].mSignal+1;
-            a.mChanged = true;
-        }
-    }
-    else
-        a.mTiles[1][1].mSignal = 0;
-
-    a.mChanged = a.mChanged || flow!=0;
-
-    return a;
-
-    // Flow down
-    if (a.mTiles[0][1].mMat == 4 && a.mTiles[0][1].mFluid > 0 && a.mTiles[1][1].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[0][1].mFluid, MAX_FLUID-a.mTiles[1][1].mFluid);
-        int change = tofill/3 + (tofill%3);
-        m11 += change;
-        m01 -= change;
-        a.mChanged = true;
-    }
-    if (a.mTiles[1][1].mMat == 4 && (a.mTiles[2][1].mMat == 4 || a.mTiles[2][1].mMat == 0) &&
-        a.mTiles[1][1].mFluid > 0 && a.mTiles[2][1].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[1][1].mFluid, MAX_FLUID-a.mTiles[2][1].mFluid);
-        int change = tofill/3 + (tofill%3);
-        m11 -= change;
-        m21 += change;
-        a.mChanged = true;
-    }
-
-    // Flow right to left
-    if (a.mTiles[1][2].mMat == 4 && a.mTiles[1][2].mFluid > 0 && a.mTiles[1][1].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[1][2].mFluid, MAX_FLUID-a.mTiles[1][1].mFluid);
-        int change = tofill/3;
-        m11 += change;
-        a.mChanged = true;
-    }
-    if (a.mTiles[1][1].mMat == 4 && (a.mTiles[1][0].mMat == 4 || a.mTiles[1][0].mMat == 0) &&
-        a.mTiles[1][1].mFluid > 0 && a.mTiles[1][0].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[1][1].mFluid, MAX_FLUID-a.mTiles[1][0].mFluid);
-        int change = tofill/3;
-        m11 -= change;
-        a.mChanged = true;
-    }
-
-    // Flow left to right
-    if (a.mTiles[1][0].mMat == 4 && a.mTiles[1][0].mFluid > 0 && a.mTiles[1][1].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[1][0].mFluid, MAX_FLUID-a.mTiles[1][1].mFluid);
-        int change = tofill/3;
-        m11 += change;
-        a.mChanged = true;
-    }
-    if (a.mTiles[1][1].mMat == 4 && (a.mTiles[1][2].mMat == 4 || a.mTiles[1][2].mMat == 0) &&
-        a.mTiles[1][1].mFluid > 0 && a.mTiles[1][2].mFluid < MAX_FLUID)
-    {
-        int tofill = std::min<int>(a.mTiles[1][1].mFluid, MAX_FLUID-a.mTiles[1][2].mFluid);
-        int change = tofill/3;
-        m11 -= change;
-        a.mChanged = true;
-    }
-
-    a.mTiles[1][1].mFluid = m11;
-
-    if (a.mTiles[1][1].mFluid > 0 && a.mTiles[1][1].mMat == 0)
-        a.mTiles[1][1].mMat = 4;
-    else if (a.mTiles[1][1].mFluid == 0 && a.mTiles[1][1].mMat == 4)
-        a.mTiles[1][1].mMat = 0;
-
-    return a;
+    if (oldTile.mFluid != newTile.mFluid)
+        return true;
+    return false;
 }

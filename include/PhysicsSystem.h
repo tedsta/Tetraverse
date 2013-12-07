@@ -23,6 +23,9 @@ class PhysicsSystem : public System
 
         void end(const float dt);
 
+        void onEntityAdded(Entity* entity);
+        void onEntityRemoved(Entity* entity);
+
     private:
         phys::PhysicsWorld* world;
 };

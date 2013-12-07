@@ -45,6 +45,7 @@
 #include "ItemComponent.h"
 #include "LightComponent.h"
 #include "SignalComponent.h"
+#include "WeaponComponent.h"
 
 #include "GridSystem.h"
 #include "PlaceableSystem.h"
@@ -80,18 +81,19 @@ int main()
     ItemComponent::Type = ComponentFactories::add(ItemComponent::factory);
     LightComponent::Type = ComponentFactories::add(LightComponent::factory);
     SignalComponent::Type = ComponentFactories::add(SignalComponent::factory);
+    WeaponComponent::Type = ComponentFactories::add(WeaponComponent::factory);
 
     Connection* conn = new Connection(engine->getEventManager());
 
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
-                                            FrontGridComponent::Type|SkeletonComponent::Type);
-    InputSystem *input = new InputSystem(engine->getEventManager(), 0.016f, &render->getWindow());
-    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 0.016f, conn);
-    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 0.016f, engine);
-    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 0.016f);
-    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 0.016f);
-    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 0.016f);
-    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 0.016f);
+                                            BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type);
+    InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/30.f, &render->getWindow());
+    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/30.f, conn);
+    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/30.f, engine);
+    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 1.f/30.f);
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/30.f);
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/30.f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/30.f);
     LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
     engine->addSystem(render);
@@ -105,7 +107,6 @@ int main()
     engine->addSystem(lightSys);
 
     FrontGridComponent::RndSys = render;
-    GridComponent::PhysSys = physSys;
 
     render->setBackgroundColor(sf::Color(130, 130, 255, 255));
 
@@ -154,8 +155,7 @@ int main()
     GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
-    gridSys->addTick(fluidGridOp2, 0.002f);
-    gridSys->addTick(wireGridOp, 0.01f);
+    gridSys->addTick(fluidGridOp, 0.002f);
 
     Scene *scene = engine->getScene();
 
@@ -172,7 +172,7 @@ int main()
     planet->addComponent(pg);
     planet->addComponent(new BackGridComponent(pg));
     planet->addComponent(new FrontGridComponent(pg));
-    planet->addComponent(new PhysicsComponent(physSys, pg));
+    planet->addComponent(new PhysicsComponent(pg));
 
     // Spawn player
     Entity *player = new Entity(engine->getEventManager());
@@ -181,7 +181,7 @@ int main()
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(physSys, 30, 60));
+    player->addComponent(new PhysicsComponent(30, 60));
     player->addComponent(new PlayerComponent);
     player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
@@ -285,6 +285,7 @@ Tile** newWorld(int seed, int width, int height)
 			if (y > n*100)
 			{
                 tiles[y][x].mMat = p * 3 / 2;
+                tiles[y][x].mBack = 1;
 
 				if (tiles[y][x].mMat > 3)
 					tiles[y][x].mMat = 3;
@@ -330,9 +331,7 @@ void bindSquirrel(HSQUIRRELVM vm)
 
     Sqrat::Class<Tile> tile(vm);
     tile.Var("mMat", &Tile::mMat);
-    tile.Var("mWire", &Tile::mWire);
     tile.Var("mFluid", &Tile::mFluid);
-    tile.Var("mSignal", &Tile::mSignal);
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
     Sqrat::DerivedClass<GridComponent, Component> grid(vm);
@@ -345,13 +344,15 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
     Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, float>> rigidbody(vm);
+    rigidbody.Func("applyForce", &phys::RigidBody::applyForce);
+
     rigidbody.Func("setVelocity", &phys::RigidBody::setVelocity);
     rigidbody.Func("setVelocityX", &phys::RigidBody::setVelocityX);
     rigidbody.Func("setVelocityY", &phys::RigidBody::setVelocityY);
     rigidbody.Func("getVelocity", &phys::RigidBody::getVelocity);
     Sqrat::RootTable(vm).Bind("RigidBody", rigidbody);
 
-    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, PhysicsSystem*, int, int>> physics(vm);
+    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, int, int>> physics(vm);
     physics.Func("getBody", &PhysicsComponent::getBody);
     Sqrat::RootTable(vm).Bind("PhysicsComponent", physics);
 

@@ -18,8 +18,8 @@ class PhysicsComponent : public Component
     friend class PhysicsSystem;
 
     public:
-        PhysicsComponent(PhysicsSystem* physSys = NULL, float width = 16, float height = 16);
-        PhysicsComponent(PhysicsSystem* physSys, GridComponent* gridCmp);
+        PhysicsComponent(float width = 16, float height = 16);
+        PhysicsComponent(GridComponent* gridCmp);
         virtual ~PhysicsComponent();
 
         // Serialization stuff

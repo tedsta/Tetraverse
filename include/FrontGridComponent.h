@@ -12,6 +12,10 @@ class FrontGridComponent : public RenderComponent
         FrontGridComponent(GridComponent* grid = NULL);
         virtual ~FrontGridComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         void render(sf::RenderTarget& target, sf::RenderStates states);
         void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 
@@ -22,7 +26,7 @@ class FrontGridComponent : public RenderComponent
         static RenderSystem* RndSys; // FrontGridComponents depend on render system
 
     private:
-        GridComponent* mGrid;
+        int mGridID;
 };
 
 #endif // FRONTGRIDCOMPONENT_H

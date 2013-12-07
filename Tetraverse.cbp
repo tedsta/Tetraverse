@@ -150,6 +150,7 @@
 		<Unit filename="include/SignalComponent.h" />
 		<Unit filename="include/SkeletonComponent.h" />
 		<Unit filename="include/TetraCollision.h" />
+		<Unit filename="include/WeaponComponent.h" />
 		<Unit filename="include/WireComponent.h" />
 		<Unit filename="include/phys/Collision.h" />
 		<Unit filename="include/phys/CollisionDispatcher.h" />
@@ -181,6 +182,7 @@
 		<Unit filename="src/SignalComponent.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />
 		<Unit filename="src/TetraCollision.cpp" />
+		<Unit filename="src/WeaponComponent.cpp" />
 		<Unit filename="src/WireComponent.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
 		<Unit filename="src/phys/CollisionDispatcher.cpp" />

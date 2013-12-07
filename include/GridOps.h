@@ -4,8 +4,9 @@
 #include "GridSystem.h"
 
 Area veggyGridOp(Area a);
-Area wireGridOp(Area a);
-Area fluidGridOp(Area a);
-void fluidGridOp2(GridComponent* grid, int tick);
+bool veggyTest(const Tile& oldTile, const Tile& newTile);
+
+void fluidGridOp(GridComponent* grid, int tick);
+bool fluidTest(const Tile& oldTile, const Tile& newTile);
 
 #endif // GRIDOPS_H

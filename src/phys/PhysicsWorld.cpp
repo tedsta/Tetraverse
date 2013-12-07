@@ -89,5 +89,15 @@ namespace phys
             b->torque = 0;
         }
     }
+
+    void PhysicsWorld::removeRigidBody(RigidBody* body)
+    {
+        for (sf::Uint32 i = 0; i < bodies.size(); i++)
+            if (bodies[i] == body)
+            {
+                bodies.erase(bodies.begin()+i);
+                return;
+            }
+    }
 }
 

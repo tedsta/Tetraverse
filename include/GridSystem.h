@@ -8,6 +8,8 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
+typedef bool (*InterestingTest)(const Tile& oldTile, const Tile& newTile);
+
 // Grid operation function. The surrounding tiles and the physics ticks are passed
 class GridOp
 {
@@ -45,6 +47,7 @@ struct Tick
     Tick(GridOp op, float delay) : mOp(op), mDelay(delay) {}
 
 	GridOp mOp;
+	InterestingTest mInterestingTest;
 	float mDelay; // Delay between each tick in seconds
 	sf::Clock mClock;
 };

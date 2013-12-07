@@ -19,6 +19,10 @@ class SignalComponent : public Component
         SignalComponent();
         virtual ~SignalComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         void addOutput(SignalComponent* output){outputs.push_back(output);}
 
         void fireInt(int i);

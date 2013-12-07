@@ -37,6 +37,14 @@ SkeletonComponent::~SkeletonComponent()
     delete mSkeleton;
 }
 
+void SkeletonComponent::serialize(sf::Packet &packet)
+{
+}
+
+void SkeletonComponent::deserialize(sf::Packet &packet)
+{
+}
+
 void SkeletonComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 {
     mSkeleton->draw(target, states);

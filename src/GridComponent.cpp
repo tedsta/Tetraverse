@@ -22,12 +22,16 @@ int randStateLeft(int x, int y);
 
 TypeBits GridComponent::Type;
 std::vector<sf::Texture*> GridComponent::TileSheets;
-PhysicsSystem* GridComponent::PhysSys;
 
-GridComponent::GridComponent(sf::Transformable* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
-    mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
+GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
+    mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
 {
-    //mTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
+    if (transform)
+        mTransformID = transform->getID();
+    else
+        mTransformID = -1;
+
+    //myTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
 
 	for (int y = 0; y < mSizeY; y++)
 		for (int x = 0; x < mSizeX; x++)
@@ -43,14 +47,88 @@ GridComponent::~GridComponent()
 
 void GridComponent::serialize(sf::Packet &packet)
 {
+    packet << mSizeX;
+    packet << mSizeY;
+    packet << mWrapX;
+
+    for (int y = 0; y < mSizeY; y++)
+        for (int x = 0; x < mSizeX; x++)
+            mTiles[y][x].serialize(packet);
+
+    packet << mTransformID;
+    packet << mTickCount;
+    for (int i = 0; i < mTickCount; i++)
+    {
+        packet << (int)mCTiles[i].size();
+        for (auto& cTile : mCTiles[i])
+            packet << cTile.x << cTile.y;
+    }
+
+    packet << (int)mPlaceables.size();
+    for (auto placeable : mPlaceables)
+        packet << placeable->getID();
+
+    packet << (int)mChildren.size();
+    for (auto child : mChildren)
+        packet << child->getID();
 }
 
 void GridComponent::deserialize(sf::Packet &packet)
 {
+    packet >> mSizeX;
+    packet >> mSizeY;
+    packet >> mWrapX;
+
+    mTiles = new Tile*[mSizeY];
+
+    for (int y = 0; y < mSizeY; y++)
+    {
+        mTiles[y] = new Tile[mSizeX];
+        for (int x = 0; x < mSizeX; x++)
+            mTiles[y][x].deserialize(packet);
+    }
+
+
+    packet >> mTransformID;
+    packet >> mTickCount;
+    mCTiles.resize(mTickCount);
+    for (int i = 0; i < mTickCount; i++)
+    {
+        int cTileSize;
+        packet >> cTileSize;
+
+        mCTiles[i].resize(cTileSize);
+        for (auto& cTile : mCTiles[i])
+            packet >> cTile.x >> cTile.y;
+    }
+
+    int placeableCount;
+    packet >> placeableCount;
+    mPlaceables.resize(placeableCount);
+    for (int i = 0; i < placeableCount; i++)
+    {
+        int placeableID;
+        packet >> placeableID;
+        mPlaceables[i] = Entity::get(placeableID);
+    }
+
+    int childCount;
+    packet >> childCount;
+    mChildren.resize(childCount);
+    for (int i = 0; i < childCount; i++)
+    {
+        int childID;
+        packet >> childID;
+        mChildren[i] = Entity::get(childID);
+    }
 }
 
 void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int bot)
 {
+    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
+    if (!myTransform)
+        return;
+
     int width = right-left+1;
     int height = bot-top+1;
 
@@ -74,12 +152,12 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
 
     sf::Vector2f pos(left, top);
     pos *= float(TILE_SIZE);
-    pos = mTransform->getTransform().transformPoint(pos);
+    pos = myTransform->getTransform().transformPoint(pos);
 
     TransformComponent* transform = new TransformComponent(pos,
-                                                           mTransform->getRotation(), mTransform->getScale());
+                                                           myTransform->getRotation(), myTransform->getScale());
     GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
-    //PhysicsComponent* physics = new PhysicsComponent((width)*TILE_SIZE, (height)*TILE_SIZE);
+    PhysicsComponent* physics = new PhysicsComponent(grid);
 
     for (Entity* placeable : placeables)
     {
@@ -93,12 +171,16 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
 
     newGrid->addComponent(transform);
     newGrid->addComponent(grid);
-    //newGrid->addComponent(physics);
+    newGrid->addComponent(physics);
 }
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 {
-	sf::Transform myInv = mTransform->getTransform().getInverse();
+    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
+    if (!myTransform)
+        return sf::Vector2f();
+
+	sf::Transform myInv = myTransform->getTransform().getInverse();
 	pos = myInv.transformPoint(pos);
 	pos = pos/float(TILE_SIZE);
 	pos.x = floor(pos.x);
@@ -131,6 +213,23 @@ void GridComponent::addFluid(int x, int y, float fluid)
 	mTiles[y][x].mFluid += fluid;
 }
 
+void GridComponent::placeMid(int x, int y, int mat)
+{
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return;
+
+    if (mTiles[y][x].mMat == mat)
+        return;
+
+    mTiles[y][x].mMat = mat;
+}
+
+void GridComponent::placeBack(int x, int y, int mat)
+{
+}
+
 void GridComponent::setTile(int x, int y, Tile tile, int tick)
 {
     if (mWrapX)
@@ -138,8 +237,7 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
     if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
 
-	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid &&
-        mTiles[y][x].mWire == tile.mWire && mTiles[y][x].mSignal == tile.mSignal)
+	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid)
 	{
 		return;
 	}
@@ -219,6 +317,10 @@ bool GridComponent::canPlace(int x, int y, int width, int height)
 
 void GridComponent::addPlaceable(Entity* entity)
 {
+    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
+    if (!myTransform)
+        return;
+
     TransformComponent* trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
 
@@ -227,10 +329,10 @@ void GridComponent::addPlaceable(Entity* entity)
 
     sf::Vector2f pos(placeable->getGridX(), placeable->getGridY());
     pos *= float(TILE_SIZE);
-    pos = mTransform->getTransform().transformPoint(pos);
+    pos = myTransform->getTransform().transformPoint(pos);
     trans->setPosition(pos);
-    trans->setRotation(mTransform->getRotation());
-    trans->setScale(mTransform->getScale());
+    trans->setRotation(myTransform->getRotation());
+    trans->setScale(myTransform->getScale());
     mPlaceables.push_back(entity);
 }
 

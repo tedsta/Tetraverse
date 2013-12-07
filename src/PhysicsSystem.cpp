@@ -14,7 +14,7 @@
 PhysicsSystem::PhysicsSystem(EventManager *eventManager, float lockStep) :
     System(eventManager, lockStep, TransformComponent::Type|PhysicsComponent::Type, 0)
 {
-    world = new phys::PhysicsWorld(0.016f, 10);
+    world = new phys::PhysicsWorld(lockStep, 10);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Circle, phys::Shape::Circle, phys::circleToCircle);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Circle, phys::Shape::Polygon, phys::circleToPolygon);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, phys::Shape::Circle, phys::polygonToCircle);
@@ -53,4 +53,16 @@ void PhysicsSystem::processEntity(Entity *entity, const float dt)
 
 void PhysicsSystem::end(const float dt)
 {
+}
+
+void PhysicsSystem::onEntityAdded(Entity* entity)
+{
+    auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
+    world->addRigidBody(phys->getBody());
+}
+
+void PhysicsSystem::onEntityRemoved(Entity* entity)
+{
+    auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
+    world->removeRigidBody(phys->getBody());
 }

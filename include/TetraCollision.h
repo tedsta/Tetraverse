@@ -29,6 +29,15 @@ class GridShape : public phys::Shape
 
         void computeMass(phys::RigidBody* body, float density)
         {
+            body->setMass(0.f);
+            body->setInverseMass(0.f);
+            body->setInertia(0.f);
+            body->setInverseInertia(0.f);
+
+            /*body->setMass(density * area);
+            body->setInverseMass((body->getMass()) ? 1.0f / body->getMass() : 0.0f);
+            body->setInertia(I * density);
+            body->setInverseInertia(body->getInertia() ? 1.0f / body->getInertia() : 0.0f);*/
         }
 
         GridComponent* getGrid(){return grid;}

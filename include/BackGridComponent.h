@@ -11,6 +11,10 @@ class BackGridComponent : public RenderComponent
         BackGridComponent(GridComponent* grid = NULL);
         virtual ~BackGridComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         void render(sf::RenderTarget& target, sf::RenderStates states);
         void renderShadow(sf::RenderTarget& target, sf::RenderStates states){}
 
@@ -19,7 +23,7 @@ class BackGridComponent : public RenderComponent
         static Component* factory() {return new BackGridComponent;}
 
     private:
-        GridComponent* mGrid;
+        int mGridID;
 };
 
 #endif // BACKGRIDCOMPONENT_H

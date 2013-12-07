@@ -14,6 +14,10 @@ class PlayerComponent : public Component
         PlayerComponent();
         virtual ~PlayerComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         int getLeftCoordsCount(){return mLeftCoords.size();}
         void pushLeftCoord(sf::Vector2f coord){mLeftCoords.push(coord);}
         const sf::Vector2f& frontLeftCoord(){return mLeftCoords.front();}
@@ -25,10 +29,6 @@ class PlayerComponent : public Component
         const sf::Vector2f& frontRightCoord(){return mRightCoords.front();}
         void popRightCoord(){mRightCoords.pop();}
         void clearRightCoords(){while (!mRightCoords.empty()) mRightCoords.pop();}
-
-        // Serialization stuff
-        void serialize(sf::Packet &packet);
-        void deserialize(sf::Packet &packet);
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

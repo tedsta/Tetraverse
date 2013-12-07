@@ -21,6 +21,8 @@ namespace phys
             void step();
 
             void addRigidBody(RigidBody* body){bodies.push_back(body);}
+            void removeRigidBody(RigidBody* body);
+
             void addConstraint(Constraint* constraint){constraints.push_back(constraint);}
 
         private:

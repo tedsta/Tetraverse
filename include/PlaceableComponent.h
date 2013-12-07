@@ -17,6 +17,10 @@ class PlaceableComponent : public Component
         PlaceableComponent(Entity* entity = NULL, Entity* grid = NULL, const std::string& className = "", int gridX = 1, int gridY = 1, int width = 1, int height = 1);
         virtual ~PlaceableComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         static void registerClass(HSQUIRRELVM vm, const std::string& className);
 
         void interact();

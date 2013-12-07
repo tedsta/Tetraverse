@@ -15,6 +15,10 @@ class InventoryComponent : public Component
         InventoryComponent(int size);
         virtual ~InventoryComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         int addItem(int slot, int item, int count);
         int addItem(int item, int count);
 

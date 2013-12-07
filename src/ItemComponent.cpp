@@ -60,3 +60,11 @@ ItemComponent::~ItemComponent()
 {
     //dtor
 }
+
+void ItemComponent::serialize(sf::Packet &packet)
+{
+}
+
+void ItemComponent::deserialize(sf::Packet &packet)
+{
+}

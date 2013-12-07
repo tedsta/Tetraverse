@@ -18,6 +18,14 @@ InventoryComponent::~InventoryComponent()
     //dtor
 }
 
+void InventoryComponent::serialize(sf::Packet &packet)
+{
+}
+
+void InventoryComponent::deserialize(sf::Packet &packet)
+{
+}
+
 int InventoryComponent::addItem(int slot, int item, int count)
 {
     if (slot >= mSlots.size() || (mSlots[slot].mItem != -1 && mSlots[slot].mItem != item) ||

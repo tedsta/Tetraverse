@@ -12,6 +12,14 @@ SignalComponent::~SignalComponent()
     //dtor
 }
 
+void SignalComponent::serialize(sf::Packet &packet)
+{
+}
+
+void SignalComponent::deserialize(sf::Packet &packet)
+{
+}
+
 void SignalComponent::fireInt(int i)
 {
     for (auto output : outputs)

@@ -12,9 +12,12 @@
 TypeBits FrontGridComponent::Type;
 RenderSystem* FrontGridComponent::RndSys;
 
-FrontGridComponent::FrontGridComponent(GridComponent* grid) : mGrid(grid)
+FrontGridComponent::FrontGridComponent(GridComponent* grid)
 {
-    //ctor
+    if (grid)
+        mGridID = grid->getID();
+    else
+        mGridID = -1;
 }
 
 FrontGridComponent::~FrontGridComponent()
@@ -22,8 +25,22 @@ FrontGridComponent::~FrontGridComponent()
     //dtor
 }
 
+void FrontGridComponent::serialize(sf::Packet &packet)
+{
+    packet << mGridID;
+}
+
+void FrontGridComponent::deserialize(sf::Packet &packet)
+{
+    packet >> mGridID;
+}
+
 void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 {
+    GridComponent* grid = reinterpret_cast<GridComponent*>(Component::get(mGridID));
+    if (!grid)
+        return;
+
     float tsize = static_cast<float>(TILE_SIZE);
 
 	sf::Vector2f center = states.transform.transformPoint(sf::Vector2f());
@@ -36,7 +53,7 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 	float ssXT = ceil(target.getView().getSize().x / tsize); // Screen size X in tiles
 	float ssYT = ceil(target.getView().getSize().y / tsize); // Screen size Y in tiles
 
-    /*if (mGrid->mWrapX)
+    /*if (grid->mWrapX)
     {
         for (auto rEnt : RndSys->getActiveEntities())
         {
@@ -50,12 +67,12 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 
                 auto rRnd = reinterpret_cast<RenderComponent*>(cmpnt);
 
-                sf::Vector2f cOffset = mGrid->mTransform->getInverseTransform().transformPoint(rTrans->getPosition());
+                sf::Vector2f cOffset = grid->mTransform->getInverseTransform().transformPoint(rTrans->getPosition());
 
-                if (cOffset.x >= 0 || cOffset.x+(dim.x/2) <= mGrid->mSizeX*TILE_SIZE)
+                if (cOffset.x >= 0 || cOffset.x+(dim.x/2) <= grid->mSizeX*TILE_SIZE)
                 {
-                    cOffset.x = fmod(cOffset.x, mGrid->mSizeX*TILE_SIZE);
-                    sf::Transform t = mGrid->mTransform->getTransform();
+                    cOffset.x = fmod(cOffset.x, grid->mSizeX*TILE_SIZE);
+                    sf::Transform t = grid->mTransform->getTransform();
                     trans->setPosition(t.transformPoint(cOffset));
                 }
             }
@@ -64,7 +81,7 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 
 	int left;
 	int right;
-	if (mGrid->mWrapX)
+	if (grid->mWrapX)
     {
         left = centerT.x - 1;
         right = centerT.x + ssXT + 1;
@@ -72,11 +89,11 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
     else
     {
         left = std::max<int>(centerT.x-1, 0);
-        right = std::min<int>(centerT.x+ssXT+1, mGrid->mSizeX-1);
+        right = std::min<int>(centerT.x+ssXT+1, grid->mSizeX-1);
     }
 
 	int top = std::max<int>(centerT.y-1, 0);
-	int bot = std::min<int>(centerT.y+ssYT+1, mGrid->mSizeY-1);
+	int bot = std::min<int>(centerT.y+ssYT+1, grid->mSizeY-1);
 
     sf::VertexArray verts(sf::Quads, 4);
     sf::VertexArray outline(sf::LinesStrip, 5);
@@ -84,7 +101,7 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 	{
 		for (int _x = left; _x <= right; _x++)
         {
-			int x = mGrid->wrapX(_x);
+			int x = grid->wrapX(_x);
 			int y = _y;
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
@@ -116,41 +133,29 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 				sf::Color::White,
 				sf::Vector2f());
 
-            if (mGrid->mTiles[y][x].mFluid > 0)
+            if (grid->mTiles[y][x].mFluid > 0)
             {
                 states.texture = NULL;
-                verts[0].color = sf::Color(0, 0, 255, std::min(mGrid->mTiles[y][x].mFluid*128.f, 255.f));
-                verts[1].color = sf::Color(0, 0, 255, std::min(mGrid->mTiles[y][x].mFluid*128.f, 255.f));
-                verts[2].color = sf::Color(0, 0, 255, std::min(mGrid->mTiles[y][x].mFluid*128.f, 255.f));
-                verts[3].color = sf::Color(0, 0, 255, std::min(mGrid->mTiles[y][x].mFluid*128.f, 255.f));
+                verts[0].color = sf::Color(0, 0, 255, std::min(grid->mTiles[y][x].mFluid*128.f, 255.f));
+                verts[1].color = sf::Color(0, 0, 255, std::min(grid->mTiles[y][x].mFluid*128.f, 255.f));
+                verts[2].color = sf::Color(0, 0, 255, std::min(grid->mTiles[y][x].mFluid*128.f, 255.f));
+                verts[3].color = sf::Color(0, 0, 255, std::min(grid->mTiles[y][x].mFluid*128.f, 255.f));
                 target.draw(verts, states);
             }
             else
             {
-                if (mGrid->mTiles[y][x].mWire > 0)
-                {
-                    states.texture = NULL;
-                    verts[0].color = sf::Color(mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mSignal, 255);
-                    verts[1].color = sf::Color(mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mSignal, 255);
-                    verts[2].color = sf::Color(mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mSignal, 255);
-                    verts[3].color = sf::Color(mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mWire, mGrid->mTiles[y][x].mSignal, 255);
-
-                    target.draw(verts, states);
-                }
-
-
-                if (mGrid->mTiles[y][x].mMat == 0 || mGrid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
+                if (grid->mTiles[y][x].mMat == 0 || grid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
                     continue;
 
                 // Grab tile sheet info
-                sf::Texture* sheet = GridComponent::TileSheets[mGrid->mTiles[y][x].mMat];
+                sf::Texture* sheet = GridComponent::TileSheets[grid->mTiles[y][x].mMat];
                 if (!sheet)
                     continue;
 
                 int sheetSizeX = sheet->getSize().x / TILE_SIZE;
                 int sheetSizeY = sheet->getSize().y / TILE_SIZE;
 
-                int edgeState = mGrid->calcNeighborState(x, y);
+                int edgeState = grid->calcNeighborState(x, y);
                 float texStartX = float(edgeState%sheetSizeX) * tsize;
                 float texStartY = float(edgeState/sheetSizeY) * tsize;
 
@@ -168,7 +173,7 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
             }
 
 			/*if joelMode {
-				for i, c := range mGrid->mTiles[y][x].comp {
+				for i, c := range grid->mTiles[y][x].comp {
 					bheight := (float32(c) / 255 * 16)
 					bwidth := float32(TILE_SIZE / MaxComps)
 					bstart := start.Add(sf::Vector2f{float32(i) * bwidth, 16 - bheight})
@@ -176,7 +181,7 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 					color := sf::Color{}
 					color.A = 255
 
-					switch i + int(mGrid->mTiles[y][x].mMat) {
+					switch i + int(grid->mTiles[y][x].mMat) {
 					case 0:
 						color.R = 255
 					case 1:
@@ -221,11 +226,11 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 			}*/
 
 
-			for(int j = 0; j < mGrid->mCTiles.size();j++){
-                for (int i = 0; i < mGrid->getInterestingTiles(j).size(); i++)
+			for(int j = 0; j < grid->mCTiles.size();j++){
+                for (int i = 0; i < grid->getInterestingTiles(j).size(); i++)
                     {
-                        int u = mGrid->getInterestingTiles(j)[i].x;
-                        int v = mGrid->getInterestingTiles(j)[i].y;
+                        int u = grid->getInterestingTiles(j)[i].x;
+                        int v = grid->getInterestingTiles(j)[i].y;
                         if (u == x && v == y)
                         {
                             verts.setPrimitiveType(sf::LinesStrip);
@@ -246,6 +251,10 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 
 void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates states)
 {
+    GridComponent* grid = reinterpret_cast<GridComponent*>(Component::get(mGridID));
+    if (!grid)
+        return;
+
     float tsize = static_cast<float>(TILE_SIZE);
 
 	sf::Vector2f center = states.transform.transformPoint(sf::Vector2f());
@@ -260,7 +269,7 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 
 	int left;
 	int right;
-	if (mGrid->mWrapX)
+	if (grid->mWrapX)
     {
         left = centerT.x - 1;
         right = centerT.x + ssXT + 1;
@@ -268,11 +277,11 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
     else
     {
         left = std::max<int>(centerT.x-1, 0);
-        right = std::min<int>(centerT.x+ssXT+1, mGrid->mSizeX-1);
+        right = std::min<int>(centerT.x+ssXT+1, grid->mSizeX-1);
     }
 
 	int top = std::max<int>(centerT.y-1, 0);
-	int bot = std::min<int>(centerT.y+ssYT+1, mGrid->mSizeY-1);
+	int bot = std::min<int>(centerT.y+ssYT+1, grid->mSizeY-1);
 
     sf::VertexArray verts(sf::Quads, 4);
     sf::VertexArray outline(sf::LinesStrip, 5);
@@ -280,7 +289,7 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 	{
 		for (int _x = left; _x <= right; _x++)
         {
-			int x = mGrid->wrapX(_x);
+			int x = grid->wrapX(_x);
 			int y = _y;
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
@@ -297,18 +306,18 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 				sf::Color::Black,
 				sf::Vector2f(tsize, 0));
 
-            if (mGrid->mTiles[y][x].mMat == 0 || mGrid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
+            if (grid->mTiles[y][x].mMat == 0 || grid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
                 continue;
 
             // Grab tile sheet info
-            sf::Texture* sheet = GridComponent::TileSheets[mGrid->mTiles[y][x].mMat];
+            sf::Texture* sheet = GridComponent::TileSheets[grid->mTiles[y][x].mMat];
             if (!sheet)
                 continue;
 
             int sheetSizeX = sheet->getSize().x / TILE_SIZE;
             int sheetSizeY = sheet->getSize().y / TILE_SIZE;
 
-            int edgeState = mGrid->calcNeighborState(x, y);
+            int edgeState = grid->calcNeighborState(x, y);
             float texStartX = float(edgeState%sheetSizeX) * tsize;
             float texStartY = float(edgeState/sheetSizeY) * tsize;
 

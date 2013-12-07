@@ -25,7 +25,10 @@ LightComponent::LightComponent(float _radius) : radius(_radius), active(true)
     shadowMapSprite.setScale(4.f, -4.f);
 }
 
-LightComponent::~LightComponent()
+void LightComponent::serialize(sf::Packet &packet)
 {
-    //dtor
+}
+
+void LightComponent::deserialize(sf::Packet &packet)
+{
 }

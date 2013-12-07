@@ -1,7 +1,6 @@
 #ifndef GRIDCOMPONENT_H
 #define GRIDCOMPONENT_H
 
-#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <Fission/Rendering/RenderComponent.h>
 
@@ -22,9 +21,30 @@ enum
 
 struct Tile
 {
-    Tile() : mMat(0), mBack(0), mFluid(0), mWire(0), mSignal(0) {}
-    Tile(sf::Uint8 mat, sf::Uint8 fluid = 0, sf::Uint8 wire = 0, sf::Uint8 signal = 0) :
-        mMat(mat), mFluid(fluid), mWire(wire), mSignal(signal) {}
+    Tile() : mMat(0), mBack(0), mFluid(0) {}
+    Tile(sf::Uint8 mat, sf::Uint8 fluid = 0) :
+        mMat(mat), mFluid(fluid) {}
+
+    // Serialization stuff
+    void serialize(sf::Packet &packet)
+    {
+        packet << mMat;
+        packet << mBack;
+        packet << mFlags;
+        packet << mComp[0] << mComp[1] << mComp[2] << mComp[3];
+        packet << mVeggy;
+        packet << mFluid;
+    }
+
+    void deserialize(sf::Packet &packet)
+    {
+        packet >> mMat;
+        packet >> mBack;
+        packet >> mFlags;
+        packet >> mComp[0] >> mComp[1] >> mComp[2] >> mComp[3];
+        packet >> mVeggy;
+        packet >> mFluid;
+    }
 
     bool isInteresting(){return mFlags&1;}
     void setInteresting(){mFlags|=1;}
@@ -42,8 +62,6 @@ struct Tile
 	sf::Uint8 mComp[MAX_COMPS]; // composit id, quantity
 	sf::Uint8 mVeggy;
 	float mFluid;
-	sf::Uint8 mWire;
-	sf::Uint8 mSignal;
 };
 
 struct Area
@@ -56,7 +74,7 @@ struct Area
 };
 
 class Entity;
-class PhysicsSystem;
+class TransformComponent;
 
 class GridComponent : public RenderComponent
 {
@@ -68,7 +86,7 @@ class GridComponent : public RenderComponent
     friend void gridToPolygon(phys::Manifold* m, phys::RigidBody* a, phys::RigidBody* b);
 
     public:
-        GridComponent(sf::Transformable* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);
+        GridComponent(TransformComponent* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);
         virtual ~GridComponent();
 
         // Serialization stuff
@@ -81,6 +99,9 @@ class GridComponent : public RenderComponent
 
         void interact(int x, int y);
         void addFluid(int x, int y, float fluid);
+
+        void placeMid(int x, int y, int mat);
+        void placeBack(int x, int y, int mat);
 
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);
@@ -118,16 +139,12 @@ class GridComponent : public RenderComponent
             TileSheets[mat] = sheet;
         }
 
-        static PhysicsSystem* PhysSys;
-
     private:
-        int mID;
         int mSizeX;
         int mSizeY;
         bool mWrapX;
         Tile** mTiles; // 2D array of tiles
-        sf::Uint8** mBackWall;
-        sf::Transformable* mTransform;
+        int mTransformID;
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
         std::vector<Entity*> mPlaceables;

@@ -48,6 +48,10 @@ namespace phys
             void setVelocityY(int y){velocity.y=y;}
             void setRotation(float rot);
             void setAngularVelocity(float vel){angularVelocity=vel;}
+            void setInertia(float i){inertia=i;}
+            void setInverseInertia(float ii){inverseInertia=ii;}
+            void setMass(float m){mass=m;}
+            void setInverseMass(float m){inverseMass=m;}
             void setTorque(float t){torque=t;}
             void setStaticFriction(float friction){staticFriction=friction;}
             void setDynamicFriction(float friction){dynamicFriction=friction;}

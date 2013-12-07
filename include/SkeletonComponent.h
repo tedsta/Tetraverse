@@ -10,6 +10,10 @@ class SkeletonComponent : public RenderComponent
         SkeletonComponent(std::string skDataFile = "", std::string atlasFile = "");
         virtual ~SkeletonComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         void render(sf::RenderTarget& target, sf::RenderStates states);
         void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
 

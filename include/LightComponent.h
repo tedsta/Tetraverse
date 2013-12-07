@@ -20,7 +20,10 @@ class LightComponent : public Component
 
         LightComponent(float _radius = 0.f);
         LightComponent(const LightComponent& other){}
-        virtual ~LightComponent();
+
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
 
         void setActive(bool a){active=a;}
 

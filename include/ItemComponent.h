@@ -44,6 +44,10 @@ class ItemComponent : public Component
         ItemComponent();
         virtual ~ItemComponent();
 
+        // Serialization stuff
+        void serialize(sf::Packet &packet);
+        void deserialize(sf::Packet &packet);
+
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
         static Component* factory() {return new ItemComponent;}

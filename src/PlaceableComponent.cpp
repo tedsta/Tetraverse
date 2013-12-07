@@ -21,6 +21,14 @@ PlaceableComponent::~PlaceableComponent()
     delete mInst;
 }
 
+void PlaceableComponent::serialize(sf::Packet &packet)
+{
+}
+
+void PlaceableComponent::deserialize(sf::Packet &packet)
+{
+}
+
 void PlaceableComponent::interact()
 {
     try
