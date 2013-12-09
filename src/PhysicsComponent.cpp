@@ -14,7 +14,7 @@ PhysicsComponent::PhysicsComponent(float width, float height) : grid(NULL)
     shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
     body = new phys::RigidBody(shape, 1.f);
     body->setGravity(sf::Vector2f(0, 40.f));
-    //body->setFixedRotation();
+    body->setFixedRotation();
 }
 
 PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : grid(NULL)
