@@ -227,3 +227,28 @@ bool fluidTest(const Tile& oldTile, const Tile& newTile)
         return true;
     return false;
 }
+
+// ************************************************************************************************
+
+Area lightGridOp(Area a)
+{
+    int light = std::max(a.mTiles[0][1].mLight, std::max(a.mTiles[1][0].mLight, std::max(a.mTiles[1][2].mLight, a.mTiles[2][1].mLight)));
+    if (light-1 < a.mTiles[1][1].mLight)
+        return a;
+
+
+    a.mTiles[1][1].mLight = light-1;
+    if (a.mTiles[1][1].mMat != 0 && a.mTiles[1][1].mLight > 0)
+        a.mTiles[1][1].mLight--;
+
+    a.mChanged = true;
+
+	return a;
+}
+
+bool lightTest(const Tile& oldTile, const Tile& newTile)
+{
+    if (oldTile.mLight != newTile.mLight)
+        return true;
+    return false;
+}

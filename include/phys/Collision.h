@@ -3,13 +3,13 @@
 
 namespace phys
 {
-    class Manifold;
+    class Collision;
     class RigidBody;
 
-    void circleToCircle(Manifold* m, RigidBody* a, RigidBody* b);
-    void circleToPolygon(Manifold* m, RigidBody* a, RigidBody* b);
-    void polygonToCircle(Manifold* m, RigidBody* a, RigidBody* b);
-    void polygonToPolygon(Manifold* m, RigidBody* a, RigidBody* b);
+    void circleToCircle(Collision* c, RigidBody* a, RigidBody* b);
+    void circleToPolygon(Collision* c, RigidBody* a, RigidBody* b);
+    void polygonToCircle(Collision* c, RigidBody* a, RigidBody* b);
+    void polygonToPolygon(Collision* c, RigidBody* a, RigidBody* b);
 }
 
 #endif // COLLISION_H

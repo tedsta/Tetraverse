@@ -19,11 +19,6 @@ namespace phys
         //dtor
     }
 
-    void Manifold::solve()
-    {
-        CollisionDispatcher::dispatch(this, bodyA, bodyB);
-    }
-
     void Manifold::initialize()
     {
         // Calculate average restitution
@@ -133,6 +128,51 @@ namespace phys
     {
         bodyA->velocity = sf::Vector2f(0, 0);
         bodyB->velocity = sf::Vector2f(0, 0);
+    }
+
+    // ********************************************************************************************
+
+    Collision::Collision(RigidBody* a, RigidBody* b, float _dt, const sf::Vector2f& _gravity) : bodyA(a), bodyB(b),
+        dt(_dt), gravity(_gravity), collision(false)
+    {
+        //ctor
+    }
+
+    void Collision::addManifold()
+    {
+        manifolds.emplace_back(Manifold(bodyA, bodyB, dt, gravity));
+    }
+
+    void Collision::solve()
+    {
+        CollisionDispatcher::dispatch(this, bodyA, bodyB);
+        for (auto& manifold : manifolds)
+            if (manifold.contactCount)
+                collision = true;
+    }
+
+    void Collision::initialize()
+    {
+        for (auto& manifold : manifolds)
+            manifold.initialize();
+    }
+
+    void Collision::applyImpulse()
+    {
+        for (auto& manifold : manifolds)
+            manifold.applyImpulse();
+    }
+
+    void Collision::positionalCorrection()
+    {
+        for (auto& manifold : manifolds)
+            manifold.positionalCorrection();
+    }
+
+    void Collision::infiniteMassCorrection()
+    {
+        for (auto& manifold : manifolds)
+            manifold.infiniteMassCorrection();
     }
 }
 

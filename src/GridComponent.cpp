@@ -223,6 +223,9 @@ void GridComponent::placeMid(int x, int y, int mat)
     if (mTiles[y][x].mMat == mat)
         return;
 
+    if (!canPlace(x, y, 1, 1))
+        return;
+
     mTiles[y][x].mMat = mat;
 }
 
@@ -237,7 +240,7 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
     if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
 
-	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid)
+	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid && mTiles[y][x].mLight == tile.mLight)
 	{
 		return;
 	}

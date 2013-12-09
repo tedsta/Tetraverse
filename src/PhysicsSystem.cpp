@@ -21,6 +21,7 @@ PhysicsSystem::PhysicsSystem(EventManager *eventManager, float lockStep) :
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, phys::Shape::Polygon, phys::polygonToPolygon);
     phys::CollisionDispatcher::registerCallback(Shape::Grid, phys::Shape::Polygon, gridToPolygon);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, Shape::Grid, polygonToGrid);
+    phys::CollisionDispatcher::registerCallback(Shape::Grid, Shape::Grid, gridToGrid);
 }
 
 PhysicsSystem::~PhysicsSystem()
@@ -36,7 +37,7 @@ void PhysicsSystem::begin(const float dt)
         auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
 
         phys->getBody()->setPosition(trans->getPosition()/PTU);
-        phys->getBody()->setRotation(trans->getRotation());
+        phys->getBody()->setRotation(degToRad(trans->getRotation()));
     }
 
     world->step();

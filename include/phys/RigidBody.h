@@ -42,6 +42,7 @@ namespace phys
             }
 
             // Setters
+            void setGravity(const sf::Vector2f& g){gravity=g;}
             void setPosition(const sf::Vector2f& pos){position=pos;}
             void setVelocity(const sf::Vector2f& vel){velocity=vel;}
             void setVelocityX(int x){velocity.x=x;}
@@ -58,6 +59,7 @@ namespace phys
             void setRestitution(float res){restitution=res;}
 
             // Getters
+            sf::Vector2f getGravity(){return gravity;}
             sf::Vector2f getPosition(){return position;}
             sf::Vector2f getVelocity(){return velocity;}
             float getRotation(){return rotation;}
@@ -73,6 +75,8 @@ namespace phys
             Shape* getShape(){return shape;}
 
         private:
+            sf::Vector2f gravity;
+
             sf::Vector2f position;
             sf::Vector2f velocity;
 

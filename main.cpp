@@ -104,7 +104,7 @@ int main()
     engine->addSystem(placeableSys);
     engine->addSystem(gridSys);
     engine->addSystem(physSys);
-    engine->addSystem(lightSys);
+    //engine->addSystem(lightSys);
 
     FrontGridComponent::RndSys = render;
 
@@ -156,6 +156,7 @@ int main()
 
     gridSys->addTick(veggyGridOp, 5.f);
     gridSys->addTick(fluidGridOp, 0.002f);
+    gridSys->addTick(lightGridOp, 0.1f);
 
     Scene *scene = engine->getScene();
 
@@ -282,10 +283,14 @@ Tile** newWorld(int seed, int width, int height)
 			{
 				o[i] = PerlinNoise2D(x, y, 1.01, 0.2, i) + 1;
 			}
+
+            tiles[y][x].mLight = 20;
+
 			if (y > n*100)
 			{
                 tiles[y][x].mMat = p * 3 / 2;
                 tiles[y][x].mBack = 1;
+                tiles[y][x].mLight = 0;
 
 				if (tiles[y][x].mMat > 3)
 					tiles[y][x].mMat = 3;

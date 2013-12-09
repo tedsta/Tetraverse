@@ -13,13 +13,16 @@ PhysicsComponent::PhysicsComponent(float width, float height) : grid(NULL)
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
     body = new phys::RigidBody(shape, 1.f);
-    body->setFixedRotation();
+    body->setGravity(sf::Vector2f(0, 40.f));
+    //body->setFixedRotation();
+    body->setRestitution(1.f);
 }
 
 PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : grid(NULL)
 {
     GridShape* shape = new GridShape(gridCmp);
     body = new phys::RigidBody(shape, 1.f);
+    body->setRestitution(1.f);
 
     if (gridCmp->getWrapX())
         body->setStatic();

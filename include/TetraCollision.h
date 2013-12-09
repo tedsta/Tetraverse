@@ -19,8 +19,9 @@ namespace Shape
 }
 
 sf::Vector2f calcSupportPoint(sf::Vector2f* vertices, int vertexCount, sf::Vector2f dir);
-void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b);
-void polygonToGrid(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b);
+void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
+void polygonToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
+void gridToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
 
 class GridShape : public phys::Shape
 {
@@ -29,8 +30,8 @@ class GridShape : public phys::Shape
 
         void computeMass(phys::RigidBody* body, float density)
         {
-            body->setMass(0.f);
-            body->setInverseMass(0.f);
+            body->setMass(1000.f);
+            body->setInverseMass(0.001f);
             body->setInertia(0.f);
             body->setInverseInertia(0.f);
 

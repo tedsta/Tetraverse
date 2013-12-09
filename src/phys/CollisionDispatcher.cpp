@@ -20,9 +20,9 @@ namespace phys
         callbacks[a][b] = callback;
     }
 
-    void CollisionDispatcher::dispatch(Manifold* m, RigidBody* a, RigidBody* b)
+    void CollisionDispatcher::dispatch(Collision* c, RigidBody* a, RigidBody* b)
     {
-        callbacks[a->getShape()->getType()][b->getShape()->getType()](m, a, b);
+        callbacks[a->getShape()->getType()][b->getShape()->getType()](c, a, b);
     }
 }
 

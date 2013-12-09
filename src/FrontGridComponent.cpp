@@ -292,6 +292,9 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 			int x = grid->wrapX(_x);
 			int y = _y;
 
+			if (grid->mTiles[y][x].mLight > 0)
+                continue;
+
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
 			verts[0] = sf::Vertex(start,
 				sf::Color::Black,
@@ -306,31 +309,6 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 				sf::Color::Black,
 				sf::Vector2f(tsize, 0));
 
-            if (grid->mTiles[y][x].mMat == 0 || grid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
-                continue;
-
-            // Grab tile sheet info
-            sf::Texture* sheet = GridComponent::TileSheets[grid->mTiles[y][x].mMat];
-            if (!sheet)
-                continue;
-
-            int sheetSizeX = sheet->getSize().x / TILE_SIZE;
-            int sheetSizeY = sheet->getSize().y / TILE_SIZE;
-
-            int edgeState = grid->calcNeighborState(x, y);
-            float texStartX = float(edgeState%sheetSizeX) * tsize;
-            float texStartY = float(edgeState/sheetSizeY) * tsize;
-
-            verts[0].texCoords.x += texStartX;
-            verts[0].texCoords.y += texStartY;
-            verts[1].texCoords.x += texStartX;
-            verts[1].texCoords.y += texStartY;
-            verts[2].texCoords.x += texStartX;
-            verts[2].texCoords.y += texStartY;
-            verts[3].texCoords.x += texStartX;
-            verts[3].texCoords.y += texStartY;
-
-            states.texture = sheet;
             target.draw(verts, states);
 		}
 	}

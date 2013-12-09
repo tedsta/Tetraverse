@@ -78,13 +78,13 @@ class Thruster extends Placeable
         local mousePos = intent.getMousePos();
 
         if (intent.isIntentActive("up"))
-            physics.getBody().applyForce(Vector2f(0, -4000));
+            physics.getBody().applyForce(Vector2f(0, -40));
         if (intent.isIntentActive("down"))
-            physics.getBody().applyForce(Vector2f(0, 4000));
+            physics.getBody().applyForce(Vector2f(0, 40));
         if (intent.isIntentActive("left"))
-            physics.getBody().applyForce(Vector2f(-2000, 0));
+            physics.getBody().applyForce(Vector2f(-20, 0));
         if (intent.isIntentActive("right"))
-            physics.getBody().applyForce(Vector2f(2000, 0));
+            physics.getBody().applyForce(Vector2f(20, 0));
     }
 
     function interact()

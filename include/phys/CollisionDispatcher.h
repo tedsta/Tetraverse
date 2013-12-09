@@ -6,16 +6,16 @@
 
 namespace phys
 {
-    class Manifold;
+    class Collision;
     class RigidBody;
 
-    typedef void (*CollisionCallback)(Manifold* m, RigidBody* a, RigidBody* b);
+    typedef void (*CollisionCallback)(Collision* c, RigidBody* a, RigidBody* b);
 
     class CollisionDispatcher
     {
         public:
             static void registerCallback(int a, int b, CollisionCallback callback);
-            static void dispatch(Manifold* m, RigidBody* a, RigidBody* b);
+            static void dispatch(Collision* c, RigidBody* a, RigidBody* b);
 
         private:
             static std::vector<std::vector<CollisionCallback>> callbacks;

@@ -5,14 +5,12 @@
 
 namespace phys
 {
-    const sf::Vector2f gravity = sf::Vector2f(0, 40.f);
-
     void PhysicsWorld::integrateForces( RigidBody *b, float dt )
     {
         if(b->inverseMass == 0.0f)
             return;
 
-        b->velocity += (b->force * b->inverseMass + gravity) * (dt / 2.0f);
+        b->velocity += (b->force * b->inverseMass + b->gravity) * (dt / 2.0f);
         b->angularVelocity += b->torque * b->inverseInertia * (dt / 2.0f);
     }
 
@@ -50,10 +48,10 @@ namespace phys
                 RigidBody* B = bodies[j];
                 if(A->inverseMass == 0 && B->inverseMass == 0)
                     continue;
-                Manifold m(A, B, dt, gravity);
-                m.solve();
-                if(m.contactCount)
-                    contacts.emplace_back(m);
+                Collision c(A, B, dt, sf::Vector2f(0, 40));
+                c.solve();
+                if(c.hasCollision())
+                    contacts.emplace_back(c);
             }
         }
 

@@ -9,8 +9,10 @@
 
 namespace phys
 {
-    void circleToCircle(Manifold* m, RigidBody* a, RigidBody* b)
+    void circleToCircle(Collision* c, RigidBody* a, RigidBody* b)
     {
+        c->addManifold();
+
         CircleShape* A = reinterpret_cast<CircleShape*>(a->getShape());
         CircleShape* B = reinterpret_cast<CircleShape*>(b->getShape());
 
@@ -23,34 +25,36 @@ namespace phys
         // Not in contact
         if(dist_sqr >= radius * radius)
         {
-            m->contactCount = 0;
+            c->getLastManifold()->contactCount = 0;
             return;
         }
 
         float distance = std::sqrt( dist_sqr );
 
-        m->contactCount = 1;
+        c->getLastManifold()->contactCount = 1;
 
         if(distance == 0.0f)
         {
-            m->penetration = A->getRadius();
-            m->normal = sf::Vector2f( 1, 0 );
-            m->contacts [0] = a->getPosition();
+            c->getLastManifold()->penetration = A->getRadius();
+            c->getLastManifold()->normal = sf::Vector2f( 1, 0 );
+            c->getLastManifold()->contacts [0] = a->getPosition();
         }
         else
         {
-            m->penetration = radius - distance;
-            m->normal = normal / distance; // Faster than using Normalized since we already performed sqrt
-            m->contacts[0] = m->normal * A->getRadius() + a->getPosition();
+            c->getLastManifold()->penetration = radius - distance;
+            c->getLastManifold()->normal = normal / distance; // Faster than using Normalized since we already performed sqrt
+            c->getLastManifold()->contacts[0] = c->getLastManifold()->normal * A->getRadius() + a->getPosition();
         }
     }
 
-    void circleToPolygon( Manifold *m, RigidBody *a, RigidBody *b )
+    void circleToPolygon( Collision* c, RigidBody *a, RigidBody *b )
     {
+        c->addManifold();
+
         CircleShape* A = reinterpret_cast<CircleShape*>(a->getShape());
         PolygonShape* B = reinterpret_cast<PolygonShape*>(b->getShape());
 
-        m->contactCount = 0;
+        c->getLastManifold()->contactCount = 0;
 
         // Transform circle center to Polygon model space
         sf::Vector2f center = a->getPosition();
@@ -82,17 +86,17 @@ namespace phys
         // Check to see if center is within polygon
         if(separation < EPSILON)
         {
-            m->contactCount = 1;
-            m->normal = -(B->getU() * B->getNormals()[faceNormal]);
-            m->contacts[0] = m->normal * A->getRadius() + a->getPosition();
-            m->penetration = A->getRadius();
+            c->getLastManifold()->contactCount = 1;
+            c->getLastManifold()->normal = -(B->getU() * B->getNormals()[faceNormal]);
+            c->getLastManifold()->contacts[0] = c->getLastManifold()->normal * A->getRadius() + a->getPosition();
+            c->getLastManifold()->penetration = A->getRadius();
             return;
         }
 
         // Determine which voronoi region of the edge center of circle lies within
         float dot1 = dot( center - v1, v2 - v1 );
         float dot2 = dot( center - v2, v1 - v2 );
-        m->penetration = A->getRadius() - separation;
+        c->getLastManifold()->penetration = A->getRadius() - separation;
 
         // Closest to v1
         if(dot1 <= 0.0f)
@@ -100,13 +104,13 @@ namespace phys
             if(lengthSqr( center - v1 ) > A->getRadius() * A->getRadius())
                 return;
 
-            m->contactCount = 1;
+            c->getLastManifold()->contactCount = 1;
             sf::Vector2f n = v1 - center;
             n = B->getU() * n;
             n = normalize(n);
-            m->normal = n;
+            c->getLastManifold()->normal = n;
             v1 = B->getU() * v1 + b->getPosition();
-            m->contacts[0] = v1;
+            c->getLastManifold()->contacts[0] = v1;
         }
 
         // Closest to v2
@@ -115,13 +119,13 @@ namespace phys
             if(lengthSqr( center - v2 ) > A->getRadius() * A->getRadius())
                 return;
 
-            m->contactCount = 1;
+            c->getLastManifold()->contactCount = 1;
             sf::Vector2f n = v2 - center;
             v2 = B->getU() * v2 + b->getPosition();
-            m->contacts[0] = v2;
+            c->getLastManifold()->contacts[0] = v2;
             n = B->getU() * n;
             n = normalize(n);
-            m->normal = n;
+            c->getLastManifold()->normal = n;
         }
 
         // Closest to face
@@ -132,16 +136,16 @@ namespace phys
                 return;
 
             n = B->getU() * n;
-            m->normal = -n;
-            m->contacts[0] = m->normal * A->getRadius() + a->getPosition();
-            m->contactCount = 1;
+            c->getLastManifold()->normal = -n;
+            c->getLastManifold()->contacts[0] = c->getLastManifold()->normal * A->getRadius() + a->getPosition();
+            c->getLastManifold()->contactCount = 1;
         }
     }
 
-    void polygonToCircle( Manifold *m, RigidBody *a, RigidBody *b )
+    void polygonToCircle( Collision* c, RigidBody *a, RigidBody *b )
     {
-      circleToPolygon( m, b, a );
-      m->normal = -m->normal;
+      circleToPolygon( c, b, a );
+      c->getLastManifold()->normal = -c->getLastManifold()->normal;
     }
 
     float findAxisLeastPenetration( sf::Uint32 *faceIndex, RigidBody *a, RigidBody *b )
@@ -252,11 +256,13 @@ namespace phys
         return sp;
     }
 
-    void polygonToPolygon( Manifold *m, RigidBody *a, RigidBody *b )
+    void polygonToPolygon( Collision* c, RigidBody *a, RigidBody *b )
     {
+        c->addManifold();
+
         PolygonShape *A = reinterpret_cast<PolygonShape *>(a->getShape());
         PolygonShape *B = reinterpret_cast<PolygonShape *>(b->getShape());
-        m->contactCount = 0;
+        c->getLastManifold()->contactCount = 0;
 
         // Check for a separating axis with A's face planes
         sf::Uint32 faceA;
@@ -346,32 +352,32 @@ namespace phys
             return; // Due to floating point error, possible to not have required points
 
         // Flip
-        m->normal = flip ? -refFaceNormal : refFaceNormal;
+        c->getLastManifold()->normal = flip ? -refFaceNormal : refFaceNormal;
 
         // Keep points behind reference face
         sf::Uint32 cp = 0; // clipped points behind reference face
         float separation = dot( refFaceNormal, incidentFace[0] ) - refC;
         if(separation <= 0.0f)
         {
-            m->contacts[cp] = incidentFace[0];
-            m->penetration = -separation;
+            c->getLastManifold()->contacts[cp] = incidentFace[0];
+            c->getLastManifold()->penetration = -separation;
             ++cp;
         }
         else
-            m->penetration = 0;
+            c->getLastManifold()->penetration = 0;
 
         separation = dot( refFaceNormal, incidentFace[1] ) - refC;
         if(separation <= 0.0f)
         {
-            m->contacts[cp] = incidentFace[1];
+            c->getLastManifold()->contacts[cp] = incidentFace[1];
 
-            m->penetration += -separation;
+            c->getLastManifold()->penetration += -separation;
             ++cp;
 
             // Average penetration
-            m->penetration /= (float)cp;
+            c->getLastManifold()->penetration /= (float)cp;
         }
 
-        m->contactCount = cp;
+        c->getLastManifold()->contactCount = cp;
     }
 }

@@ -21,9 +21,9 @@ enum
 
 struct Tile
 {
-    Tile() : mMat(0), mBack(0), mFluid(0) {}
+    Tile() : mMat(0), mBack(0), mFluid(0), mLight(0) {}
     Tile(sf::Uint8 mat, sf::Uint8 fluid = 0) :
-        mMat(mat), mFluid(fluid) {}
+        mMat(mat), mBack(0), mFluid(fluid), mLight(0) {}
 
     // Serialization stuff
     void serialize(sf::Packet &packet)
@@ -34,6 +34,7 @@ struct Tile
         packet << mComp[0] << mComp[1] << mComp[2] << mComp[3];
         packet << mVeggy;
         packet << mFluid;
+        packet << mLight;
     }
 
     void deserialize(sf::Packet &packet)
@@ -44,13 +45,14 @@ struct Tile
         packet >> mComp[0] >> mComp[1] >> mComp[2] >> mComp[3];
         packet >> mVeggy;
         packet >> mFluid;
+        packet >> mLight;
     }
 
-    bool isInteresting(){return mFlags&1;}
+    bool isInteresting() const {return mFlags&1;}
     void setInteresting(){mFlags|=1;}
     void clearInteresting(){mFlags&=~1;}
 
-    bool isSolid(){return mFlags&2;}
+    bool isSolid() const {return mFlags&2;}
     void setSolid(){mFlags|=2;}
     void clearSolid(){mFlags&=~2;}
 
@@ -62,6 +64,7 @@ struct Tile
 	sf::Uint8 mComp[MAX_COMPS]; // composit id, quantity
 	sf::Uint8 mVeggy;
 	float mFluid;
+	sf::Uint8 mLight;
 };
 
 struct Area
@@ -83,7 +86,7 @@ class GridComponent : public RenderComponent
     friend class BackGridComponent;
     friend class GridShape;
 
-    friend void gridToPolygon(phys::Manifold* m, phys::RigidBody* a, phys::RigidBody* b);
+    friend void gridToPolygon(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
 
     public:
         GridComponent(TransformComponent* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);

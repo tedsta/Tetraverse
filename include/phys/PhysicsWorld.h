@@ -33,7 +33,7 @@ namespace phys
             sf::Uint32 iterations;
             std::vector<RigidBody*> bodies;
             std::vector<Constraint*> constraints;
-            std::vector<Manifold> contacts;
+            std::vector<Collision> contacts;
     };
 }
 

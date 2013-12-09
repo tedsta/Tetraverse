@@ -36,6 +36,23 @@ void LightSystem::begin(const float dt)
 {
     lightMask.clear(sf::Color::Black);
     lightMask.setView(rndSys->getView());
+
+    /*for (auto rEntity : rndSys->getActiveEntities())
+    {
+        auto rTransform = reinterpret_cast<TransformComponent*>(rEntity->getComponent(TransformComponent::Type));
+        auto renderCmpnts = rEntity->getComponents(rndSys->getOptBits());
+
+        sf::RenderStates states = sf::RenderStates::Default;
+        states.transform = rTransform->getTransform();
+        for (auto cmpnt : renderCmpnts)
+        {
+            RenderComponent* rc = reinterpret_cast<RenderComponent*>(cmpnt);
+            if (rc->getLit())
+            {
+                rc->renderShadow(lightMask, states);
+            }
+        }
+    }*/
 }
 
 void LightSystem::processEntity(Entity *entity, const float dt)

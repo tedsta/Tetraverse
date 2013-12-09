@@ -117,12 +117,14 @@ int clip( sf::Vector2f n, float c, sf::Vector2f *face )
     return sp;
 }
 
-void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
+void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
+    c->addManifold();
+
     GridShape* grid = reinterpret_cast<GridShape*>(a->getShape());
     phys::PolygonShape* poly = reinterpret_cast<phys::PolygonShape*>(b->getShape());
 
-    m->contactCount = 0;
+    c->getLastManifold()->contactCount = 0;
 
     sf::Vector2f topLeft(FLT_MAX, FLT_MAX);
     sf::Vector2f botRight(-FLT_MAX, -FLT_MAX);
@@ -332,37 +334,43 @@ void gridToPolygon(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
         return; // Due to floating point error, possible to not have required points
 
     // Flip
-    m->normal = flip ? -refFaceNormal : refFaceNormal;
+    c->getLastManifold()->normal = flip ? -refFaceNormal : refFaceNormal;
 
     // Keep points behind reference face
     sf::Uint32 cp = 0; // clipped points behind reference face
     float separation = phys::dot( refFaceNormal, incidentFace[0] ) - refC;
     if(separation <= 0.0f)
     {
-        m->contacts[cp] = incidentFace[0];
-        m->penetration = -separation;
+        c->getLastManifold()->contacts[cp] = incidentFace[0];
+        c->getLastManifold()->penetration = -separation;
         ++cp;
     }
     else
-        m->penetration = 0;
+        c->getLastManifold()->penetration = 0;
 
     separation = phys::dot( refFaceNormal, incidentFace[1] ) - refC;
     if(separation <= 0.0f)
     {
-        m->contacts[cp] = incidentFace[1];
+        c->getLastManifold()->contacts[cp] = incidentFace[1];
 
-        m->penetration += -separation;
+        c->getLastManifold()->penetration += -separation;
         ++cp;
 
         // Average penetration
-        m->penetration /= (float)cp;
+        c->getLastManifold()->penetration /= (float)cp;
     }
 
-    m->contactCount = cp;
+    c->getLastManifold()->contactCount = cp;
 }
 
-void polygonToGrid(phys::Manifold *m, phys::RigidBody *a, phys::RigidBody *b)
+void polygonToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
-    gridToPolygon( m, b, a );
-    m->normal = -m->normal;
+    gridToPolygon( c, b, a );
+    c->getLastManifold()->normal = -c->getLastManifold()->normal;
+}
+
+void gridToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
+{
+    c->addManifold();
+    c->getLastManifold()->contactCount = 0;
 }
