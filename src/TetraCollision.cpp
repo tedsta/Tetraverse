@@ -120,11 +120,10 @@ int clip( sf::Vector2f n, float c, sf::Vector2f *face )
 void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
     c->addManifold();
+    c->getLastManifold()->contactCount = 0;
 
     GridShape* grid = reinterpret_cast<GridShape*>(a->getShape());
     phys::PolygonShape* poly = reinterpret_cast<phys::PolygonShape*>(b->getShape());
-
-    c->getLastManifold()->contactCount = 0;
 
     sf::Vector2f topLeft(FLT_MAX, FLT_MAX);
     sf::Vector2f botRight(-FLT_MAX, -FLT_MAX);
@@ -173,9 +172,6 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
     bot = std::min(bot, grid->getGrid()->mSizeY-1);
 
     // Find the tile with the least overlap in the collision
-    float smallestPenetration = FLT_MAX;
-    int smallestFace;
-
     sf::Vector2f tileVerts[4];
     float tilePenetration = 0.f;
     float polyPenetration = 0.f;
@@ -199,168 +195,152 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             if (grid->getGrid()->mTiles[y][x].mMat == 0)
                 continue;
 
-            sf::Vector2f tVerts[4];
-            tVerts[0] = sf::Vector2f(_x*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
-            tVerts[1] = sf::Vector2f(_x*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
-            tVerts[2] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
-            tVerts[3] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
+            tileVerts[0] = sf::Vector2f(_x*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
+            tileVerts[1] = sf::Vector2f(_x*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
+            tileVerts[2] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
+            tileVerts[3] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
 
             // Check for a separating axis with A's face planes
             int faceA;
             float penetrationA = findAxisLeastPenetration(&faceA, poly->transformedVertices.data(),
-                                                          poly->transformedNormals.data(), poly->transformedVertices.size(), tVerts, 4);
+                                                          poly->transformedNormals.data(), poly->transformedVertices.size(), tileVerts, 4);
             if(penetrationA >= 0.0f || phys::equal(penetrationA, 0.f))
                 continue;
 
             // Check for a separating axis with B's face planes
             int faceB;
-            float penetrationB = findAxisLeastPenetration(&faceB, tVerts, tileNormals, 4, poly->transformedVertices.data(), poly->transformedVertices.size());
+            float penetrationB = findAxisLeastPenetration(&faceB, tileVerts, tileNormals, 4, poly->transformedVertices.data(), poly->transformedVertices.size());
             if(penetrationB >= 0.0f || phys::equal(penetrationB, 0.f))
                 continue;
 
-            if (penetrationA < smallestPenetration || penetrationB < smallestPenetration)
+            tilePenetration = penetrationB;
+            polyPenetration = penetrationA;
+            tileFace = faceB;
+            polyFace = faceA;
+
+            sf::Uint32 referenceIndex;
+            bool flip; // Always point from a to b
+
+            phys::RigidBody* ref;
+            sf::Vector2f* refVerts;
+            sf::Vector2f* refNormals;
+            int refCount;
+            phys::RigidBody* inc;
+            sf::Vector2f* incVerts;
+            sf::Vector2f* incNormals;
+            int incCount;
+
+            // Determine which shape contains reference face
+            if(phys::biasGreaterThan( tilePenetration, polyPenetration ))
             {
-                tilePenetration = penetrationB;
-                polyPenetration = penetrationA;
-                tileFace = faceB;
-                polyFace = faceA;
-                memcpy(tileVerts, tVerts, sizeof(sf::Vector2f)*4);
+                ref = a;
+                refVerts = tileVerts;
+                refNormals = tileNormals;
+                refCount = 4;
+
+                inc = b;
+                incVerts = poly->transformedVertices.data();
+                incNormals = poly->transformedNormals.data();
+                incCount = poly->transformedVertices.size();
+
+                referenceIndex = tileFace;
+                flip = false;
+            }
+            else
+            {
+                ref = b;
+                refVerts = poly->transformedVertices.data();
+                refNormals = poly->transformedNormals.data();
+                refCount = poly->transformedVertices.size();
+
+                inc = a;
+                incVerts = tileVerts;
+                incNormals = tileNormals;
+                incCount = 4;
+
+                referenceIndex = polyFace;
+                flip = true;
             }
 
-            if (penetrationA < smallestPenetration)
+            // World space incident face
+            sf::Vector2f incidentFace[2];
+            findIncidentFace(incidentFace, refVerts, refNormals, refCount, incVerts, incNormals, incCount, referenceIndex);
+
+            //        y
+            //        ^  ->n       ^
+            //      +---c ------posPlane--
+            //  x < | i |\
+            //      +---+ c-----negPlane--
+            //             \       v
+            //              r
+            //
+            //  r : reference face
+            //  i : incident poly
+            //  c : clipped point
+            //  n : incident normal
+
+            // Setup reference face vertices
+            sf::Vector2f v1 = refVerts[referenceIndex];
+            referenceIndex = referenceIndex + 1 == refCount ? 0 : referenceIndex + 1;
+            sf::Vector2f v2 = refVerts[referenceIndex];
+
+            // Transform vertices to world space
+            v1 = a->getShape()->getU() * v1 + a->getPosition();
+            v2 = a->getShape()->getU() * v2 + a->getPosition();
+
+            // Calculate reference face side normal in world space
+            sf::Vector2f sidePlaneNormal = (v2 - v1);
+            sidePlaneNormal = phys::normalize(sidePlaneNormal);
+
+            // Orthogonalize
+            sf::Vector2f refFaceNormal( sidePlaneNormal.y, -sidePlaneNormal.x );
+
+            // ax + by = c
+            // c is distance from origin
+            float refC = phys::dot( refFaceNormal, v1 );
+            float negSide = -phys::dot( sidePlaneNormal, v1 );
+            float posSide =  phys::dot( sidePlaneNormal, v2 );
+
+            // Clip incident face to reference face side planes
+            if(clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
+                return; // Due to floating point error, possible to not have required points
+
+            if(clip(  sidePlaneNormal, posSide, incidentFace ) < 2)
+                return; // Due to floating point error, possible to not have required points
+
+            // Flip
+            c->getLastManifold()->normal = flip ? -refFaceNormal : refFaceNormal;
+
+            // Keep points behind reference face
+            sf::Uint32 cp = 0; // clipped points behind reference face
+            float separation = phys::dot( refFaceNormal, incidentFace[0] ) - refC;
+            if(separation <= 0.0f)
             {
-                smallestPenetration = penetrationA;
-                smallestFace = faceA;
+                c->getLastManifold()->contacts[cp] = incidentFace[0];
+                c->getLastManifold()->penetration = -separation;
+                ++cp;
             }
-            if (penetrationB < smallestPenetration)
+            else
+                c->getLastManifold()->penetration = 0;
+
+            separation = phys::dot( refFaceNormal, incidentFace[1] ) - refC;
+            if(separation <= 0.0f)
             {
-                smallestPenetration = penetrationB;
-                smallestFace = faceB;
+                c->getLastManifold()->contacts[cp] = incidentFace[1];
+
+                c->getLastManifold()->penetration += -separation;
+                ++cp;
+
+                // Average penetration
+                c->getLastManifold()->penetration /= (float)cp;
             }
+
+            c->getLastManifold()->contactCount = cp;
+
+            c->addManifold();
+            c->getLastManifold()->contactCount = 0;
         }
     }
-
-    if (smallestPenetration == FLT_MAX)
-        return;
-
-    sf::Uint32 referenceIndex;
-    bool flip; // Always point from a to b
-
-    phys::RigidBody* ref;
-    sf::Vector2f* refVerts;
-    sf::Vector2f* refNormals;
-    int refCount;
-    phys::RigidBody* inc;
-    sf::Vector2f* incVerts;
-    sf::Vector2f* incNormals;
-    int incCount;
-
-    // Determine which shape contains reference face
-    if(phys::biasGreaterThan( tilePenetration, polyPenetration ))
-    {
-        ref = a;
-        refVerts = tileVerts;
-        refNormals = tileNormals;
-        refCount = 4;
-
-        inc = b;
-        incVerts = poly->transformedVertices.data();
-        incNormals = poly->transformedNormals.data();
-        incCount = poly->transformedVertices.size();
-
-        referenceIndex = tileFace;
-        flip = false;
-    }
-    else
-    {
-        ref = b;
-        refVerts = poly->transformedVertices.data();
-        refNormals = poly->transformedNormals.data();
-        refCount = poly->transformedVertices.size();
-
-        inc = a;
-        incVerts = tileVerts;
-        incNormals = tileNormals;
-        incCount = 4;
-
-        referenceIndex = polyFace;
-        flip = true;
-    }
-
-    // World space incident face
-    sf::Vector2f incidentFace[2];
-    findIncidentFace(incidentFace, refVerts, refNormals, refCount, incVerts, incNormals, incCount, referenceIndex);
-
-    //        y
-    //        ^  ->n       ^
-    //      +---c ------posPlane--
-    //  x < | i |\
-    //      +---+ c-----negPlane--
-    //             \       v
-    //              r
-    //
-    //  r : reference face
-    //  i : incident poly
-    //  c : clipped point
-    //  n : incident normal
-
-    // Setup reference face vertices
-    sf::Vector2f v1 = refVerts[referenceIndex];
-    referenceIndex = referenceIndex + 1 == refCount ? 0 : referenceIndex + 1;
-    sf::Vector2f v2 = refVerts[referenceIndex];
-
-    // Transform vertices to world space
-    v1 = a->getShape()->getU() * v1 + a->getPosition();
-    v2 = a->getShape()->getU() * v2 + a->getPosition();
-
-    // Calculate reference face side normal in world space
-    sf::Vector2f sidePlaneNormal = (v2 - v1);
-    sidePlaneNormal = phys::normalize(sidePlaneNormal);
-
-    // Orthogonalize
-    sf::Vector2f refFaceNormal( sidePlaneNormal.y, -sidePlaneNormal.x );
-
-    // ax + by = c
-    // c is distance from origin
-    float refC = phys::dot( refFaceNormal, v1 );
-    float negSide = -phys::dot( sidePlaneNormal, v1 );
-    float posSide =  phys::dot( sidePlaneNormal, v2 );
-
-    // Clip incident face to reference face side planes
-    if(clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
-        return; // Due to floating point error, possible to not have required points
-
-    if(clip(  sidePlaneNormal, posSide, incidentFace ) < 2)
-        return; // Due to floating point error, possible to not have required points
-
-    // Flip
-    c->getLastManifold()->normal = flip ? -refFaceNormal : refFaceNormal;
-
-    // Keep points behind reference face
-    sf::Uint32 cp = 0; // clipped points behind reference face
-    float separation = phys::dot( refFaceNormal, incidentFace[0] ) - refC;
-    if(separation <= 0.0f)
-    {
-        c->getLastManifold()->contacts[cp] = incidentFace[0];
-        c->getLastManifold()->penetration = -separation;
-        ++cp;
-    }
-    else
-        c->getLastManifold()->penetration = 0;
-
-    separation = phys::dot( refFaceNormal, incidentFace[1] ) - refC;
-    if(separation <= 0.0f)
-    {
-        c->getLastManifold()->contacts[cp] = incidentFace[1];
-
-        c->getLastManifold()->penetration += -separation;
-        ++cp;
-
-        // Average penetration
-        c->getLastManifold()->penetration /= (float)cp;
-    }
-
-    c->getLastManifold()->contactCount = cp;
 }
 
 void polygonToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)

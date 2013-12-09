@@ -15,14 +15,12 @@ PhysicsComponent::PhysicsComponent(float width, float height) : grid(NULL)
     body = new phys::RigidBody(shape, 1.f);
     body->setGravity(sf::Vector2f(0, 40.f));
     //body->setFixedRotation();
-    body->setRestitution(1.f);
 }
 
 PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : grid(NULL)
 {
     GridShape* shape = new GridShape(gridCmp);
     body = new phys::RigidBody(shape, 1.f);
-    body->setRestitution(1.f);
 
     if (gridCmp->getWrapX())
         body->setStatic();

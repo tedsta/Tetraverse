@@ -154,25 +154,29 @@ namespace phys
     void Collision::initialize()
     {
         for (auto& manifold : manifolds)
-            manifold.initialize();
+            if (manifold.contactCount)
+                manifold.initialize();
     }
 
     void Collision::applyImpulse()
     {
         for (auto& manifold : manifolds)
-            manifold.applyImpulse();
+            if (manifold.contactCount)
+                manifold.applyImpulse();
     }
 
     void Collision::positionalCorrection()
     {
         for (auto& manifold : manifolds)
-            manifold.positionalCorrection();
+            if (manifold.contactCount)
+                manifold.positionalCorrection();
     }
 
     void Collision::infiniteMassCorrection()
     {
         for (auto& manifold : manifolds)
-            manifold.infiniteMassCorrection();
+            if (manifold.contactCount)
+                manifold.infiniteMassCorrection();
     }
 }
 
