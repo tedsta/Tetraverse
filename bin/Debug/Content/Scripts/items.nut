@@ -37,12 +37,12 @@ function door(gridEnt, coords)
     local x = coords[0].x;
     local y = coords[0].y;
 
-    if (grid.canPlace(x, y, 4, 6) == true)
+    if (grid.canPlace(x, y, 1, 4) == true)
     {
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
-        entity.addComponentSq(SpriteComponent("robot.png", 1, 1));
-        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 4, 6));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/door.png", 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 1, 4));
         entity.addComponentSq(LightComponent(200));
         entity.addComponentSq(SignalComponent());
         grid.addPlaceable(entity);
@@ -64,7 +64,7 @@ function thruster(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 1) == true)
     {
         local transform = TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1));
-        transform.setOrigin(Vector2f(12-8, 47-8));
+        transform.setOrigin(Vector2f(24-8, 32-8));
 
         local intent = IntentComponent();
         intent.mapKeyToIntent("up", KeyI, BtnStateDown);
@@ -75,7 +75,7 @@ function thruster(gridEnt, coords)
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(transform);
         entity.addComponentSq(intent);
-        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/thruster.png", 1, 1));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/engine.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
 
@@ -170,11 +170,11 @@ function light(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 1) == true)
     {
         local transform = TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1));
-        transform.setOrigin(Vector2f(8, 12));
+        transform.setOrigin(Vector2f(0, 0));
 
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(transform);
-        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/light.png", 1, 1));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/torch.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Light", x, y, 1,1));
         entity.addComponentSq(LightComponent(170));
         entity.addComponentSq(SignalComponent());
@@ -200,6 +200,54 @@ function swtch(gridEnt, coords)
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/switch.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
+        entity.addComponentSq(LightComponent(15));
+        entity.addComponentSq(SignalComponent());
+        grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+
+        return true;
+    }
+
+    return false;
+}
+
+function o2(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    if (grid.canPlace(x, y, 1, 3))
+    {
+        local entity = engine.getScene().createEntity();
+        entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/o2.png", 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 3));
+        entity.addComponentSq(LightComponent(15));
+        entity.addComponentSq(SignalComponent());
+        grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+
+        return true;
+    }
+
+    return false;
+}
+
+function reactor(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    if (grid.canPlace(x, y, 3, 2))
+    {
+        local entity = engine.getScene().createEntity();
+        entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/reactor.png", 1, 1));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 3, 2));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());
         grid.addPlaceable(entity);

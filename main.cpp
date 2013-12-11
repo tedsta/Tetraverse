@@ -141,6 +141,12 @@ int main()
     Item *swtch = new Item("switch", "Content/Textures/Placeables/switch.png", false, BtnState::PRESSED, 1, 1, itemScript, "swtch");
     Item::Items.push_back(swtch);
 
+    Item *o2 = new Item("o2", "Content/Textures/Placeables/o2.png", false, BtnState::PRESSED, 1, 1, itemScript, "o2");
+    Item::Items.push_back(o2);
+
+    Item *reactor = new Item("reactor", "Content/Textures/Placeables/reactor.png", false, BtnState::PRESSED, 1, 1, itemScript, "reactor");
+    Item::Items.push_back(reactor);
+
     // Set up the placeables
     HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
     PlaceableComponent::registerClass(placeableScript, "Door");
@@ -199,6 +205,7 @@ int main()
     inventory->addItem(6, 6, 1);
     inventory->addItem(7, 7, 99);
     inventory->addItem(8, 8, 99);
+    inventory->addItem(9, 10, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));

@@ -8,8 +8,8 @@ namespace phys
     {
         angularVelocity = 0;
         torque = 0;
-        staticFriction = 0.5f;
-        dynamicFriction = 0.3f;
+        staticFriction = 0.8f;
+        dynamicFriction = 0.55f;
         restitution = 0.2f;
         shape->computeMass(this, density);
     }
