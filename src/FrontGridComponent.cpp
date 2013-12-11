@@ -8,6 +8,7 @@
 #include <Fission/Rendering/RenderComponent.h>
 
 #include "GridComponent.h"
+#include "TetraCollision.h"
 
 TypeBits FrontGridComponent::Type;
 RenderSystem* FrontGridComponent::RndSys;
@@ -228,25 +229,38 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
 
 			for(int j = 0; j < grid->mCTiles.size();j++){
                 for (int i = 0; i < grid->getInterestingTiles(j).size(); i++)
+                {
+                    int u = grid->getInterestingTiles(j)[i].x;
+                    int v = grid->getInterestingTiles(j)[i].y;
+                    if (u == x && v == y)
                     {
-                        int u = grid->getInterestingTiles(j)[i].x;
-                        int v = grid->getInterestingTiles(j)[i].y;
-                        if (u == x && v == y)
-                        {
-                            verts.setPrimitiveType(sf::LinesStrip);
-                            states.texture = NULL;
-                            outline[0].color = sf::Color(255, 0, 0, 255);
-                            outline[1].color = sf::Color(255, 0, 0, 255);
-                            outline[2].color = sf::Color(255, 0, 0, 255);
-                            outline[3].color = sf::Color(255, 0, 0, 255);
-                            outline[4].color = sf::Color(255, 0, 0, 255);
-                            target.draw(verts, states);
-                             verts.setPrimitiveType(sf::Quads);
-                        }
+                        verts.setPrimitiveType(sf::LinesStrip);
+                        states.texture = NULL;
+                        outline[0].color = sf::Color(255, 0, 0, 255);
+                        outline[1].color = sf::Color(255, 0, 0, 255);
+                        outline[2].color = sf::Color(255, 0, 0, 255);
+                        outline[3].color = sf::Color(255, 0, 0, 255);
+                        outline[4].color = sf::Color(255, 0, 0, 255);
+                        target.draw(verts, states);
+                         verts.setPrimitiveType(sf::Quads);
+                    }
                 }
 			}
 		}
 	}
+
+    if (!grid->getWrapX())
+    {
+        sf::VertexArray physicsPoly(sf::LinesStrip, grid->mPolyShape.getVertices().size()+1);
+        for (unsigned int i = 0; i < grid->mPolyShape.getVertices().size(); i++)
+        {
+            physicsPoly[i].position = grid->mPolyShape.getVertices()[i]*PTU;
+            physicsPoly[i].color = sf::Color::White;
+        }
+        physicsPoly[physicsPoly.getVertexCount()-1] = physicsPoly[0];
+        target.draw(physicsPoly, states);
+    }
+
 }
 
 void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates states)

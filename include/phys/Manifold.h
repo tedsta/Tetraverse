@@ -52,12 +52,13 @@ namespace phys
             void positionalCorrection();  // Naive correction of positional penetration
             void infiniteMassCorrection();
 
+            std::vector<Manifold> manifolds;
+
         private:
             RigidBody* bodyA;
             RigidBody* bodyB;
             float dt;
             sf::Vector2f gravity;
-            std::vector<Manifold> manifolds;
             bool collision;
     };
 }

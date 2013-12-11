@@ -22,6 +22,7 @@ PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : grid(NULL)
     GridShape* shape = new GridShape(gridCmp);
     body = new phys::RigidBody(shape, 1.f);
 
+    body->setGravity(sf::Vector2f(0, 40.f));
     if (gridCmp->getWrapX())
         body->setStatic();
 }

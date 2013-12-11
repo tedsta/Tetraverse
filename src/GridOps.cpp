@@ -139,8 +139,8 @@ void fluidGridOp(GridComponent* grid, int tick)
             }
             Flow = constrain( Flow, 0, std::min(MaxSpeed, remaining_mass) );
 
-            grid->addFluid(x, y, -Flow);
-            grid->addFluid(x, y+1, Flow);
+            grid->addFluid(x, y, 4, -Flow);
+            grid->addFluid(x, y+1, 4, Flow);
             remaining_mass -= Flow;
         }
 
@@ -157,8 +157,8 @@ void fluidGridOp(GridComponent* grid, int tick)
                 Flow *= 0.5f;
             }
             Flow = constrain(Flow, 0, remaining_mass);
-            grid->addFluid(x, y, -Flow);
-            grid->addFluid(x-1, y, Flow);
+            grid->addFluid(x, y, 4, -Flow);
+            grid->addFluid(x-1, y, 4, Flow);
             remaining_mass -= Flow;
         }
 
@@ -175,8 +175,8 @@ void fluidGridOp(GridComponent* grid, int tick)
                 Flow *= 0.5f;
             }
             Flow = constrain(Flow, 0, remaining_mass);
-            grid->addFluid(x, y, -Flow);
-            grid->addFluid(x+1, y, Flow);
+            grid->addFluid(x, y, 4, -Flow);
+            grid->addFluid(x+1, y, 4, Flow);
             remaining_mass -= Flow;
         }
 
@@ -194,8 +194,8 @@ void fluidGridOp(GridComponent* grid, int tick)
             }
             Flow = constrain( Flow, 0, std::min(MaxSpeed, remaining_mass) );
 
-            grid->addFluid(x, y, -Flow);
-            grid->addFluid(x, y-1, Flow);
+            grid->addFluid(x, y, 4, -Flow);
+            grid->addFluid(x, y-1, 4, Flow);
             remaining_mass -= Flow;
         }
     }

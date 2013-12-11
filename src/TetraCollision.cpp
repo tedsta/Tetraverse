@@ -141,7 +141,7 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
         // Retrieve vertex on face from A, transform into
         // B's model space
         sf::Vector2f v = poly->getVertices()[i];
-        v = poly->getU() * v + b->getPosition();
+        v = (poly->getU() * v) + b->getPosition();
         v -= a->getPosition();
         v = buT * v;
 
@@ -284,10 +284,6 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             referenceIndex = referenceIndex + 1 == refCount ? 0 : referenceIndex + 1;
             sf::Vector2f v2 = refVerts[referenceIndex];
 
-            // Transform vertices to world space
-            v1 = a->getShape()->getU() * v1 + a->getPosition();
-            v2 = a->getShape()->getU() * v2 + a->getPosition();
-
             // Calculate reference face side normal in world space
             sf::Vector2f sidePlaneNormal = (v2 - v1);
             sidePlaneNormal = phys::normalize(sidePlaneNormal);
@@ -346,11 +342,40 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 void polygonToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
     gridToPolygon( c, b, a );
-    c->getLastManifold()->normal = -c->getLastManifold()->normal;
+    for (auto& manifold : c->manifolds)
+        manifold.normal = -manifold.normal;
 }
 
 void gridToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
-    c->addManifold();
-    c->getLastManifold()->contactCount = 0;
+    auto gridA = reinterpret_cast<GridShape*>(a->getShape());
+    auto gridB = reinterpret_cast<GridShape*>(b->getShape());
+
+    bool polyA;
+
+    if (gridA->getGrid()->getWrapX() && gridB->getGrid()->getWrapX())
+    {
+        return;
+    }
+    else if (gridA->getGrid()->getWrapX())
+    {
+        polyA = false;
+    }
+    else if (gridB->getGrid()->getWrapX())
+    {
+        polyA = true;
+    }
+
+    if (polyA)
+    {
+        a->setShape(&gridA->getGrid()->mPolyShape); // Use B's polygon shape
+        gridToPolygon(c, b, a);
+        a->setShape(gridA); // Put B's grid shape back
+    }
+    else
+    {
+        b->setShape(&gridB->getGrid()->mPolyShape); // Use B's polygon shape
+        gridToPolygon(c, a, b);
+        b->setShape(gridB); // Put B's grid shape back
+    }
 }

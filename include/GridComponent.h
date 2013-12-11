@@ -6,6 +6,7 @@
 
 #include "phys/Manifold.h"
 #include "phys/RigidBody.h"
+#include "phys/Shape.h"
 
 #define MAX_COMPS 4
 #define TILE_SIZE 16
@@ -87,6 +88,7 @@ class GridComponent : public RenderComponent
     friend class GridShape;
 
     friend void gridToPolygon(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
+    friend void gridToGrid(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
 
     public:
         GridComponent(TransformComponent* transform = NULL, int sizeX = 0, int sizeY = 0, bool wrapX = false, Tile** tiles = NULL, int tickCount = 0);
@@ -101,10 +103,10 @@ class GridComponent : public RenderComponent
         void sliceInto(Entity* newGrid, int left, int top, int right, int bot);
 
         void interact(int x, int y);
-        void addFluid(int x, int y, float fluid);
 
-        void placeMid(int x, int y, int mat);
-        void placeBack(int x, int y, int mat);
+        bool placeMid(int x, int y, int mat);
+        bool placeBack(int x, int y, int mat);
+        bool addFluid(int x, int y, int mat, float fluid);
 
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);
@@ -113,6 +115,8 @@ class GridComponent : public RenderComponent
         Entity* getPlaceableAt(int x, int y);
         int calcNeighborState(int x, int y);
         int wrapX(int x) const;
+
+        void recalculatePolygon();
 
         void setInteresting(int x, int y, int tick)
         {
@@ -152,6 +156,9 @@ class GridComponent : public RenderComponent
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
         std::vector<Entity*> mPlaceables;
         std::vector<Entity*> mChildren; // All of the entities in this grid
+
+        phys::PolygonShape mPolyShape;
+        std::vector<sf::Vector2f> mVertices;
 
         static std::vector<sf::Texture*> TileSheets;
 };

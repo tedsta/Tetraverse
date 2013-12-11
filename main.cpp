@@ -90,7 +90,7 @@ int main()
     InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/30.f, &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/30.f, conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/30.f, engine);
-    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 1.f/30.f);
+    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 1.f/1000.f);
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/30.f);
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/30.f);
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/30.f);
@@ -155,7 +155,7 @@ int main()
     GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
-    gridSys->addTick(fluidGridOp, 0.002f);
+    gridSys->addTick(fluidGridOp, 0.001f);
     gridSys->addTick(lightGridOp, 0.1f);
 
     Scene *scene = engine->getScene();

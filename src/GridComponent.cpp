@@ -7,12 +7,16 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <Fission/Core/Math.h>
 #include <Fission/Core/Entity.h>
 #include <Fission/Rendering/TransformComponent.h>
 
 #include "PhysicsSystem.h"
 #include "PhysicsComponent.h"
+#include "BackGridComponent.h"
+#include "FrontGridComponent.h"
 #include "PlaceableComponent.h"
+#include "TetraCollision.h"
 
 int randStateCovered(int x, int y);
 int randStateTop(int x, int y);
@@ -170,8 +174,24 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     }
 
     newGrid->addComponent(transform);
+    newGrid->addComponent(new BackGridComponent(grid));
+    newGrid->addComponent(new FrontGridComponent(grid));
     newGrid->addComponent(grid);
     newGrid->addComponent(physics);
+
+    for (int y = 0; y < height-1; y++)
+    {
+        for (int x = 0; x < width-1; x++)
+        {
+            if (grid->mTiles[y][x].mMat != 0 || grid->mTiles[y][x+1].mMat != 0 ||
+                grid->mTiles[y+1][x+1].mMat != 0 || grid->mTiles[y+1][x].mMat != 0)
+            {
+                grid->mVertices.push_back(sf::Vector2f(x+1, y+1));
+            }
+        }
+    }
+
+    grid->recalculatePolygon();
 }
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
@@ -203,34 +223,56 @@ void GridComponent::interact(int x, int y)
     }
 }
 
-void GridComponent::addFluid(int x, int y, float fluid)
+bool GridComponent::placeMid(int x, int y, int mat)
 {
     if (mWrapX)
         x = wrapX(x);
     if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
-		return;
-
-	mTiles[y][x].mFluid += fluid;
-}
-
-void GridComponent::placeMid(int x, int y, int mat)
-{
-    if (mWrapX)
-        x = wrapX(x);
-    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
-		return;
+		return false;
 
     if (mTiles[y][x].mMat == mat)
-        return;
+        return false;
 
     if (!canPlace(x, y, 1, 1))
-        return;
+        return false;
 
-    mTiles[y][x].mMat = mat;
+    Tile tile = getTile(x, y);
+    tile.mMat = mat;
+    setTile(x, y, tile, -1);
+
+    return true;
 }
 
-void GridComponent::placeBack(int x, int y, int mat)
+bool GridComponent::placeBack(int x, int y, int mat)
 {
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return false;
+
+    if (mTiles[y][x].mBack == mat)
+        return false;
+
+    if (!canPlace(x, y, 1, 1))
+        return false;
+
+    Tile tile = getTile(x, y);
+    tile.mBack = mat;
+    setTile(x, y, tile, -1);
+
+    return true;
+}
+
+bool GridComponent::addFluid(int x, int y, int mat, float fluid)
+{
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return false;
+
+	mTiles[y][x].mFluid += fluid;
+
+	return true;
 }
 
 void GridComponent::setTile(int x, int y, Tile tile, int tick)
@@ -245,9 +287,9 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
 		return;
 	}
 
-	//std::cout << int(mTiles[y][x].mMat) << std::endl;
-
 	mTiles[y][x] = tile;
+	if (mTiles[y][x].mBack == 0)
+        mTiles[y][x].mLight = 20;
 
 	int left = wrapX(x - 1);
 	int right = wrapX(x + 1);
@@ -279,6 +321,53 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
         if (y < mSizeY-1)
             setInteresting(x, y+1, t);
 	}
+
+    if (!mWrapX)
+    {
+        if (mTiles[y][x].mMat != 0)
+        {
+            bool foundTopLeft = false;
+            bool foundTopRight = false;
+            bool foundBotLeft = false;
+            bool foundBotRight = false;
+            for (unsigned int i = 0; i < mVertices.size(); i++)
+            {
+                if (mVertices[i] == sf::Vector2f(x, y))
+                    foundTopLeft = true;
+                else if (mVertices[i] == sf::Vector2f(x+1, y))
+                    foundTopRight = true;
+                else if (mVertices[i] == sf::Vector2f(x+1, y+1))
+                    foundBotRight = true;
+                else if (mVertices[i] == sf::Vector2f(x, y+1))
+                    foundBotLeft = true;
+            }
+
+            if (!foundTopLeft)
+                mVertices.push_back(sf::Vector2f(x, y));
+            if (!foundTopRight)
+                mVertices.push_back(sf::Vector2f(x+1, y));
+            if (!foundBotRight)
+                mVertices.push_back(sf::Vector2f(x+1, y+1));
+            if (!foundBotLeft)
+                mVertices.push_back(sf::Vector2f(x, y+1));
+        }
+        else
+        {
+            for (unsigned int i = 0; i < mVertices.size(); i++)
+            {
+                if (mVertices[i] == sf::Vector2f(x, y) || mVertices[i] == sf::Vector2f(x+1, y) ||
+                    mVertices[i] == sf::Vector2f(x+1, y+1) || mVertices[i] == sf::Vector2f(x, y+1))
+                {
+                    mVertices.erase(mVertices.begin()+i);
+                    i--;
+                    continue;
+                }
+            }
+        }
+
+        recalculatePolygon();
+    }
+
 }
 
 Tile GridComponent::getTile(int x, int y) const
@@ -367,6 +456,32 @@ Entity* GridComponent::getPlaceableAt(int x, int y)
     }
 
     return NULL;
+}
+
+void GridComponent::recalculatePolygon()
+{
+    sf::Vector2f centroid;
+    for (auto& vert : mVertices)
+        centroid += vert;
+    centroid /= static_cast<float>(mVertices.size());
+
+    std::vector<sf::Vector2f> vertices;
+
+    for (unsigned int i = 0; i < mVertices.size(); i++)
+    {
+        sf::Vector2f dir = normalize(mVertices[i]-centroid);
+        sf::Vector2f support = calcSupportPoint(mVertices.data(), mVertices.size(), dir);
+
+        if (equal(mVertices[i].x, support.x) && equal(mVertices[i].y, support.y))
+        {
+            vertices.push_back(mVertices[i]);
+        }
+    }
+
+    std::cout << vertices.size() << std::endl;
+
+    if (vertices.size() > 2)
+        mPolyShape.set(vertices.data(), vertices.size());
 }
 
 int GridComponent::calcNeighborState(int x, int y)

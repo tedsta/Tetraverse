@@ -57,6 +57,7 @@ namespace phys
             void setStaticFriction(float friction){staticFriction=friction;}
             void setDynamicFriction(float friction){dynamicFriction=friction;}
             void setRestitution(float res){restitution=res;}
+            void setShape(Shape* s){shape=s;}
 
             // Getters
             sf::Vector2f getGravity(){return gravity;}
