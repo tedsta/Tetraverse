@@ -102,8 +102,8 @@ int main()
     engine->addSystem(scriptSys);
     engine->addSystem(playerSys);
     engine->addSystem(placeableSys);
-    engine->addSystem(gridSys);
     engine->addSystem(physSys);
+    engine->addSystem(gridSys);
     //engine->addSystem(lightSys);
 
     FrontGridComponent::RndSys = render;
