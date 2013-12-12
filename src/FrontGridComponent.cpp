@@ -12,6 +12,7 @@
 
 TypeBits FrontGridComponent::Type;
 RenderSystem* FrontGridComponent::RndSys;
+std::vector<sf::Texture*> FrontGridComponent::TileSheets;
 
 FrontGridComponent::FrontGridComponent(GridComponent* grid)
 {
@@ -145,18 +146,18 @@ void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates state
             }
             else
             {
-                if (grid->mTiles[y][x].mMat == 0 || grid->mTiles[y][x].mMat >= GridComponent::TileSheets.size())
+                if (grid->mTiles[y][x].mMat == 0 || grid->mTiles[y][x].mMat >= TileSheets.size())
                     continue;
 
                 // Grab tile sheet info
-                sf::Texture* sheet = GridComponent::TileSheets[grid->mTiles[y][x].mMat];
+                sf::Texture* sheet = TileSheets[grid->mTiles[y][x].mMat];
                 if (!sheet)
                     continue;
 
                 int sheetSizeX = sheet->getSize().x / TILE_SIZE;
                 int sheetSizeY = sheet->getSize().y / TILE_SIZE;
 
-                int edgeState = grid->calcNeighborState(x, y);
+                int edgeState = grid->calcNeighborStateMid(x, y);
                 float texStartX = float(edgeState%sheetSizeX) * tsize;
                 float texStartY = float(edgeState/sheetSizeY) * tsize;
 

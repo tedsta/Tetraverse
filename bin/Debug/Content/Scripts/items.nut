@@ -15,16 +15,38 @@ function dirtBlock(gridEnt, coords)
     return false;
 }
 
+function steelBlock(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    return grid.placeMid(x, y, 5);
+}
+
+function steelWall(gridEnt, coords)
+{
+    local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
+    local x = coords[0].x;
+    local y = coords[0].y;
+
+    return grid.placeBack(x, y, 6);
+}
+
 function crowbar(gridEnt, coords)
 {
     local grid = castGridComponent(gridEnt.getComponent(GridComponentType));
     local x = coords[0].x;
     local y = coords[0].y;
 
-    if (grid.getTile(x, y).mMat != 0)
+    local placeable = grid.getPlaceableAt(x, y);
+
+    if (grid.getTile(x, y).mMat != 0 || grid.getTile(x, y).mBack != 0 || placeable != null)
     {
         local empty = Tile();
         grid.setTile(x, y, empty, -1);
+        if (placeable != null)
+            grid.removePlaceable(placeable);
         return true;
 	}
 

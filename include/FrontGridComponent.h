@@ -25,8 +25,17 @@ class FrontGridComponent : public RenderComponent
 
         static RenderSystem* RndSys; // FrontGridComponents depend on render system
 
+        static void addTileSheet(int mat, sf::Texture* sheet)
+        {
+            if (mat >= static_cast<int>(TileSheets.size()))
+                TileSheets.resize(mat+1);
+            TileSheets[mat] = sheet;
+        }
+
     private:
         int mGridID;
+
+        static std::vector<sf::Texture*> TileSheets;
 };
 
 #endif // FRONTGRIDCOMPONENT_H

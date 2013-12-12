@@ -25,7 +25,6 @@ int randStateRight(int x, int y);
 int randStateLeft(int x, int y);
 
 TypeBits GridComponent::Type;
-std::vector<sf::Texture*> GridComponent::TileSheets;
 
 GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
     mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
@@ -36,10 +35,6 @@ GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY
         mTransformID = -1;
 
     //myTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
-
-	for (int y = 0; y < mSizeY; y++)
-		for (int x = 0; x < mSizeX; x++)
-			calcNeighborState(x, y);
 
     mCTiles.resize(tickCount);
 }
@@ -253,7 +248,7 @@ bool GridComponent::placeBack(int x, int y, int mat)
     if (mTiles[y][x].mBack == mat)
         return false;
 
-    if (!canPlace(x, y, 1, 1))
+    if (mTiles[y][x].mBack != 0)
         return false;
 
     Tile tile = getTile(x, y);
@@ -282,7 +277,7 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
     if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
 
-	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mFluid == tile.mFluid && mTiles[y][x].mLight == tile.mLight)
+	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mBack == tile.mBack && mTiles[y][x].mFluid == tile.mFluid && mTiles[y][x].mLight == tile.mLight)
 	{
 		return;
 	}
@@ -484,7 +479,113 @@ void GridComponent::recalculatePolygon()
         mPolyShape.set(vertices.data(), vertices.size());
 }
 
-int GridComponent::calcNeighborState(int x, int y)
+int GridComponent::calcNeighborStateBack(int x, int y)
+{
+    x = wrapX(x);
+	int left = x - 1;
+	int right = x + 1;
+	if (mWrapX)
+    {
+        left = wrapX(left);
+        right = wrapX(right);
+    }
+
+    if (mTiles[y][x].mBack == 0 || mTiles[y][x].mBack == 4)
+        return 0;
+
+	Tile a[3][3]; // Area
+
+	if (y > 0)
+    {
+        if (left >= 0 && left < mSizeX)
+            a[0][0] = mTiles[y-1][left];
+		a[0][1] = mTiles[y-1][x];
+		if (right >= 0 && right < mSizeX)
+            a[0][2] = mTiles[y-1][right];
+	}
+
+    if (left >= 0 && left < mSizeX)
+        a[1][0] = mTiles[y][left];
+	a[1][1] = mTiles[y][x];
+	if (right >= 0 && right < mSizeX)
+        a[1][2] = mTiles[y][right];
+
+	if (y < mSizeY-1)
+    {
+        if (left >= 0 && left < mSizeX)
+            a[2][0] = mTiles[y+1][left];
+		a[2][1] = mTiles[y+1][x];
+		if (right >= 0 && right < mSizeX)
+            a[2][2] = mTiles[y+1][right];
+	}
+
+	if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return randStateCovered(x, y);
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 22;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return randStateTop(x, y);
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return randStateBot(x, y);
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return randStateLeft(x, y);
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return randStateRight(x, y);
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 0;
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return 1;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return 18;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return 21;
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 20;
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 19;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack == a[1][1].mBack)
+		return 2;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack == a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 3;
+	else if (a[0][1].mBack == a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack != a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 4;
+	else if (a[0][1].mBack != a[1][1].mBack &&
+		a[1][0].mBack != a[1][1].mBack && a[1][2].mBack == a[1][1].mBack &&
+		a[2][1].mBack != a[1][1].mBack)
+		return 5;
+}
+
+int GridComponent::calcNeighborStateMid(int x, int y)
 {
     x = wrapX(x);
 	int left = x - 1;
@@ -531,7 +632,7 @@ int GridComponent::calcNeighborState(int x, int y)
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		return 21;
+		return 22;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
@@ -559,19 +660,19 @@ int GridComponent::calcNeighborState(int x, int y)
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		return 17;
+		return 18;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
-		return 18;
+		return 21;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat == a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		return 19;
+		return 20;
 	else if (a[0][1].mMat == a[1][1].mMat &&
 		a[1][0].mMat == a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat != a[1][1].mMat)
-		return 20;
+		return 19;
 	else if (a[0][1].mMat != a[1][1].mMat &&
 		a[1][0].mMat != a[1][1].mMat && a[1][2].mMat != a[1][1].mMat &&
 		a[2][1].mMat == a[1][1].mMat)
@@ -663,5 +764,5 @@ int randStateRight(int x, int y)
 
 int randStateLeft(int x, int y)
 {
-	return 16;
+	return random(x, y, 16, 17);
 }

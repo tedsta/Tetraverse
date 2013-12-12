@@ -8,11 +8,20 @@
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(float width, float height) : grid(NULL)
+PhysicsComponent::PhysicsComponent(float width, float height, float density) : grid(NULL)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
-    body = new phys::RigidBody(shape, 1.f);
+    body = new phys::RigidBody(shape, density);
+    body->setGravity(sf::Vector2f(0, 40.f));
+    body->setFixedRotation();
+}
+
+PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float density) : grid(NULL)
+{
+    phys::PolygonShape* shape = new phys::PolygonShape();
+    shape->set(verts, vertCount);
+    body = new phys::RigidBody(shape, density);
     body->setGravity(sf::Vector2f(0, 40.f));
     body->setFixedRotation();
 }

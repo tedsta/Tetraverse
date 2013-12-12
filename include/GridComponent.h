@@ -113,7 +113,8 @@ class GridComponent : public RenderComponent
         void addPlaceable(Entity* entity);
         void removePlaceable(Entity* placeable);
         Entity* getPlaceableAt(int x, int y);
-        int calcNeighborState(int x, int y);
+        int calcNeighborStateBack(int x, int y);
+        int calcNeighborStateMid(int x, int y);
         int wrapX(int x) const;
 
         void recalculatePolygon();
@@ -139,13 +140,6 @@ class GridComponent : public RenderComponent
         const TypeBits getTypeBits() const {return Type;}
         static Component* factory() {return new GridComponent;}
 
-        static void addTileSheet(int mat, sf::Texture* sheet)
-        {
-            if (mat >= static_cast<int>(TileSheets.size()))
-                TileSheets.resize(mat+1);
-            TileSheets[mat] = sheet;
-        }
-
     private:
         int mSizeX;
         int mSizeY;
@@ -159,8 +153,6 @@ class GridComponent : public RenderComponent
 
         phys::PolygonShape mPolyShape;
         std::vector<sf::Vector2f> mVertices;
-
-        static std::vector<sf::Texture*> TileSheets;
 };
 
 #endif // GRIDCOMPONENT_H

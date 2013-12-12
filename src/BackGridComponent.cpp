@@ -6,6 +6,7 @@
 #include "GridComponent.h"
 
 TypeBits BackGridComponent::Type;
+std::vector<sf::Texture*> BackGridComponent::TileSheets;
 
 BackGridComponent::BackGridComponent(GridComponent* grid)
 {
@@ -75,16 +76,16 @@ void BackGridComponent::render(sf::RenderTarget& target, sf::RenderStates states
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
 			verts[0] = sf::Vertex(start,
-				sf::Color::White,
+				sf::Color(120, 120, 120, 255),
 				sf::Vector2f());
 			verts[1] = sf::Vertex(start+sf::Vector2f(0, tsize),
-				sf::Color::White,
+				sf::Color(120, 120, 120, 255),
 				sf::Vector2f(0, tsize));
 			verts[2] = sf::Vertex(start+sf::Vector2f(tsize, tsize),
-				sf::Color::White,
+				sf::Color(120, 120, 120, 255),
 				sf::Vector2f(tsize, tsize));
 			verts[3] = sf::Vertex(start+sf::Vector2f(tsize, 0),
-				sf::Color::White,
+				sf::Color(120, 120, 120, 255),
 				sf::Vector2f(tsize, 0));
 			outline[0] = sf::Vertex(start,
 				sf::Color::White,
@@ -113,18 +114,18 @@ void BackGridComponent::render(sf::RenderTarget& target, sf::RenderStates states
             }
             else
             {
-                if (grid->mTiles[y][x].mBack == 0 || grid->mTiles[y][x].mBack >= GridComponent::TileSheets.size())
+                if (grid->mTiles[y][x].mBack == 0 || grid->mTiles[y][x].mBack >= TileSheets.size())
                     continue;
 
                 // Grab tile sheet info
-                sf::Texture* sheet = GridComponent::TileSheets[grid->mTiles[y][x].mBack];
+                sf::Texture* sheet = TileSheets[grid->mTiles[y][x].mBack];
                 if (!sheet)
                     continue;
 
                 int sheetSizeX = sheet->getSize().x / TILE_SIZE;
                 int sheetSizeY = sheet->getSize().y / TILE_SIZE;
 
-                int edgeState = grid->calcNeighborState(x, y);
+                int edgeState = grid->calcNeighborStateBack(x, y);
                 float texStartX = float(edgeState%sheetSizeX) * tsize;
                 float texStartY = float(edgeState/sheetSizeY) * tsize;
 

@@ -114,8 +114,14 @@ int main()
 
     // Set up all the items
     HSQUIRRELVM itemScript = scriptSys->createScript("Content/Scripts/items.nut");
-    Item *dirtBlock = new Item("dirt", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "dirtBlock");
+    Item *dirtBlock = new Item("dirt block", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "dirtBlock");
     Item::Items.push_back(dirtBlock);
+
+    Item *steelBlock = new Item("steel block", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "steelBlock");
+    Item::Items.push_back(steelBlock);
+
+    Item *steelWall = new Item("steel wall", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "steelWall");
+    Item::Items.push_back(steelWall);
 
     Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, BtnState::DOWN, 1, 1, itemScript, "crowbar");
     Item::Items.push_back(crowbar);
@@ -155,10 +161,17 @@ int main()
     PlaceableComponent::registerClass(placeableScript, "Swtch");
 
     // Set up the materials
-    GridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
-    GridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
-    GridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
-    GridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    FrontGridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
+    FrontGridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
+    FrontGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    FrontGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel.png"));
+    FrontGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
+
+    BackGridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
+    BackGridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
+    BackGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    BackGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_wall.png"));
+    BackGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
     gridSys->addTick(fluidGridOp, 0.001f);
@@ -182,13 +195,23 @@ int main()
     planet->addComponent(new PhysicsComponent(pg));
 
     // Spawn player
+    std::vector<sf::Vector2f> playerVerts(8);
+    playerVerts[0] = sf::Vector2f(-0.5f, -1.8f);
+    playerVerts[1] = sf::Vector2f(0.5f, -1.8f);
+    playerVerts[2] = sf::Vector2f(0.9f, -1.5f);
+    playerVerts[3] = sf::Vector2f(0.9f, 1.5f);
+    playerVerts[4] = sf::Vector2f(0.5f, 1.8f);
+    playerVerts[5] = sf::Vector2f(-0.5f, 1.8f);
+    playerVerts[6] = sf::Vector2f(-0.9f, 1.5f);
+    playerVerts[7] = sf::Vector2f(-0.9f, -1.5f);
+
     Entity *player = new Entity(engine->getEventManager());
     scene->addEntity(player);
     player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(30, 60));
+    player->addComponent(new PhysicsComponent(playerVerts.data(), playerVerts.size()));
     player->addComponent(new PlayerComponent);
     player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
@@ -196,16 +219,16 @@ int main()
 
     reinterpret_cast<PhysicsComponent*>(player->getComponent(PhysicsComponent::Type))->setGrid(planet);
 
-    inventory->addItem(0, 1, 1);
-    inventory->addItem(1, 0, 999);
-    inventory->addItem(2, 2, 10);
-    inventory->addItem(3, 3, 1);
-    inventory->addItem(4, 4, 1);
-    inventory->addItem(5, 5, 1);
-    inventory->addItem(6, 6, 1);
-    inventory->addItem(7, 7, 99);
-    inventory->addItem(8, 8, 99);
-    inventory->addItem(9, 10, 1);
+    inventory->addItem(0, 3, 1);
+    inventory->addItem(1, 1, 999);
+    inventory->addItem(2, 2, 999);
+    inventory->addItem(3, 4, 1);
+    inventory->addItem(4, 6, 1);
+    inventory->addItem(5, 7, 1);
+    inventory->addItem(6, 8, 1);
+    inventory->addItem(7, 9, 99);
+    inventory->addItem(8, 10, 99);
+    inventory->addItem(9, 12, 1);
 
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
@@ -343,13 +366,17 @@ void bindSquirrel(HSQUIRRELVM vm)
 
     Sqrat::Class<Tile> tile(vm);
     tile.Var("mMat", &Tile::mMat);
+    tile.Var("mBack", &Tile::mBack);
     tile.Var("mFluid", &Tile::mFluid);
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
     Sqrat::DerivedClass<GridComponent, Component> grid(vm);
     grid.Func("canPlace", &GridComponent::canPlace);
     grid.Func("addPlaceable", &GridComponent::addPlaceable);
+    grid.Func("removePlaceable", &GridComponent::removePlaceable);
     grid.Func("getPlaceableAt", &GridComponent::getPlaceableAt);
+    grid.Func("placeMid", &GridComponent::placeMid);
+    grid.Func("placeBack", &GridComponent::placeBack);
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
     grid.Func("sliceInto", &GridComponent::sliceInto);
@@ -364,7 +391,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     rigidbody.Func("getVelocity", &phys::RigidBody::getVelocity);
     Sqrat::RootTable(vm).Bind("RigidBody", rigidbody);
 
-    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, int, int>> physics(vm);
+    Sqrat::DerivedClass<PhysicsComponent, Component, sqext::ConstAlloc<PhysicsComponent, float, float, float>> physics(vm);
     physics.Func("getBody", &PhysicsComponent::getBody);
     Sqrat::RootTable(vm).Bind("PhysicsComponent", physics);
 
