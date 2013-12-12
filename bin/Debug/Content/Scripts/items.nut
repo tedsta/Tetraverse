@@ -30,7 +30,7 @@ function steelWall(gridEnt, coords)
     local x = coords[0].x;
     local y = coords[0].y;
 
-    return grid.placeBack(x, y, 6);
+    return grid.placeBack(x, y, 5);
 }
 
 function crowbar(gridEnt, coords)
