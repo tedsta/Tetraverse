@@ -356,7 +356,6 @@ void bindSquirrel(HSQUIRRELVM vm)
 
     Sqrat::DerivedClass<SpriteComponent, RenderComponent, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
     //sprite.Func("setTexture", &SpriteComponent::setTexture);
-    sprite.Func("setFrameLoop", &SpriteComponent::setFrameLoop);
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
     Sqrat::DerivedClass<IntentComponent, Component, sqext::ConstAlloc<IntentComponent>> intent(vm);
