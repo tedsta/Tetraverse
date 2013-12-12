@@ -90,9 +90,9 @@ int main()
     InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/30.f, &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/30.f, conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/30.f, engine);
-    GridSystem *gridSys = new GridSystem(engine->getEventManager(), 1.f/1000.f);
-    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/30.f);
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/30.f);
+    GridSystem *gridSys = new GridSystem(engine->getEventManager(), physSys, 1.f/1000.f);
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/30.f);
     PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/30.f);
     LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
@@ -166,12 +166,14 @@ int main()
     FrontGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
     FrontGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel.png"));
     FrontGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
+    FrontGridComponent::addTileSheet(7, ResourceManager::get()->getTexture("Content/Textures/Tiles/glass.png"));
 
     BackGridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
     BackGridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
     BackGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
     BackGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_wall.png"));
     BackGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
+    BackGridComponent::addTileSheet(7, ResourceManager::get()->getTexture("Content/Textures/Tiles/glass.png"));
 
     gridSys->addTick(veggyGridOp, 5.f);
     gridSys->addTick(fluidGridOp, 0.001f);
@@ -217,7 +219,7 @@ int main()
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
-    reinterpret_cast<PhysicsComponent*>(player->getComponent(PhysicsComponent::Type))->setGrid(planet);
+    reinterpret_cast<SkeletonComponent*>(player->getComponent(SkeletonComponent::Type))->setLayer(3);
 
     inventory->addItem(0, 3, 1);
     inventory->addItem(1, 1, 999);
@@ -341,6 +343,8 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::DerivedClass<RenderComponent, Component> renderComp(vm);
     renderComp.Func("setLit", &RenderComponent::setLit);
     renderComp.Func("getLit", &RenderComponent::getLit);
+    renderComp.Func("setLayer", &RenderComponent::setLayer);
+    renderComp.Func("getLayer", &RenderComponent::getLayer);
     Sqrat::RootTable(vm).Bind("RenderComponent", renderComp);
 
     Sqrat::DerivedClass<TransformComponent, Component, sqext::ConstAlloc<TransformComponent, sf::Vector2f, float, sf::Vector2f>> transform(vm);

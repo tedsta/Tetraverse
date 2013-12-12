@@ -70,6 +70,7 @@ function door(gridEnt, coords)
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
 
         return true;
     }
@@ -100,6 +101,8 @@ function thruster(gridEnt, coords)
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/engine.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(5);
 
         return true;
     }
@@ -203,6 +206,7 @@ function light(gridEnt, coords)
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
 
         return true;
     }
@@ -227,6 +231,7 @@ function swtch(gridEnt, coords)
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
 
         return true;
     }
@@ -251,6 +256,7 @@ function o2(gridEnt, coords)
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
 
         return true;
     }
@@ -275,6 +281,7 @@ function reactor(gridEnt, coords)
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
 
         return true;
     }

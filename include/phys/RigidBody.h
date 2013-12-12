@@ -12,6 +12,7 @@ namespace phys
     class RigidBody
     {
         friend class Manifold;
+        friend class Collision;
         friend class CircleShape;
         friend class PolygonShape;
         friend class PhysicsWorld;
@@ -58,6 +59,7 @@ namespace phys
             void setDynamicFriction(float friction){dynamicFriction=friction;}
             void setRestitution(float res){restitution=res;}
             void setShape(Shape* s){shape=s;}
+            void setParent(RigidBody* body){parent=body;}
 
             // Getters
             sf::Vector2f getGravity(){return gravity;}
@@ -81,6 +83,8 @@ namespace phys
             sf::Vector2f position;
             sf::Vector2f velocity;
 
+            sf::Vector2f oldPosition;
+
             float rotation;
             float angularVelocity;
             float torque;
@@ -97,6 +101,8 @@ namespace phys
             float restitution;
 
             Shape* shape;
+
+            RigidBody* parent;
     };
 }
 

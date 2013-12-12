@@ -59,6 +59,7 @@ namespace phys
 
             void computeMass(RigidBody* body, float density);
 
+            void setRotation(float rot);
             void setBox(float hw, float hh);
             void set(sf::Vector2f* vertices, sf::Uint32 count);
             sf::Vector2f getSupport(const sf::Vector2f& dir);

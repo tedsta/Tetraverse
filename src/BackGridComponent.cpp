@@ -14,6 +14,8 @@ BackGridComponent::BackGridComponent(GridComponent* grid)
         mGridID = grid->getID();
     else
         mGridID = -1;
+
+    setLayer(1);
 }
 
 BackGridComponent::~BackGridComponent()

@@ -1,7 +1,10 @@
 #include "phys/PhysicsWorld.h"
 
+#include <SFML/Graphics/Rect.hpp>
+
 #include "phys/RigidBody.h"
 #include "phys/Constraint.h"
+#include "phys/Shape.h"
 
 namespace phys
 {
@@ -42,10 +45,23 @@ namespace phys
         for(sf::Uint32 i = 0; i < bodies.size(); ++i)
         {
             RigidBody* A = bodies[i];
+            sf::FloatRect ABounds = A->getShape()->getLocalBounds();
+            ABounds.left += A->position.x;
+            ABounds.top += A->position.y;
+
+            A->oldPosition = A->position;
 
             for(sf::Uint32 j = i + 1; j < bodies.size(); ++j)
             {
                 RigidBody* B = bodies[j];
+
+                sf::FloatRect BBounds = B->getShape()->getLocalBounds();
+                BBounds.left += B->position.x;
+                BBounds.top += B->position.y;
+
+                if (!ABounds.intersects(BBounds))
+                    continue;
+
                 if(A->inverseMass == 0 && B->inverseMass == 0)
                     continue;
                 Collision c(A, B, dt, sf::Vector2f(0, 40));
@@ -79,6 +95,16 @@ namespace phys
         // Correct positions
         for(auto& contact : contacts)
             contact.positionalCorrection();
+
+        /*for (auto b : bodies)
+        {
+            RigidBody* current = b->parent; // Current parent
+            while (current)
+            {
+                b->position += current->position-current->oldPosition;
+                current = current->parent;
+            }
+        }*/
 
         // Clear all forces
         for(auto b : bodies)

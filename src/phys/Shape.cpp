@@ -76,6 +76,34 @@ namespace phys
         body->inverseInertia = body->inertia ? 1.0f / body->inertia : 0.0f;
     }
 
+    void PolygonShape::setRotation(float rot)
+    {
+        u.set(rot);
+
+        float left = FLT_MAX;
+        float right = -FLT_MAX;
+        float top = FLT_MAX;
+        float bot = -FLT_MAX;
+
+        for (auto v : vertices)
+        {
+            v = u * v;
+            if (v.x < left)
+                left = v.x;
+            if (v.x > right)
+                right = v.x;
+            if (v.y < top)
+                top = v.y;
+            if (v.y > bot)
+                bot = v.y;
+        }
+
+        boundingBox.left = left;
+        boundingBox.top = top;
+        boundingBox.width = right-left;
+        boundingBox.height = bot-top;
+    }
+
      // Half width and half height
     void PolygonShape::setBox(float hw, float hh)
     {

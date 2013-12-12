@@ -1,6 +1,8 @@
 #ifndef TETRA_COLLISION_H
 #define TETRA_COLLISION_H
 
+#include <cfloat>
+
 #include "phys/Manifold.h"
 #include "phys/RigidBody.h"
 #include "phys/Shape.h"
@@ -27,7 +29,13 @@ void gridToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
 class GridShape : public phys::Shape
 {
     public:
-        GridShape(GridComponent* _grid) : grid(_grid) {}
+        GridShape(GridComponent* _grid) : grid(_grid)
+        {
+            boundingBox.left = 0;
+            boundingBox.top = 0;
+            boundingBox.width = grid->getSizeX();
+            boundingBox.height = grid->getSizeY();
+        }
 
         void computeMass(phys::RigidBody* body, float density)
         {
@@ -40,6 +48,22 @@ class GridShape : public phys::Shape
             body->setInverseMass((body->getMass()) ? 1.0f / body->getMass() : 0.0f);
             body->setInertia(I * density);
             body->setInverseInertia(body->getInertia() ? 1.0f / body->getInertia() : 0.0f);*/
+        }
+
+        void setRotation(float rot)
+        {
+            u.set(rot);
+
+            boundingBox.left = 0;
+            boundingBox.top = 0;
+            boundingBox.width = grid->getSizeX();
+            boundingBox.height = grid->getSizeY();
+
+            if (grid->getWrapX())
+            {
+                boundingBox.left = -FLT_MAX/2;
+                boundingBox.width = FLT_MAX;
+            }
         }
 
         GridComponent* getGrid(){return grid;}

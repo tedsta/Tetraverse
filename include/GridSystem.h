@@ -42,6 +42,8 @@ private:
     void (*mDynamic)(GridComponent*, int);
 };
 
+class PhysicsSystem;
+
 struct Tick
 {
     Tick(GridOp op, float delay) : mOp(op), mDelay(delay) {}
@@ -55,7 +57,7 @@ struct Tick
 class GridSystem : public System
 {
     public:
-        GridSystem(EventManager *eventManager, float lockStep);
+        GridSystem(EventManager *eventManager, PhysicsSystem* physSys, float lockStep);
         virtual ~GridSystem();
 
         void addTick(GridOp op, float delay){mTicks.push_back(Tick(op, delay));}
@@ -68,6 +70,8 @@ class GridSystem : public System
         void end(const float dt);
 
     private:
+        PhysicsSystem* mPhysSys;
+
         Connection *mConn; // Network connection
         int mHndID; // Network handle id
         std::vector<Tick> mTicks; // Ticks

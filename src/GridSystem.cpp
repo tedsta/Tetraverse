@@ -4,9 +4,12 @@
 
 #include <Fission/Rendering/TransformComponent.h>
 
+#include "PhysicsSystem.h"
+#include "PhysicsComponent.h"
 #include "PlaceableComponent.h"
 
-GridSystem::GridSystem(EventManager *eventManager, float lockStep) : System(eventManager, lockStep, GridComponent::Type)
+GridSystem::GridSystem(EventManager *eventManager, PhysicsSystem* physSys, float lockStep) : System(eventManager, lockStep, GridComponent::Type),
+    mPhysSys(physSys)
 {
     //ctor
 }
@@ -24,6 +27,34 @@ void GridSystem::processEntity(Entity *entity, const float dt)
 {
     auto trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     auto grid = static_cast<GridComponent*>(entity->getComponent(GridComponent::Type));
+    auto phys = reinterpret_cast<PhysicsComponent*>(entity->getComponent(PhysicsComponent::Type));
+
+    sf::FloatRect gridBounds = phys->getBody()->getShape()->getLocalBounds();
+    gridBounds.left += phys->getBody()->getPosition().x;
+    gridBounds.top += phys->getBody()->getPosition().y;
+
+    // Check all the physics components
+    for (auto physEnt : mPhysSys->getActiveEntities())
+    {
+        if (entity == physEnt)
+            continue;
+
+        auto pPhys = reinterpret_cast<PhysicsComponent*>(physEnt->getComponent(PhysicsComponent::Type));
+
+        sf::FloatRect bounds = pPhys->getBody()->getShape()->getLocalBounds();
+        bounds.left += pPhys->getBody()->getPosition().x;
+        bounds.top += pPhys->getBody()->getPosition().y;
+
+        if (gridBounds.left <= bounds.left && gridBounds.left+gridBounds.width >= bounds.left+bounds.width &&
+            gridBounds.top <= bounds.top && gridBounds.top+gridBounds.height >= bounds.top+bounds.height)
+        {
+            pPhys->addGrid(entity);
+        }
+        else
+        {
+            pPhys->removeGrid(entity);
+        }
+    }
 
 	// Update all the placeable positions
 	for (auto placeableEnt : grid->mPlaceables)

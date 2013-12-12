@@ -1,6 +1,7 @@
 #ifndef PHYSICSCOMPONENT_H
 #define PHYSICSCOMPONENT_H
 
+#include <set>
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -27,20 +28,24 @@ class PhysicsComponent : public Component
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
 
-        // Setters
-        void setGrid(Entity* g){grid=g;}
+        void addGrid(Entity* g);
+        void removeGrid(Entity* g);
 
         // Getters
         phys::RigidBody* getBody(){return body;}
-        Entity* getGrid(){return grid;}
+        Entity* getPrimaryGrid(){return primaryGrid;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
         static Component* factory() {return new PhysicsComponent;}
 
     private:
+        void recalculatePrimaryGrid();
+
         phys::RigidBody* body;
-        Entity* grid;
+        Entity* primaryGrid;
+
+        std::set<Entity*> grids;
 };
 
 #endif // PHYSICSCOMPONENT_H

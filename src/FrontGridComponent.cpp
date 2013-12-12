@@ -20,6 +20,8 @@ FrontGridComponent::FrontGridComponent(GridComponent* grid)
         mGridID = grid->getID();
     else
         mGridID = -1;
+
+    setLayer(4);
 }
 
 FrontGridComponent::~FrontGridComponent()
