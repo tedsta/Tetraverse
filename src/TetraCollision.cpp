@@ -276,7 +276,7 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             }
 
             if (used)
-                break;
+                continue;
 
             usedNormals[usedNormalCount] = refNormals[referenceIndex];
             usedNormalCount++;
