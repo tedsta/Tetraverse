@@ -237,7 +237,7 @@ function swtch(gridEnt, coords)
     {
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
-        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/button_wall.png", 2, 2));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/switch.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());
