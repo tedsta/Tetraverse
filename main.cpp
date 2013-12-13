@@ -299,6 +299,9 @@ int main()
 
 Tile** newWorld(int seed, int width, int height)
 {
+    int MC = 4;// this needs to be dynamicly defined...
+    //it should be random but related to the number of materials available in the game
+
 	Tile** tiles = new Tile*[height];
 	for (int i = 0; i < height; i++)
 		tiles[i] = new Tile[width];
@@ -307,8 +310,13 @@ Tile** newWorld(int seed, int width, int height)
     {
 		for (int x = 0; x < width; x++)
 		{
+		    //auto[MC]
+		    for(int m = 0; m < MC; m++){
+
+		    }
 			auto n = PerlinNoise1D(x, 1.01, .02, 2) + 1;
 			auto p = PerlinNoise2D(y, x, 1.01, 0.2, 10) + 1;
+            auto cave = PerlinNoise2D(y, x, 0.9, 0.15, 9)+1;
 			p += float(height-y) / float(height);
 			float o[MAX_COMPS];
 			for (int i = 0; i < MAX_COMPS; i++)
@@ -320,11 +328,13 @@ Tile** newWorld(int seed, int width, int height)
 
 			if (y > n*100)
 			{
-                tiles[y][x].mMat = p * 3 / 2;
+			    if(cave < .8){
+                    tiles[y][x].mMat = p * 7 / 2;
+			    }
                 tiles[y][x].mBack = 1;
                 tiles[y][x].mLight = 0;
 
-				if (tiles[y][x].mMat > 3)
+				if (tiles[y][x].mMat > 7)
 					tiles[y][x].mMat = 3;
 
 				for (int i = 0; i < MAX_COMPS; i++)
