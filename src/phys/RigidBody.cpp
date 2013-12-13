@@ -4,7 +4,7 @@
 
 namespace phys
 {
-    RigidBody::RigidBody(Shape* _shape, float density) : shape(_shape), parent(NULL)
+    RigidBody::RigidBody(Shape* _shape, int _type, float density) : type(_type), shape(_shape), parent(NULL)
     {
         angularVelocity = 0;
         torque = 0;
@@ -12,6 +12,10 @@ namespace phys
         dynamicFriction = 0.55f;
         restitution = 0.2f;
         shape->computeMass(this, density);
+        mass_ = mass;
+        inverseMass_ = inverseMass;
+        inertia_ = inertia;
+        inverseInertia_ = inverseInertia;
     }
 
     RigidBody::~RigidBody()

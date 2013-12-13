@@ -20,7 +20,7 @@ namespace phys
         friend class Constraint;
 
         public:
-            RigidBody(Shape* _shape, float density);
+            RigidBody(Shape* _shape, int _type, float density);
             virtual ~RigidBody();
 
             void applyForce(const sf::Vector2f& f){force+=f;}
@@ -34,16 +34,17 @@ namespace phys
 
             void setStatic()
             {
-                mass = inverseMass = 0.f;
-                inertia = inverseInertia = 0.f;
+                mass = inverseMass = mass_ = inverseMass_ = 0.f;
+                inertia = inverseInertia = inertia_ = inverseInertia_ = 0.f;
             }
 
             void setFixedRotation()
             {
-                inertia = inverseInertia = 0.f;
+                inertia = inverseInertia = inertia_ = inverseInertia_ = 0.f;
             }
 
             // Setters
+            void setType(int t){type=t;}
             void setGravity(const sf::Vector2f& g){gravity=g;}
             void setPosition(const sf::Vector2f& pos){position=pos;}
             void setVelocity(const sf::Vector2f& vel){velocity=vel;}
@@ -71,6 +72,7 @@ namespace phys
             }
 
             // Getters
+            int getType(){return type;}
             sf::Vector2f getGravity(){return gravity;}
             sf::Vector2f getPosition(){return position;}
             sf::Vector2f getVelocity(){return velocity;}
@@ -87,12 +89,16 @@ namespace phys
             Shape* getShape(){return shape;}
 
         private:
+            int type;
+
             sf::Vector2f gravity;
 
             sf::Vector2f position;
             sf::Vector2f velocity;
 
             sf::Vector2f oldPosition;
+            sf::Vector2f velocity_;
+            float angularVelocity_;
 
             float rotation;
             float angularVelocity;
@@ -104,6 +110,11 @@ namespace phys
             float inverseInertia; // inverse inertia
             float mass;  // mass
             float inverseMass; // inverse mass
+
+            float inertia_;  // moment of inertia
+            float inverseInertia_; // inverse inertia
+            float mass_;  // mass
+            float inverseMass_; // inverse mass
 
             float staticFriction;
             float dynamicFriction;

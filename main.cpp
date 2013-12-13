@@ -387,7 +387,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("sliceInto", &GridComponent::sliceInto);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
-    Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, float>> rigidbody(vm);
+    Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, int, float>> rigidbody(vm);
     rigidbody.Func("applyForce", &phys::RigidBody::applyForce);
 
     rigidbody.Func("setVelocity", &phys::RigidBody::setVelocity);
