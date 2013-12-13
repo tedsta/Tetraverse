@@ -123,7 +123,7 @@ int main()
     Item *steelWall = new Item("steel wall", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "steelWall");
     Item::Items.push_back(steelWall);
 
-    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, BtnState::DOWN, 1, 1, itemScript, "crowbar");
+    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 1, itemScript, "crowbar");
     Item::Items.push_back(crowbar);
 
     Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 10, 1, itemScript, "door");
@@ -227,7 +227,7 @@ int main()
     inventory->addItem(3, 4, 1);
     inventory->addItem(4, 6, 1);
     inventory->addItem(5, 7, 1);
-    inventory->addItem(6, 8, 1);
+    inventory->addItem(6, 11, 1);
     inventory->addItem(7, 9, 99);
     inventory->addItem(8, 10, 99);
     inventory->addItem(9, 12, 1);
@@ -366,6 +366,7 @@ void bindSquirrel(HSQUIRRELVM vm)
 
     Sqrat::DerivedClass<SpriteComponent, RenderComponent, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
     //sprite.Func("setTexture", &SpriteComponent::setTexture);
+    sprite.Func("setFrameLoop", &SpriteComponent::setFrameLoop);
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
     Sqrat::DerivedClass<IntentComponent, Component, sqext::ConstAlloc<IntentComponent>> intent(vm);
@@ -396,7 +397,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("sliceInto", &GridComponent::sliceInto);
     Sqrat::RootTable(vm).Bind("GridComponent", grid);
 
-    Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, float>> rigidbody(vm);
+    Sqrat::Class<phys::RigidBody, sqext::ConstAlloc<phys::RigidBody, phys::Shape*, int, float>> rigidbody(vm);
     rigidbody.Func("applyForce", &phys::RigidBody::applyForce);
 
     rigidbody.Func("setVelocity", &phys::RigidBody::setVelocity);

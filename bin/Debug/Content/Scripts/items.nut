@@ -41,10 +41,23 @@ function crowbar(gridEnt, coords)
 
     local placeable = grid.getPlaceableAt(x, y);
 
-    if (grid.getTile(x, y).mMat != 0 || grid.getTile(x, y).mBack != 0 || placeable != null)
+    if (grid.getTile(x, y).mMat != 0)
     {
-        local empty = Tile();
-        grid.setTile(x, y, empty, -1);
+        local tile = grid.getTile(x, y);
+        tile.mMat = 0;
+        grid.setTile(x, y, tile, -1);
+        return true;
+	}
+	else if (placeable != null)
+    {
+        grid.removePlaceable(placeable);
+        return true;
+	}
+	else if (grid.getTile(x, y).mBack != 0)
+    {
+        local tile = grid.getTile(x, y);
+        tile.mBack = 0;
+        grid.setTile(x, y, tile, -1);
         if (placeable != null)
             grid.removePlaceable(placeable);
         return true;
@@ -224,7 +237,7 @@ function swtch(gridEnt, coords)
     {
         local entity = engine.getScene().createEntity();
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
-        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/switch.png", 1, 1));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/button_wall.png", 2, 2));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());

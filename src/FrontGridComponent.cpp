@@ -309,7 +309,7 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 			int x = grid->wrapX(_x);
 			int y = _y;
 
-			if (grid->mTiles[y][x].mLight > 0)
+			if (grid->mTiles[y][x].mMat == 0)
                 continue;
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw

@@ -14,7 +14,7 @@ PhysicsComponent::PhysicsComponent(float width, float height, float density) : p
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
-    body = new phys::RigidBody(shape, density);
+    body = new phys::RigidBody(shape, 2, density);
     body->setGravity(sf::Vector2f(0, 40.f));
     body->setFixedRotation();
 }
@@ -23,7 +23,7 @@ PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float den
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->set(verts, vertCount);
-    body = new phys::RigidBody(shape, density);
+    body = new phys::RigidBody(shape, 2, density);
     body->setGravity(sf::Vector2f(0, 40.f));
     body->setFixedRotation();
 }
@@ -31,7 +31,7 @@ PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float den
 PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : primaryGrid(NULL)
 {
     GridShape* shape = new GridShape(gridCmp);
-    body = new phys::RigidBody(shape, 1.f);
+    body = new phys::RigidBody(shape, (gridCmp->getWrapX() ? 0 : 1), 1.f);
 
     if (gridCmp->getWrapX())
     {
@@ -72,6 +72,9 @@ void PhysicsComponent::removeGrid(Entity* g)
 
 void PhysicsComponent::recalculatePrimaryGrid()
 {
+    primaryGrid = NULL;
+    body->setParent(NULL);
+
     int smallestArea = FLT_MAX;
     for (auto ent : grids)
     {
@@ -85,6 +88,9 @@ void PhysicsComponent::recalculatePrimaryGrid()
         }
     }
 
-    PhysicsComponent* phys = reinterpret_cast<PhysicsComponent*>(primaryGrid->getComponent(PhysicsComponent::Type));
-    body->setParent(phys->getBody());
+    if (primaryGrid)
+    {
+        PhysicsComponent* phys = reinterpret_cast<PhysicsComponent*>(primaryGrid->getComponent(PhysicsComponent::Type));
+        body->setParent(phys->getBody());
+    }
 }

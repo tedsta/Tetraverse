@@ -184,6 +184,9 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
     tileNormals[2] = sf::Vector2f(1, 0);
     tileNormals[3] = sf::Vector2f(0, -1);
 
+    sf::Vector2f usedNormals[20];
+    int usedNormalCount = 0;
+
     for (int y = top; y <= bot; y++)
     {
         for (int _x = left; _x <= right; _x++)
@@ -261,6 +264,22 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
                 referenceIndex = polyFace;
                 flip = true;
             }
+
+            bool used = false;
+            for (int i = 0; i < usedNormalCount; i++)
+            {
+                if (refNormals[referenceIndex] == usedNormals[i])
+                {
+                    used = true;
+                    break;
+                }
+            }
+
+            if (used)
+                continue;
+
+            usedNormals[usedNormalCount] = refNormals[referenceIndex];
+            usedNormalCount++;
 
             // World space incident face
             sf::Vector2f incidentFace[2];

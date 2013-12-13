@@ -116,6 +116,8 @@ class Swtch extends Placeable
     constructor(_entity, _grid, _x, _y)
     {
         base.constructor(_entity, _grid, _x, _y);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(1, 1);
     }
 
     function update(dt)
@@ -132,8 +134,14 @@ class Swtch extends Placeable
 
         on = !on;
         if (on)
+        {
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 0);
             signal.fireInt(1);
+        }
         else
+        {
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(1, 1);
             signal.fireInt(0);
+        }
     }
 };
