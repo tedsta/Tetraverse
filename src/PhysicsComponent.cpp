@@ -72,6 +72,9 @@ void PhysicsComponent::removeGrid(Entity* g)
 
 void PhysicsComponent::recalculatePrimaryGrid()
 {
+    primaryGrid = NULL;
+    body->setParent(NULL);
+
     int smallestArea = FLT_MAX;
     for (auto ent : grids)
     {
@@ -85,6 +88,9 @@ void PhysicsComponent::recalculatePrimaryGrid()
         }
     }
 
-    PhysicsComponent* phys = reinterpret_cast<PhysicsComponent*>(primaryGrid->getComponent(PhysicsComponent::Type));
-    body->setParent(phys->getBody());
+    if (primaryGrid)
+    {
+        PhysicsComponent* phys = reinterpret_cast<PhysicsComponent*>(primaryGrid->getComponent(PhysicsComponent::Type));
+        body->setParent(phys->getBody());
+    }
 }

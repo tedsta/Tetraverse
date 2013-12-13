@@ -67,7 +67,9 @@ namespace phys
                 Collision c(A, B, dt, sf::Vector2f(0, 40));
                 c.solve();
                 if(c.hasCollision())
+                {
                     contacts.emplace_back(c);
+                }
             }
         }
 
@@ -95,16 +97,6 @@ namespace phys
         // Correct positions
         for(auto& contact : contacts)
             contact.positionalCorrection();
-
-        /*for (auto b : bodies)
-        {
-            RigidBody* current = b->parent; // Current parent
-            while (current)
-            {
-                b->position += current->position-current->oldPosition;
-                current = current->parent;
-            }
-        }*/
 
         // Clear all forces
         for(auto b : bodies)

@@ -41,10 +41,23 @@ function crowbar(gridEnt, coords)
 
     local placeable = grid.getPlaceableAt(x, y);
 
-    if (grid.getTile(x, y).mMat != 0 || grid.getTile(x, y).mBack != 0 || placeable != null)
+    if (grid.getTile(x, y).mMat != 0)
     {
-        local empty = Tile();
-        grid.setTile(x, y, empty, -1);
+        local tile = grid.getTile(x, y);
+        tile.mMat = 0;
+        grid.setTile(x, y, tile, -1);
+        return true;
+	}
+	else if (placeable != null)
+    {
+        grid.removePlaceable(placeable);
+        return true;
+	}
+	else if (grid.getTile(x, y).mBack != 0)
+    {
+        local tile = grid.getTile(x, y);
+        tile.mBack = 0;
+        grid.setTile(x, y, tile, -1);
         if (placeable != null)
             grid.removePlaceable(placeable);
         return true;

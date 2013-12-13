@@ -1,6 +1,7 @@
 #ifndef RIGIDBODY_H
 #define RIGIDBODY_H
 
+#include <set>
 #include <SFML/System/Vector2.hpp>
 
 #include "PhysMath.h"
@@ -59,7 +60,15 @@ namespace phys
             void setDynamicFriction(float friction){dynamicFriction=friction;}
             void setRestitution(float res){restitution=res;}
             void setShape(Shape* s){shape=s;}
-            void setParent(RigidBody* body){parent=body;}
+            void setParent(RigidBody* body)
+            {
+                if (parent)
+                    parent->children.erase(this);
+
+                parent=body;
+                if (parent)
+                    parent->children.insert(this);
+            }
 
             // Getters
             sf::Vector2f getGravity(){return gravity;}
@@ -103,6 +112,7 @@ namespace phys
             Shape* shape;
 
             RigidBody* parent;
+            std::set<RigidBody*> children;
     };
 }
 
