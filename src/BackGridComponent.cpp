@@ -25,12 +25,20 @@ BackGridComponent::~BackGridComponent()
 
 void BackGridComponent::serialize(sf::Packet &packet)
 {
+    RenderComponent::serialize(packet);
+
     packet << mGridID;
 }
 
 void BackGridComponent::deserialize(sf::Packet &packet)
 {
+    RenderComponent::deserialize(packet);
+
     packet >> mGridID;
+}
+
+void BackGridComponent::postDeserialize()
+{
 }
 
 void BackGridComponent::render(sf::RenderTarget& target, sf::RenderStates states)

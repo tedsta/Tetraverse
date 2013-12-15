@@ -181,16 +181,18 @@ int main()
 
     Scene *scene = engine->getScene();
 
-    int worldW = 200;
+    scene->load("myfunscene.tsc");
+
+    /*int worldW = 200;
     int worldH = 200;
     Tile** tiles = newWorld(0, worldW, worldH);
 
-    TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
-    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
-
     Entity *planet = new Entity(engine->getEventManager());
+    planet->giveID();
     scene->addEntity(planet);
+    TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
     planet->addComponent(pt);
+    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
     planet->addComponent(pg);
     planet->addComponent(new BackGridComponent(pg));
     planet->addComponent(new FrontGridComponent(pg));
@@ -208,6 +210,7 @@ int main()
     playerVerts[7] = sf::Vector2f(-0.9f, -1.5f);
 
     Entity *player = new Entity(engine->getEventManager());
+    player->giveID();
     scene->addEntity(player);
     player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
     //player->addComponent(new SpriteComponent("robot.png"));
@@ -215,7 +218,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(playerVerts.data(), playerVerts.size()));
     player->addComponent(new PlayerComponent);
-    player->addComponent(new LightComponent(500.f));
+    //player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
@@ -264,9 +267,13 @@ int main()
     intent->mapKeyToIntent("zoomin", sf::Keyboard::Down, BtnState::DOWN);
 
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
+    engine->getScene()->save("myfunscene.tsc");*/
+
 
     float accum = 0;
     int frames = 0;
+
+    sf::Clock saveClock;
 
     sf::Clock clock;
     while (render->getWindow().isOpen())
@@ -290,6 +297,12 @@ int main()
         frames++;
 
         engine->update(dt);
+
+        if (saveClock.getElapsedTime().asSeconds() >= 10.f)
+        {
+            saveClock.restart();
+            engine->getScene()->save("myfunscene.tsc");
+        }
     }
 
     delete engine;

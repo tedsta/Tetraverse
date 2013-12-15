@@ -10,7 +10,7 @@
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(float width, float height, float density) : primaryGrid(NULL)
+PhysicsComponent::PhysicsComponent(float width, float height, float _density) : primaryGrid(NULL), density(_density)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
@@ -19,7 +19,7 @@ PhysicsComponent::PhysicsComponent(float width, float height, float density) : p
     body->setFixedRotation();
 }
 
-PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float density) : primaryGrid(NULL)
+PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float _density) : primaryGrid(NULL), density(_density)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->set(verts, vertCount);
@@ -51,9 +51,74 @@ PhysicsComponent::~PhysicsComponent()
 
 void PhysicsComponent::serialize(sf::Packet &packet)
 {
+    packet << body->getShape()->getType();
+    body->getShape()->serialize(packet);
+
+    packet << body->getType();
+    packet << density;
+    packet << body->getGravity().x << body->getGravity().y;
 }
 
 void PhysicsComponent::deserialize(sf::Packet &packet)
+{
+    phys::Shape* shape;
+
+    int shapeType;
+    packet >> shapeType;
+    switch (shapeType)
+    {
+    case phys::Shape::Circle:
+        {
+            shape = new phys::CircleShape(0);
+            break;
+        }
+    case phys::Shape::Polygon:
+        {
+            shape = new phys::PolygonShape;
+            break;
+        }
+    case Shape::Grid:
+        {
+            shape = new GridShape(NULL);
+            break;
+        }
+    default:
+        {
+            return;
+        }
+    }
+
+    shape->deserialize(packet);
+
+    int type;
+    sf::Vector2f gravity;
+    packet >> type;
+    packet >> density;
+    packet >> gravity.x >> gravity.y;
+
+    body = new phys::RigidBody(shape, type, density);
+    body->setGravity(gravity);
+
+    switch (shapeType)
+    {
+    case phys::Shape::Circle:
+    case phys::Shape::Polygon:
+        {
+            body->setFixedRotation();
+            break;
+        }
+    case Shape::Grid:
+        {
+            if (reinterpret_cast<GridShape*>(body->getShape())->getGrid()->getWrapX())
+            {
+                body->setStatic();
+            }
+            break;
+        }
+    }
+}
+
+void PhysicsComponent::postDeserialize()
 {
 }
 

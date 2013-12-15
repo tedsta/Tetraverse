@@ -20,9 +20,21 @@ InventoryComponent::~InventoryComponent()
 
 void InventoryComponent::serialize(sf::Packet &packet)
 {
+    packet << static_cast<int>(mSlots.size());
+    for (auto& slot : mSlots)
+        packet << slot.mItem << slot.mStack;
 }
 
 void InventoryComponent::deserialize(sf::Packet &packet)
+{
+    int slotCount;
+    packet >> slotCount;
+    mSlots.resize(slotCount);
+    for (int i = 0; i < slotCount; i++)
+        packet >> mSlots[i].mItem >> mSlots[i].mStack;
+}
+
+void InventoryComponent::postDeserialize()
 {
 }
 

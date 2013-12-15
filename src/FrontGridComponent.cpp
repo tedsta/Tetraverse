@@ -31,12 +31,20 @@ FrontGridComponent::~FrontGridComponent()
 
 void FrontGridComponent::serialize(sf::Packet &packet)
 {
+    RenderComponent::serialize(packet);
+
     packet << mGridID;
 }
 
 void FrontGridComponent::deserialize(sf::Packet &packet)
 {
+    RenderComponent::deserialize(packet);
+
     packet >> mGridID;
+}
+
+void FrontGridComponent::postDeserialize()
+{
 }
 
 void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates states)

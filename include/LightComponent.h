@@ -24,6 +24,7 @@ class LightComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         void setActive(bool a){active=a;}
 

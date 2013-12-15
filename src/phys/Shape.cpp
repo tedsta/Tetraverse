@@ -23,6 +23,21 @@ namespace phys
         boundingBox.height = 2*radius;
     }
 
+    void CircleShape::serialize(sf::Packet &packet)
+    {
+        packet << radius;
+    }
+
+    void CircleShape::deserialize(sf::Packet &packet)
+    {
+        packet >> radius;
+
+        boundingBox.left = -radius;
+        boundingBox.top = -radius;
+        boundingBox.width = 2*radius;
+        boundingBox.height = 2*radius;
+    }
+
     void CircleShape::computeMass(RigidBody* body, float density)
     {
         body->mass = PI * radius * radius * density;
@@ -33,6 +48,25 @@ namespace phys
 
     // ********************************************************************************************
     // PolygonShape
+
+    void PolygonShape::serialize(sf::Packet &packet)
+    {
+        packet << static_cast<int>(vertices.size());
+        for (auto& v : vertices)
+            packet << v.x << v.y;
+    }
+
+    void PolygonShape::deserialize(sf::Packet &packet)
+    {
+        int vertexCount;
+        packet >> vertexCount;
+        std::vector<sf::Vector2f> verts(vertexCount);
+        for (int i = 0; i < vertexCount; i++)
+            packet >> verts[i].x >> verts[i].y;
+
+        if (vertexCount)
+            set(verts.data(), vertexCount);
+    }
 
     void PolygonShape::computeMass(RigidBody* body, float density)
     {

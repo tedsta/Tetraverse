@@ -22,3 +22,7 @@ void PlayerComponent::serialize(sf::Packet &packet)
 void PlayerComponent::deserialize(sf::Packet &packet)
 {
 }
+
+void PlayerComponent::postDeserialize()
+{
+}

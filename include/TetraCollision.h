@@ -2,6 +2,7 @@
 #define TETRA_COLLISION_H
 
 #include <cfloat>
+#include <SFML/Network/Packet.hpp>
 
 #include "phys/Manifold.h"
 #include "phys/RigidBody.h"
@@ -31,10 +32,33 @@ class GridShape : public phys::Shape
     public:
         GridShape(GridComponent* _grid) : grid(_grid)
         {
-            boundingBox.left = 0;
-            boundingBox.top = 0;
-            boundingBox.width = grid->getSizeX();
-            boundingBox.height = grid->getSizeY();
+            if (grid)
+            {
+                boundingBox.left = 0;
+                boundingBox.top = 0;
+                boundingBox.width = grid->getSizeX();
+                boundingBox.height = grid->getSizeY();
+            }
+        }
+
+        void serialize(sf::Packet &packet)
+        {
+            packet << grid->getID();
+        }
+
+        void deserialize(sf::Packet &packet)
+        {
+            int gridID;
+            packet >> gridID;
+            grid = reinterpret_cast<GridComponent*>(Component::get(gridID));
+
+            if (grid)
+            {
+                boundingBox.left = 0;
+                boundingBox.top = 0;
+                boundingBox.width = grid->getSizeX();
+                boundingBox.height = grid->getSizeY();
+            }
         }
 
         void computeMass(phys::RigidBody* body, float density)

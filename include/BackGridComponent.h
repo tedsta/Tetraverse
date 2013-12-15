@@ -14,6 +14,7 @@ class BackGridComponent : public RenderComponent
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         void render(sf::RenderTarget& target, sf::RenderStates states);
         void renderShadow(sf::RenderTarget& target, sf::RenderStates states){}

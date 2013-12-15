@@ -47,6 +47,7 @@ class ItemComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}

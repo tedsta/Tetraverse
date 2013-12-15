@@ -64,12 +64,10 @@ void GridComponent::serialize(sf::Packet &packet)
     }
 
     packet << (int)mPlaceables.size();
-    for (auto placeable : mPlaceables)
-        packet << placeable->getID();
+    for (auto placeableID : mPlaceables)
+        packet << placeableID;
 
-    packet << (int)mChildren.size();
-    for (auto child : mChildren)
-        packet << child->getID();
+    mPolyShape.serialize(packet);
 }
 
 void GridComponent::deserialize(sf::Packet &packet)
@@ -106,20 +104,10 @@ void GridComponent::deserialize(sf::Packet &packet)
     mPlaceables.resize(placeableCount);
     for (int i = 0; i < placeableCount; i++)
     {
-        int placeableID;
-        packet >> placeableID;
-        mPlaceables[i] = Entity::get(placeableID);
+        packet >> mPlaceables[i];
     }
 
-    int childCount;
-    packet >> childCount;
-    mChildren.resize(childCount);
-    for (int i = 0; i < childCount; i++)
-    {
-        int childID;
-        packet >> childID;
-        mChildren[i] = Entity::get(childID);
-    }
+    mPolyShape.deserialize(packet);
 }
 
 void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int bot)
@@ -153,11 +141,13 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     pos *= float(TILE_SIZE);
     pos = myTransform->getTransform().transformPoint(pos);
 
+    newGrid->giveID();
     TransformComponent* transform = new TransformComponent(pos,
                                                            myTransform->getRotation(), myTransform->getScale());
-    GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
-    PhysicsComponent* physics = new PhysicsComponent(grid);
+    newGrid->addComponent(transform);
 
+
+    GridComponent* grid = new GridComponent(transform, width, height, false, tiles, mTickCount);
     for (Entity* placeable : placeables)
     {
         PlaceableComponent* placeableComp = reinterpret_cast<PlaceableComponent*>(placeable->getComponent(PlaceableComponent::Type));
@@ -167,12 +157,11 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
         grid->addPlaceable(placeable);
         removePlaceable(placeable);
     }
+    newGrid->addComponent(grid);
 
-    newGrid->addComponent(transform);
     newGrid->addComponent(new BackGridComponent(grid));
     newGrid->addComponent(new FrontGridComponent(grid));
-    newGrid->addComponent(grid);
-    newGrid->addComponent(physics);
+    newGrid->addComponent(new PhysicsComponent(grid));
 
     for (int y = 0; y < height-1; y++)
     {
@@ -187,6 +176,10 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     }
 
     grid->recalculatePolygon();
+}
+
+void GridComponent::postDeserialize()
+{
 }
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
@@ -391,8 +384,9 @@ bool GridComponent::canPlace(int x, int y, int width, int height)
         }
     }
 
-    for (auto entity : mPlaceables)
+    for (auto placeableID : mPlaceables)
     {
+        Entity* entity = Entity::get(placeableID);
         PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
         if (x+width > placeable->getGridX() && x < placeable->getGridX()+placeable->getWidth() &&
             y+height > placeable->getGridY() && y < placeable->getGridY()+placeable->getHeight())
@@ -408,6 +402,8 @@ void GridComponent::addPlaceable(Entity* entity)
     if (!myTransform)
         return;
 
+    entity->giveID();
+
     TransformComponent* trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
 
@@ -420,14 +416,14 @@ void GridComponent::addPlaceable(Entity* entity)
     trans->setPosition(pos);
     trans->setRotation(myTransform->getRotation());
     trans->setScale(myTransform->getScale());
-    mPlaceables.push_back(entity);
+    mPlaceables.push_back(entity->getID());
 }
 
 void GridComponent::removePlaceable(Entity* placeable)
 {
     for (unsigned int i = 0; i < mPlaceables.size(); i++)
     {
-        if (mPlaceables[i] == placeable)
+        if (Entity::get(mPlaceables[i]) == placeable)
         {
             mPlaceables.erase(mPlaceables.begin()+i);
             return;
@@ -442,8 +438,9 @@ Entity* GridComponent::getPlaceableAt(int x, int y)
     else if (x < 0 || x >= mSizeX-1)
         return NULL;
 
-    for (auto entity : mPlaceables)
+    for (auto placeableID : mPlaceables)
     {
+        Entity* entity = Entity::get(placeableID);
         PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
         if (x >= placeable->getGridX() && x < placeable->getGridX()+placeable->getWidth() &&
             y >= placeable->getGridY() && y < placeable->getGridY()+placeable->getHeight())
