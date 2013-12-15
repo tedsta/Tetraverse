@@ -310,7 +310,7 @@ Tile** newWorld(int seed, int width, int height)
     {
 		for (int x = 0; x < width; x++)
 		{
-		    //auto[MC]
+		    float matDstrb[MC];
 		    for(int m = 0; m < MC; m++){
 
 		    }
@@ -329,7 +329,7 @@ Tile** newWorld(int seed, int width, int height)
 			if (y > n*100)
 			{
 			    if(cave < .8){
-                    tiles[y][x].mMat = p * 7 / 2;
+                    tiles[y][x].mMat = p * 4 / 2;
 			    }
                 tiles[y][x].mBack = 1;
                 tiles[y][x].mLight = 0;
