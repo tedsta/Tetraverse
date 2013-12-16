@@ -19,14 +19,15 @@ class PhysicsComponent : public Component
     friend class PhysicsSystem;
 
     public:
-        PhysicsComponent(float width = 16, float height = 16, float density = 1.f);
-        PhysicsComponent(sf::Vector2f* verts, int vertCount, float density = 1.f);
+        PhysicsComponent(float width = 16, float height = 16, float _density = 1.f);
+        PhysicsComponent(sf::Vector2f* verts, int vertCount, float _density = 1.f);
         PhysicsComponent(GridComponent* gridCmp);
         virtual ~PhysicsComponent();
 
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         void addGrid(Entity* g);
         void removeGrid(Entity* g);
@@ -44,6 +45,8 @@ class PhysicsComponent : public Component
 
         phys::RigidBody* body;
         Entity* primaryGrid;
+
+        float density;
 
         std::set<Entity*> grids;
 };

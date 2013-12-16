@@ -17,6 +17,7 @@ class PlayerComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         int getLeftCoordsCount(){return mLeftCoords.size();}
         void pushLeftCoord(sf::Vector2f coord){mLeftCoords.push(coord);}
@@ -36,7 +37,6 @@ class PlayerComponent : public Component
 
     private:
         int mNetID;
-        float mAnimTime;
         sf::Vector2f mCam;
         bool mStupidMode;
         int mLeftHand;

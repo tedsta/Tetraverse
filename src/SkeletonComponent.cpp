@@ -4,29 +4,32 @@
 
 TypeBits SkeletonComponent::Type;
 
-SkeletonComponent::SkeletonComponent(std::string skDataFile, std::string atlasFile)
+SkeletonComponent::SkeletonComponent(std::string skDataFile, std::string atlasFile) : mSkDataFile(skDataFile), mAtlasFile(atlasFile)
 {
-    spAtlas* atlas = reinterpret_cast<spAtlas*>(ResourceManager::get()->get(atlasFile));
+    if (skDataFile.size() == 0 || atlasFile.size() == 0)
+        return;
+
+    spAtlas* atlas = reinterpret_cast<spAtlas*>(ResourceManager::get()->get(mAtlasFile));
     if (!atlas)
     {
-        atlas = spAtlas_readAtlasFile(atlasFile.c_str());
-        ResourceManager::get()->add(atlasFile, atlas);
+        atlas = spAtlas_readAtlasFile(mAtlasFile.c_str());
+        ResourceManager::get()->add(mAtlasFile, atlas);
     }
 
-    spSkeletonData* skData = reinterpret_cast<spSkeletonData*>(ResourceManager::get()->get(skDataFile));
+    spSkeletonData* skData = reinterpret_cast<spSkeletonData*>(ResourceManager::get()->get(mSkDataFile));
     if (!skData)
     {
         spSkeletonJson* json = spSkeletonJson_create(atlas);
-        skData = spSkeletonJson_readSkeletonDataFile(json, skDataFile.c_str());
+        skData = spSkeletonJson_readSkeletonDataFile(json, mSkDataFile.c_str());
         spSkeletonJson_dispose(json);
-        ResourceManager::get()->add(skDataFile, skData);
+        ResourceManager::get()->add(mSkDataFile, skData);
     }
 
-    spAnimationStateData* stateData = reinterpret_cast<spAnimationStateData*>(ResourceManager::get()->get(skDataFile+"_anim"));
+    spAnimationStateData* stateData = reinterpret_cast<spAnimationStateData*>(ResourceManager::get()->get(mSkDataFile+"_anim"));
     if (!stateData)
     {
         stateData = spAnimationStateData_create(skData);
-        ResourceManager::get()->add(skDataFile+"_anim", stateData);
+        ResourceManager::get()->add(mSkDataFile+"_anim", stateData);
     }
 
     mSkeleton = new spine::SkeletonDrawable(skData, stateData);
@@ -39,9 +42,46 @@ SkeletonComponent::~SkeletonComponent()
 
 void SkeletonComponent::serialize(sf::Packet &packet)
 {
+    RenderComponent::serialize(packet);
+
+    packet << mSkDataFile;
+    packet << mAtlasFile;
 }
 
 void SkeletonComponent::deserialize(sf::Packet &packet)
+{
+    RenderComponent::deserialize(packet);
+
+    packet >> mSkDataFile;
+    packet >> mAtlasFile;
+
+    spAtlas* atlas = reinterpret_cast<spAtlas*>(ResourceManager::get()->get(mAtlasFile));
+    if (!atlas)
+    {
+        atlas = spAtlas_readAtlasFile(mAtlasFile.c_str());
+        ResourceManager::get()->add(mAtlasFile, atlas);
+    }
+
+    spSkeletonData* skData = reinterpret_cast<spSkeletonData*>(ResourceManager::get()->get(mSkDataFile));
+    if (!skData)
+    {
+        spSkeletonJson* json = spSkeletonJson_create(atlas);
+        skData = spSkeletonJson_readSkeletonDataFile(json, mSkDataFile.c_str());
+        spSkeletonJson_dispose(json);
+        ResourceManager::get()->add(mSkDataFile, skData);
+    }
+
+    spAnimationStateData* stateData = reinterpret_cast<spAnimationStateData*>(ResourceManager::get()->get(mSkDataFile+"_anim"));
+    if (!stateData)
+    {
+        stateData = spAnimationStateData_create(skData);
+        ResourceManager::get()->add(mSkDataFile+"_anim", stateData);
+    }
+
+    mSkeleton = new spine::SkeletonDrawable(skData, stateData);
+}
+
+void SkeletonComponent::postDeserialize()
 {
 }
 

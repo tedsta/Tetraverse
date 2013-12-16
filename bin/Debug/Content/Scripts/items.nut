@@ -75,6 +75,7 @@ function door(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 4) == true)
     {
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/door.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 1, 4));
@@ -109,6 +110,7 @@ function thruster(gridEnt, coords)
         intent.mapKeyToIntent("right", KeyL, BtnStateDown);
 
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(transform);
         entity.addComponentSq(intent);
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/engine.png", 1, 1));
@@ -211,6 +213,7 @@ function light(gridEnt, coords)
         transform.setOrigin(Vector2f(0, 0));
 
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(transform);
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/torch.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Light", x, y, 1,1));
@@ -236,6 +239,7 @@ function swtch(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 1))
     {
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/button_wall.png", 2, 2));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
@@ -261,6 +265,7 @@ function o2(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 3))
     {
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/o2.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 3));
@@ -286,6 +291,7 @@ function reactor(gridEnt, coords)
     if (grid.canPlace(x, y, 3, 2))
     {
         local entity = engine.getScene().createEntity();
+        entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/reactor.png", 1, 1));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 3, 2));

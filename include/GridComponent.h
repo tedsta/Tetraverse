@@ -97,6 +97,7 @@ class GridComponent : public RenderComponent
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         sf::Vector2f getTilePos(sf::Vector2f pos);
 
@@ -107,6 +108,7 @@ class GridComponent : public RenderComponent
         bool placeMid(int x, int y, int mat);
         bool placeBack(int x, int y, int mat);
         bool addFluid(int x, int y, int mat, float fluid);
+        void applyLightRec(int x, int y, int lastLight);
 
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);
@@ -127,8 +129,6 @@ class GridComponent : public RenderComponent
         const std::vector<sf::Vector2i>& getInterestingTiles(int tick) const {return mCTiles[tick];}
         void clearInteresting(int tick){mCTiles[tick].clear();}
 
-        void addChild(Entity* child){mChildren.push_back(child);}
-
         // Getters
         bool getWrapX() const {return mWrapX;}
         Tile getTile(int x, int y) const;
@@ -148,8 +148,7 @@ class GridComponent : public RenderComponent
         int mTransformID;
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
-        std::vector<Entity*> mPlaceables;
-        std::vector<Entity*> mChildren; // All of the entities in this grid
+        std::vector<int> mPlaceables;
 
         phys::PolygonShape mPolyShape;
         std::vector<sf::Vector2f> mVertices;

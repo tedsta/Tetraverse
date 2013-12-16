@@ -13,6 +13,7 @@ class SkeletonComponent : public RenderComponent
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         void render(sf::RenderTarget& target, sf::RenderStates states);
         void renderShadow(sf::RenderTarget& target, sf::RenderStates states);
@@ -33,6 +34,9 @@ class SkeletonComponent : public RenderComponent
 
     private:
         spine::SkeletonDrawable* mSkeleton;
+
+        std::string mSkDataFile;
+        std::string mAtlasFile;
 };
 
 #endif // SKELETONCOMPONENT_H

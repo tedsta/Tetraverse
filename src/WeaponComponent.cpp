@@ -22,6 +22,10 @@ void WeaponComponent::deserialize(sf::Packet &packet)
 {
 }
 
+void WeaponComponent::postDeserialize()
+{
+}
+
 bool WeaponComponent::fire(float rot)
 {
     sf::Vector2f dir(cos(degToRad(rot)), sin(degToRad(rot)));

@@ -18,6 +18,7 @@ class InventoryComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         int addItem(int slot, int item, int count);
         int addItem(int item, int count);

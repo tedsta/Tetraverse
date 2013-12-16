@@ -9,10 +9,15 @@ std::map<std::string, sqext::SQIClass*> PlaceableComponent::Classes;
 TypeBits PlaceableComponent::Type;
 
 PlaceableComponent::PlaceableComponent(Entity* entity, Entity* grid, const std::string& className, int gridX, int gridY, int width, int height) :
-    mEntity(entity), mGrid(grid), mClassName(className),
-    mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
+    mClassName(className), mInst(NULL), mGridX(gridX), mGridY(gridY), mWidth(width), mHeight(height)
 {
-    if (grid && mClassName.size() > 0)
+    if (entity)
+        mEntity = entity->getID();
+
+    if (grid)
+        mGrid = grid->getID();
+
+    if (entity && grid && !mInst && mClassName.size() > 0)
         mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(entity, grid, gridX, gridY));
 }
 
@@ -23,17 +28,38 @@ PlaceableComponent::~PlaceableComponent()
 
 void PlaceableComponent::serialize(sf::Packet &packet)
 {
+    packet << mEntity;
+    packet << mGrid;
+    packet << mClassName;
+    packet << mGridX << mGridY << mWidth << mHeight;
 }
 
 void PlaceableComponent::deserialize(sf::Packet &packet)
 {
+    packet >> mEntity;
+    packet >> mGrid;
+    packet >> mClassName;
+    packet >> mGridX >> mGridY >> mWidth >> mHeight;
+}
+
+void PlaceableComponent::postDeserialize()
+{
+    Entity* entity = Entity::get(mEntity);
+    Entity* grid = Entity::get(mGrid);
+    if (entity && grid && mClassName.size() > 0)
+        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(entity, grid, mGridX, mGridY));
 }
 
 void PlaceableComponent::interact()
 {
+    Entity* entity = Entity::get(mEntity);
+    Entity* grid = Entity::get(mGrid);
+    if (entity && grid && mClassName.size() > 0)
+        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(entity, grid, mGridX, mGridY));
+
     try
     {
-        if (mGrid && mInst)
+        if (grid && mInst)
             mInst->call("interact");
     }
     catch (Sqrat::Exception e)
@@ -44,7 +70,7 @@ void PlaceableComponent::interact()
 
 void PlaceableComponent::setGrid(Entity* grid)
 {
-    mGrid = grid;
+    mGrid = grid->getID();
     mInst->call("setGrid", grid);
 }
 

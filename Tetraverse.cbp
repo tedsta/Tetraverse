@@ -22,7 +22,6 @@
 					<Add library="extlibs\lib\libsfml-graphics.a" />
 					<Add library="extlibs\lib\libsfml-window.a" />
 					<Add library="extlibs\lib\libsfml-system.a" />
-					<Add library="extlibs\lib\libBox2D.a" />
 					<Add library="extlibs\lib\libsquirrel.a" />
 					<Add library="extlibs\lib\libsqstdlib.a" />
 					<Add library="extlibs\lib\libenet.a" />
@@ -149,6 +148,7 @@
 		<Unit filename="include/PlayerSystem.h" />
 		<Unit filename="include/SignalComponent.h" />
 		<Unit filename="include/SkeletonComponent.h" />
+		<Unit filename="include/TVNetwork.h" />
 		<Unit filename="include/TetraCollision.h" />
 		<Unit filename="include/WeaponComponent.h" />
 		<Unit filename="include/WireComponent.h" />
@@ -181,6 +181,7 @@
 		<Unit filename="src/PlayerSystem.cpp" />
 		<Unit filename="src/SignalComponent.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />
+		<Unit filename="src/TVNetwork.cpp" />
 		<Unit filename="src/TetraCollision.cpp" />
 		<Unit filename="src/WeaponComponent.cpp" />
 		<Unit filename="src/WireComponent.cpp" />

@@ -4,6 +4,12 @@ TypeBits LightComponent::Type;
 
 LightComponent::LightComponent(float _radius) : radius(_radius), active(true)
 {
+    if (radius == 0.f)
+    {
+        active = false;
+        return;
+    }
+
     // Set up the light mask
     lightMask.create(radius*2/4, radius*2/4);
     sf::View view = lightMask.getDefaultView();
@@ -30,5 +36,9 @@ void LightComponent::serialize(sf::Packet &packet)
 }
 
 void LightComponent::deserialize(sf::Packet &packet)
+{
+}
+
+void LightComponent::postDeserialize()
 {
 }

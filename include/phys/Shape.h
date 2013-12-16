@@ -5,6 +5,7 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Network/Packet.hpp>
 
 #include "phys/Mat2.h"
 
@@ -25,6 +26,9 @@ namespace phys
             Shape() : u(0.f) {}
             virtual ~Shape();
 
+            virtual void serialize(sf::Packet &packet) = 0;
+            virtual void deserialize(sf::Packet &packet) = 0;
+
             virtual void computeMass(RigidBody* body, float density) = 0;
             virtual void setRotation(float rot){u.set(rot);}
             virtual int getType() const = 0;
@@ -41,6 +45,9 @@ namespace phys
         public:
             CircleShape( float r );
 
+            void serialize(sf::Packet &packet);
+            void deserialize(sf::Packet &packet);
+
             void computeMass(RigidBody* body, float density);
 
             void setRotation(float rot){}
@@ -56,6 +63,9 @@ namespace phys
     {
         public:
             PolygonShape(){}
+
+            void serialize(sf::Packet &packet);
+            void deserialize(sf::Packet &packet);
 
             void computeMass(RigidBody* body, float density);
 

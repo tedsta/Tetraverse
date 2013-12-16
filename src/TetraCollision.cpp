@@ -171,18 +171,18 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 	top = std::max(top, 0);
     bot = std::min(bot, grid->getGrid()->mSizeY-1);
 
+    // Tile size
+    float tileSize = PTU/TILE_SIZE;
+
     // Find the tile with the least overlap in the collision
     sf::Vector2f tileVerts[4];
+    int tileVertCount;
     float tilePenetration = 0.f;
     float polyPenetration = 0.f;
     int tileFace;
     int polyFace;
 
     sf::Vector2f tileNormals[4];
-    tileNormals[0] = sf::Vector2f(-1, 0);
-    tileNormals[1] = sf::Vector2f(0, 1);
-    tileNormals[2] = sf::Vector2f(1, 0);
-    tileNormals[3] = sf::Vector2f(0, -1);
 
     sf::Vector2f usedNormals[20];
     int usedNormalCount = 0;
@@ -198,21 +198,92 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             if (grid->getGrid()->mTiles[y][x].mMat == 0)
                 continue;
 
-            tileVerts[0] = sf::Vector2f(_x*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
-            tileVerts[1] = sf::Vector2f(_x*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
-            tileVerts[2] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), (y+1)*(PTU/TILE_SIZE));
-            tileVerts[3] = sf::Vector2f((_x+1)*(PTU/TILE_SIZE), y*(PTU/TILE_SIZE));
+            int left = x-1;
+            int right = x+1;
+            int up = y-1;
+            int down = y+1;
+
+            if (grid->getGrid()->mWrapX)
+            {
+                left = grid->getGrid()->wrapX(left);
+                right = grid->getGrid()->wrapX(right);
+            }
+
+            bool leftT = false;
+            bool rightT = false;
+            bool upT = false;
+            bool downT = false;
+
+            if (left >= 0 && grid->getGrid()->mTiles[y][left].mMat != 0)
+                leftT = true;
+            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].mMat != 0)
+                rightT = true;
+            if (up >= 0 && grid->getGrid()->mTiles[up][x].mMat != 0)
+                upT = true;
+            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].mMat != 0)
+                downT = true;
+
+            sf::Vector2f start(_x*tileSize, y*tileSize);
+
+            if (!leftT && !rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start + sf::Vector2f(tileSize/2, 0);
+                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+
+                tileNormals[0] = normalize(sf::Vector2f(0.5, 1.f));
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(-0.5, 1.f));
+            }
+            else if (!leftT && rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start + sf::Vector2f(tileSize, 0);
+                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+
+                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(-1.f, 1.f));
+            }
+            else if (leftT && !rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start;
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
+
+                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(1.f, 1.f));
+            }
+            else
+            {
+                tileVertCount = 4;
+                tileVerts[0] = start;
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[3] = start + sf::Vector2f(tileSize, 0);
+
+                tileNormals[0] = sf::Vector2f(-1, 0);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = sf::Vector2f(1, 0);
+                tileNormals[3] = sf::Vector2f(0, -1);
+            }
+
 
             // Check for a separating axis with A's face planes
             int faceA;
             float penetrationA = findAxisLeastPenetration(&faceA, poly->transformedVertices.data(),
-                                                          poly->transformedNormals.data(), poly->transformedVertices.size(), tileVerts, 4);
+                                                          poly->transformedNormals.data(), poly->transformedVertices.size(), tileVerts, tileVertCount);
             if(penetrationA >= 0.0f || phys::equal(penetrationA, 0.f))
                 continue;
 
             // Check for a separating axis with B's face planes
             int faceB;
-            float penetrationB = findAxisLeastPenetration(&faceB, tileVerts, tileNormals, 4, poly->transformedVertices.data(), poly->transformedVertices.size());
+            float penetrationB = findAxisLeastPenetration(&faceB, tileVerts, tileNormals, tileVertCount,
+                                                          poly->transformedVertices.data(), poly->transformedVertices.size());
             if(penetrationB >= 0.0f || phys::equal(penetrationB, 0.f))
                 continue;
 
@@ -239,7 +310,7 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
                 ref = a;
                 refVerts = tileVerts;
                 refNormals = tileNormals;
-                refCount = 4;
+                refCount = tileVertCount;
 
                 inc = b;
                 incVerts = poly->transformedVertices.data();
@@ -259,7 +330,7 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
                 inc = a;
                 incVerts = tileVerts;
                 incNormals = tileNormals;
-                incCount = 4;
+                incCount = tileVertCount;
 
                 referenceIndex = polyFace;
                 flip = true;

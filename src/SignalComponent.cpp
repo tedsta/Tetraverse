@@ -20,6 +20,10 @@ void SignalComponent::deserialize(sf::Packet &packet)
 {
 }
 
+void SignalComponent::postDeserialize()
+{
+}
+
 void SignalComponent::fireInt(int i)
 {
     for (auto output : outputs)

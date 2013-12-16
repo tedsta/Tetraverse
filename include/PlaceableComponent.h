@@ -20,6 +20,7 @@ class PlaceableComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         static void registerClass(HSQUIRRELVM vm, const std::string& className);
 
@@ -44,8 +45,8 @@ class PlaceableComponent : public Component
     private:
         static std::map<std::string, sqext::SQIClass*> Classes;
 
-        Entity* mEntity;
-        Entity* mGrid;
+        int mEntity;
+        int mGrid;
         std::string mClassName;
         sqext::SQIClassInstance* mInst; // The instance of the squirrel class that does the logic
 

@@ -22,6 +22,7 @@ class SignalComponent : public Component
         // Serialization stuff
         void serialize(sf::Packet &packet);
         void deserialize(sf::Packet &packet);
+        void postDeserialize();
 
         void addOutput(SignalComponent* output){outputs.push_back(output);}
 

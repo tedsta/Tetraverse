@@ -57,8 +57,13 @@ void GridSystem::processEntity(Entity *entity, const float dt)
     }
 
 	// Update all the placeable positions
-	for (auto placeableEnt : grid->mPlaceables)
+	for (auto placeableID : grid->mPlaceables)
     {
+        Entity* placeableEnt = Entity::get(placeableID);
+
+        if (!placeableEnt)
+            continue;
+
         auto pTrans = reinterpret_cast<TransformComponent*>(placeableEnt->getComponent(TransformComponent::Type));
         auto placeable = reinterpret_cast<PlaceableComponent*>(placeableEnt->getComponent(PlaceableComponent::Type));
 

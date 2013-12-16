@@ -31,12 +31,20 @@ FrontGridComponent::~FrontGridComponent()
 
 void FrontGridComponent::serialize(sf::Packet &packet)
 {
+    RenderComponent::serialize(packet);
+
     packet << mGridID;
 }
 
 void FrontGridComponent::deserialize(sf::Packet &packet)
 {
+    RenderComponent::deserialize(packet);
+
     packet >> mGridID;
+}
+
+void FrontGridComponent::postDeserialize()
+{
 }
 
 void FrontGridComponent::render(sf::RenderTarget& target, sf::RenderStates states)
@@ -300,6 +308,41 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 	int top = std::max<int>(centerT.y-1, 0);
 	int bot = std::min<int>(centerT.y+ssYT+1, grid->mSizeY-1);
 
+    for (int _y = top-20; _y <= bot+20; _y++)
+	{
+		for (int _x = left-20; _x <= right+20; _x++)
+        {
+            int x = _x;
+			int y = _y;
+
+			if (grid->getWrapX())
+                x = grid->wrapX(x);
+
+            if (x < 0 || x >= grid->getSizeX() || y < 0 || y >= grid->getSizeY())
+                continue;
+
+            grid->mTiles[y][x].mLight = 0;
+        }
+	}
+
+	for (int _y = top-20; _y <= bot+20; _y++)
+	{
+		for (int _x = left-20; _x <= right+20; _x++)
+        {
+            int x = _x;
+			int y = _y;
+
+			if (grid->getWrapX())
+                x = grid->wrapX(x);
+
+            if (x < 0 || x >= grid->getSizeX() || y < 0 || y >= grid->getSizeY())
+                continue;
+
+            if (grid->mTiles[y][x].mBack == 0)
+                grid->applyLightRec(x, y, 30);
+        }
+	}
+
     sf::VertexArray verts(sf::Quads, 4);
     sf::VertexArray outline(sf::LinesStrip, 5);
 	for (int _y = top; _y <= bot; _y++)
@@ -309,21 +352,23 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 			int x = grid->wrapX(_x);
 			int y = _y;
 
-			if (grid->mTiles[y][x].mMat == 0)
+			if (grid->mTiles[y][x].mLight >= 10)
                 continue;
+
+            float intensity = std::min(1.f, float(10-grid->mTiles[y][x].mLight)/10.f);
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
 			verts[0] = sf::Vertex(start,
-				sf::Color::Black,
+				sf::Color(0, 0, 0, intensity*255),
 				sf::Vector2f());
 			verts[1] = sf::Vertex(start+sf::Vector2f(0, tsize),
-				sf::Color::Black,
+				sf::Color(0, 0, 0, intensity*255),
 				sf::Vector2f(0, tsize));
 			verts[2] = sf::Vertex(start+sf::Vector2f(tsize, tsize),
-				sf::Color::Black,
+				sf::Color(0, 0, 0, intensity*255),
 				sf::Vector2f(tsize, tsize));
 			verts[3] = sf::Vertex(start+sf::Vector2f(tsize, 0),
-				sf::Color::Black,
+				sf::Color(0, 0, 0, intensity*255),
 				sf::Vector2f(tsize, 0));
 
             target.draw(verts, states);
