@@ -37,6 +37,15 @@ GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY
     //myTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
 
     mCTiles.resize(tickCount);
+
+    for (int y = 0; y < mSizeY; y++)
+    {
+        for (int x = 0; x < mSizeX; x++)
+        {
+            if (mTiles[y][x].mBack == 0)
+                applyLightRec(x, y, 30);
+        }
+    }
 }
 
 GridComponent::~GridComponent()
@@ -263,6 +272,28 @@ bool GridComponent::addFluid(int x, int y, int mat, float fluid)
 	return true;
 }
 
+void GridComponent::applyLightRec(int x, int y, int lastLight)
+{
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return;
+
+    int blockAmount = 1;
+    if (mTiles[y][x].mMat != 0)
+        blockAmount = 4;
+
+    int newLight = lastLight-blockAmount;
+    if (newLight <= mTiles[y][x].mLight) return;
+
+    mTiles[y][x].mLight = newLight;
+
+    applyLightRec(x+1, y, newLight);
+    applyLightRec(x, y+1, newLight);
+    applyLightRec(x-1, y, newLight);
+    applyLightRec(x, y-1, newLight);
+}
+
 void GridComponent::setTile(int x, int y, Tile tile, int tick)
 {
     if (mWrapX)
@@ -276,8 +307,6 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
 	}
 
 	mTiles[y][x] = tile;
-	if (mTiles[y][x].mBack == 0)
-        mTiles[y][x].mLight = 20;
 
 	int left = wrapX(x - 1);
 	int right = wrapX(x + 1);

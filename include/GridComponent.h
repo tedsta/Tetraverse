@@ -108,6 +108,7 @@ class GridComponent : public RenderComponent
         bool placeMid(int x, int y, int mat);
         bool placeBack(int x, int y, int mat);
         bool addFluid(int x, int y, int mat, float fluid);
+        void applyLightRec(int x, int y, int lastLight);
 
         void setTile(int x, int y, Tile tile, int tick);
         bool canPlace(int x, int y, int width, int height);

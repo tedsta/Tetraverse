@@ -37,7 +37,6 @@ class PlayerComponent : public Component
 
     private:
         int mNetID;
-        float mAnimTime;
         sf::Vector2f mCam;
         bool mStupidMode;
         int mLeftHand;

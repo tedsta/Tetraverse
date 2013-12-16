@@ -104,7 +104,7 @@ int main()
     engine->addSystem(placeableSys);
     engine->addSystem(physSys);
     engine->addSystem(gridSys);
-    //engine->addSystem(lightSys);
+    engine->addSystem(lightSys);
 
     FrontGridComponent::RndSys = render;
 
@@ -177,13 +177,13 @@ int main()
 
     gridSys->addTick(veggyGridOp, 5.f);
     gridSys->addTick(fluidGridOp, 0.001f);
-    gridSys->addTick(lightGridOp, 0.1f);
+    //gridSys->addTick(lightGridOp, 0.1f);
 
     Scene *scene = engine->getScene();
 
-    scene->load("myfunscene.tsc");
+    //scene->load("myfunscene.tsc");
 
-    /*int worldW = 200;
+    int worldW = 200;
     int worldH = 200;
     Tile** tiles = newWorld(0, worldW, worldH);
 
@@ -267,7 +267,7 @@ int main()
     intent->mapKeyToIntent("zoomin", sf::Keyboard::Down, BtnState::DOWN);
 
     intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
-    engine->getScene()->save("myfunscene.tsc");*/
+    //engine->getScene()->save("myfunscene.tsc");
 
 
     float accum = 0;

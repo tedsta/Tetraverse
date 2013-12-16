@@ -34,10 +34,10 @@ LightSystem::~LightSystem()
 
 void LightSystem::begin(const float dt)
 {
-    lightMask.clear(sf::Color::Black);
+    lightMask.clear(sf::Color::Transparent);
     lightMask.setView(rndSys->getView());
 
-    /*for (auto rEntity : rndSys->getActiveEntities())
+    for (auto rEntity : rndSys->getActiveEntities())
     {
         auto rTransform = reinterpret_cast<TransformComponent*>(rEntity->getComponent(TransformComponent::Type));
         auto renderCmpnts = rEntity->getComponents(rndSys->getOptBits());
@@ -52,11 +52,13 @@ void LightSystem::begin(const float dt)
                 rc->renderShadow(lightMask, states);
             }
         }
-    }*/
+    }
 }
 
 void LightSystem::processEntity(Entity *entity, const float dt)
 {
+    return;
+
     auto transform = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     auto light = reinterpret_cast<LightComponent*>(entity->getComponent(LightComponent::Type));
 
