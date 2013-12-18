@@ -184,8 +184,8 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-    int worldW = 200;
-    int worldH = 200;
+    int worldW = 2000;
+    int worldH = 1000;
     Tile** tiles = newWorld(0, worldW, worldH);
 
     Entity *planet = new Entity(engine->getEventManager());
@@ -213,7 +213,7 @@ int main()
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
-    player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
+    player->addComponent(new TransformComponent(sf::Vector2f(100, 12000)));
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
@@ -322,9 +322,9 @@ Tile** newWorld(int seed, int width, int height)
         mats[i] = rand()%Mats;
 
         factors[i] = new float[3];
-        factors[i][0] = 1000/(float)rand();
-        factors[i][1] = 1500/(float)rand();
-        factors[i][2] = 15000/(float)rand();
+        factors[i][0] = 1/(float)((rand()%15)+1);
+        factors[i][1] = 1/(float)((rand()%10)+1);
+        factors[i][2] = 1/(float)((rand()%5)+1);
         std::cout << mats[i] <<" "<<factors[i][0]<<" "<< factors[i][1]<<" "<< factors[i][2] << std::endl;
     }
 
@@ -334,36 +334,31 @@ Tile** newWorld(int seed, int width, int height)
 
 	for (int y = 0; y < height; y++)
     {
-         std::cout << std::endl;
+         //std::cout << std::endl;
 		for (int x = 0; x < width; x++)
 		{
 		    int mat = 0;
-		    float v = -2;
-		    for(int m = 0; m < MC; m++){
-                float f = PerlinNoise2D(y, x, factors[m][0], factors[m][1], factors[m][2]);
-                if(f > v){
-                    v = f;
-                    mat = m;
-                    std::cout << f;
+		    /*for(int m = 0; m < MC; m++){
+
+                //float f = PerlinNoise2D(y, x, 1+factors[m][0], factors[m][1], 11+factors[m][2]);
+                if( y  < m*(height/MC)){
+                   // v = f;
+                    mat = y*(height/MC);
+                  //  std::cout << f;
                 }
-		    }
+		    }*/
+		     mat = (MC*y)/height;
 
 			auto n = PerlinNoise1D(x, 1.01, .02, 2) + 1;
-            auto cave = PerlinNoise2D(y, x, 0.9, 0.15, 9)+1;
-			mat += float(height-y) / float(height);
-			float o[MAX_COMPS];
-			/*
-			for (int i = 0; i < MAX_COMPS; i++)
-			{
-				o[i] = PerlinNoise2D(x, y, 1.01, 0.2, i) + 1;
-			}
-*/
+            auto cave = PerlinNoise2D(y, x, 0.9, 0.15, 11)+1;
+			//mat += float(height-y) / float(height);
+
             tiles[y][x].mLight = 20;
 
-			if (y > n*100)
+			//if (y > n*100)
 			{
-			    if(cave < .8){
-                    tiles[y][x].mMat = mats[mat] * MC / 2;
+			    if(cave < 0.1 || cave > 0.55){
+                    tiles[y][x].mMat = mats[mat];
 			    }
                 tiles[y][x].mBack = 1;
                 tiles[y][x].mLight = 0;
@@ -371,11 +366,7 @@ Tile** newWorld(int seed, int width, int height)
 				if (tiles[y][x].mMat > 7)
 					tiles[y][x].mMat = 3;
 
-				for (int i = 0; i < MAX_COMPS; i++)
-                {
-					tiles[y][x].mComp[i] = o[i] * 128;
-				}
-				//tiles[y][x].mHeat = p * 256;
+
 			}
 		}
 	}
