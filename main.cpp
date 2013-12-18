@@ -217,7 +217,7 @@ int main()
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(1.f, 1.f));
+    player->addComponent(new PhysicsComponent(1.6f, 1.f));
     player->addComponent(new PlayerComponent);
     //player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);

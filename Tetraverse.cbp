@@ -150,6 +150,7 @@
 		<Unit filename="include/PlaceableComponent.h" />
 		<Unit filename="include/PlaceableSystem.h" />
 		<Unit filename="include/PlayerComponent.h" />
+		<Unit filename="include/PlayerDatabase.h" />
 		<Unit filename="include/PlayerSystem.h" />
 		<Unit filename="include/SignalComponent.h" />
 		<Unit filename="include/SkeletonComponent.h" />
@@ -183,6 +184,7 @@
 		<Unit filename="src/PlaceableComponent.cpp" />
 		<Unit filename="src/PlaceableSystem.cpp" />
 		<Unit filename="src/PlayerComponent.cpp" />
+		<Unit filename="src/PlayerDatabase.cpp" />
 		<Unit filename="src/PlayerSystem.cpp" />
 		<Unit filename="src/SignalComponent.cpp" />
 		<Unit filename="src/SkeletonComponent.cpp" />

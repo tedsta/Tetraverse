@@ -201,27 +201,27 @@ void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 
             sf::Vector2f start(_x*tileSize, y*tileSize);
 
-            /*if (!leftT && !rightT && !upT && downT)
+            if (!leftT && !rightT && !upT && downT)
             {
                 tileVertCount = 3;
                 tileVerts[0] = start + sf::Vector2f(tileSize/2, 0);
-                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
-                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = normalize(sf::Vector2f(0.5, 1.f));
+                tileNormals[0] = normalize(sf::Vector2f(-0.5, -1.f));
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(-0.5, 1.f));
+                tileNormals[2] = normalize(sf::Vector2f(0.5, -1.f));
             }
             else if (!leftT && rightT && !upT && downT)
             {
                 tileVertCount = 3;
                 tileVerts[0] = start + sf::Vector2f(tileSize, 0);
-                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
-                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[0] = normalize(sf::Vector2f(-1.f, -1.f));
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(-1.f, 1.f));
+                tileNormals[2] = sf::Vector2f(1.f, 0.f);
             }
             else if (leftT && !rightT && !upT && downT)
             {
@@ -230,11 +230,11 @@ void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
                 tileVerts[1] = start + sf::Vector2f(0, tileSize);
                 tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[0] = sf::Vector2f(-1.f, 0.f);
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(1.f, 1.f));
+                tileNormals[2] = normalize(sf::Vector2f(1.f, -1.f));
             }
-            else*/
+            else
             {
                 tileVertCount = 4;
                 tileVerts[0] = start;
@@ -468,23 +468,23 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             {
                 tileVertCount = 3;
                 tileVerts[0] = start + sf::Vector2f(tileSize/2, 0);
-                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
-                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = normalize(sf::Vector2f(0.5, 1.f));
+                tileNormals[0] = normalize(sf::Vector2f(-0.5, -1.f));
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(-0.5, 1.f));
+                tileNormals[2] = normalize(sf::Vector2f(0.5, -1.f));
             }
             else if (!leftT && rightT && !upT && downT)
             {
                 tileVertCount = 3;
                 tileVerts[0] = start + sf::Vector2f(tileSize, 0);
-                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
-                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[0] = normalize(sf::Vector2f(-1.f, -1.f));
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(-1.f, 1.f));
+                tileNormals[2] = sf::Vector2f(1.f, 0.f);
             }
             else if (leftT && !rightT && !upT && downT)
             {
@@ -493,9 +493,9 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
                 tileVerts[1] = start + sf::Vector2f(0, tileSize);
                 tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
 
-                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[0] = sf::Vector2f(-1.f, 0.f);
                 tileNormals[1] = sf::Vector2f(0, 1);
-                tileNormals[2] = normalize(sf::Vector2f(1.f, 1.f));
+                tileNormals[2] = normalize(sf::Vector2f(1.f, -1.f));
             }
             else
             {
