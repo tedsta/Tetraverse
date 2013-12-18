@@ -184,13 +184,9 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-<<<<<<< HEAD
     int worldW = 1000;
     int worldH = 1000;
-=======
-    int worldW = 200;
-    int worldH = 200;
->>>>>>> c13587323e49f2f5e6382e5d392251edbf5eea42
+
     Tile** tiles = newWorld(0, worldW, worldH);
 
     Entity *planet = new Entity(engine->getEventManager());
@@ -208,12 +204,9 @@ int main()
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
-<<<<<<< HEAD
     player->addComponent(new TransformComponent(sf::Vector2f(worldW/2, 0)));
     //player->addComponent(new SpriteComponent("robot.png"));
-=======
-    player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
->>>>>>> c13587323e49f2f5e6382e5d392251edbf5eea42
+
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.6f, 1.f));
