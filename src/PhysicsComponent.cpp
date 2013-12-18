@@ -44,6 +44,10 @@ PhysicsComponent::PhysicsComponent(GridComponent* gridCmp) : primaryGrid(NULL)
     GridShape* shape = new GridShape(gridCmp);
     body = new phys::RigidBody(shape, (gridCmp->getWrapX() ? 0 : 1), 1.f);
 
+    body->setDynamicFriction(0.f);
+    body->setStaticFriction(0.f);
+    body->setRestitution(0.f);
+
     if (gridCmp->getWrapX())
     {
         body->setStatic();
