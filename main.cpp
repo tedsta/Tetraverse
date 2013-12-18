@@ -184,8 +184,13 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-    int worldW = 2000;
+<<<<<<< HEAD
+    int worldW = 1000;
     int worldH = 1000;
+=======
+    int worldW = 200;
+    int worldH = 200;
+>>>>>>> c13587323e49f2f5e6382e5d392251edbf5eea42
     Tile** tiles = newWorld(0, worldW, worldH);
 
     Entity *planet = new Entity(engine->getEventManager());
@@ -200,26 +205,19 @@ int main()
     planet->addComponent(new PhysicsComponent(pg));
 
     // Spawn player
-    std::vector<sf::Vector2f> playerVerts(8);
-    playerVerts[0] = sf::Vector2f(-0.5f, -1.8f);
-    playerVerts[1] = sf::Vector2f(0.5f, -1.8f);
-    playerVerts[2] = sf::Vector2f(0.9f, -1.5f);
-    playerVerts[3] = sf::Vector2f(0.9f, 1.5f);
-    playerVerts[4] = sf::Vector2f(0.5f, 1.8f);
-    playerVerts[5] = sf::Vector2f(-0.5f, 1.8f);
-    playerVerts[6] = sf::Vector2f(-0.9f, 1.5f);
-    playerVerts[7] = sf::Vector2f(-0.9f, -1.5f);
-
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
-    player->addComponent(new TransformComponent(sf::Vector2f(100, 12000)));
+<<<<<<< HEAD
+    player->addComponent(new TransformComponent(sf::Vector2f(worldW/2, 0)));
     //player->addComponent(new SpriteComponent("robot.png"));
+=======
+    player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
+>>>>>>> c13587323e49f2f5e6382e5d392251edbf5eea42
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.6f, 1.f));
     player->addComponent(new PlayerComponent);
-    //player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
@@ -239,8 +237,6 @@ int main()
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
-    //trans->setOrigin(sf::Vector2f(30, 48));
-    //trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(1000, 1000));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
@@ -302,7 +298,7 @@ int main()
         if (saveClock.getElapsedTime().asSeconds() >= 10.f)
         {
             saveClock.restart();
-            engine->getScene()->save("myfunscene.tsc");
+            //engine->getScene()->save("myfunscene.tsc");
         }
     }
 
@@ -313,7 +309,7 @@ int main()
 
 Tile** newWorld(int seed, int width, int height)
 {
-    int Mats = 8;
+    int Mats = 7;
     srand(seed);
     int MC = rand()%Mats;
     int* mats = new int[MC];
@@ -340,7 +336,7 @@ Tile** newWorld(int seed, int width, int height)
 		    int mat = 0;
 		    /*for(int m = 0; m < MC; m++){
 
-                //float f = PerlinNoise2D(y, x, 1+factors[m][0], factors[m][1], 11+factors[m][2]);
+                float f = PerlinNoise2D(y, x, 1+factors[m][0], factors[m][1], 11+factors[m][2]);
                 if( y  < m*(height/MC)){
                    // v = f;
                     mat = y*(height/MC);
@@ -355,7 +351,7 @@ Tile** newWorld(int seed, int width, int height)
 
             tiles[y][x].mLight = 20;
 
-			//if (y > n*100)
+			if (y > n*100)
 			{
 			    if(cave < 0.1 || cave > 0.55){
                     tiles[y][x].mMat = mats[mat];
