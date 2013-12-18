@@ -10,13 +10,22 @@
 
 TypeBits PhysicsComponent::Type;
 
-PhysicsComponent::PhysicsComponent(float width, float height, float _density) : primaryGrid(NULL), density(_density)
+PhysicsComponent::PhysicsComponent(int width, int height, float _density) : primaryGrid(NULL), density(_density)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
-    shape->setBox((width/2.f)/PTU, (height/2.f)/PTU);
+    shape->setBox((float(width)/2.f)/PTU, (float(height)/2.f)/PTU);
     body = new phys::RigidBody(shape, 2, density);
     body->setGravity(sf::Vector2f(0, 40.f));
     body->setFixedRotation();
+}
+
+PhysicsComponent::PhysicsComponent(float radius, float _density) : primaryGrid(NULL), density(_density)
+{
+    phys::CircleShape* shape = new phys::CircleShape(radius);
+    body = new phys::RigidBody(shape, 2, density);
+    body->setGravity(sf::Vector2f(0, 40.f));
+    body->setFixedRotation();
+    body->setRestitution(0.f);
 }
 
 PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float _density) : primaryGrid(NULL), density(_density)

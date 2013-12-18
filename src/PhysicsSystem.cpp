@@ -19,6 +19,8 @@ PhysicsSystem::PhysicsSystem(EventManager *eventManager, float lockStep) :
     phys::CollisionDispatcher::registerCallback(phys::Shape::Circle, phys::Shape::Polygon, phys::circleToPolygon);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, phys::Shape::Circle, phys::polygonToCircle);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, phys::Shape::Polygon, phys::polygonToPolygon);
+    phys::CollisionDispatcher::registerCallback(Shape::Grid, phys::Shape::Circle, gridToCircle);
+    phys::CollisionDispatcher::registerCallback(phys::Shape::Circle, Shape::Grid, circleToGrid);
     phys::CollisionDispatcher::registerCallback(Shape::Grid, phys::Shape::Polygon, gridToPolygon);
     phys::CollisionDispatcher::registerCallback(phys::Shape::Polygon, Shape::Grid, polygonToGrid);
     phys::CollisionDispatcher::registerCallback(Shape::Grid, Shape::Grid, gridToGrid);

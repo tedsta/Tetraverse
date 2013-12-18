@@ -117,6 +117,245 @@ int clip( sf::Vector2f n, float c, sf::Vector2f *face )
     return sp;
 }
 
+void gridToCircle(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
+{
+    circleToGrid( c, b, a );
+    for (auto& manifold : c->manifolds)
+        manifold.normal = -manifold.normal;
+}
+
+void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
+{
+    GridShape* grid = reinterpret_cast<GridShape*>(b->getShape());
+    phys::CircleShape* circle = reinterpret_cast<phys::CircleShape*>(a->getShape());
+
+    // Transform circle center to Polygon model space
+    sf::Vector2f center = a->getPosition();
+    center = grid->getU().transpose() * (center - b->getPosition());
+
+    sf::Vector2f topLeft(center.x-circle->getRadius(), center.y-circle->getRadius());
+    sf::Vector2f botRight(center.x+circle->getRadius(), center.y+circle->getRadius());
+
+    int left = floor(topLeft.x/(PTU/TILE_SIZE))-1;
+    int top = floor(topLeft.y/(PTU/TILE_SIZE))-1;
+    int right = ceil(botRight.x/(PTU/TILE_SIZE))+1;
+    int bot = ceil(botRight.y/(PTU/TILE_SIZE))+1;
+
+    if (!grid->getGrid()->getWrapX())
+    {
+        left = std::max(left, 0);
+        right = std::min(right, grid->getGrid()->getSizeX()-1);
+    }
+	top = std::max(top, 0);
+    bot = std::min(bot, grid->getGrid()->getSizeY()-1);
+
+    // Tile size
+    float tileSize = PTU/TILE_SIZE;
+
+    // Find the tile with the least overlap in the collision
+    sf::Vector2f tileVerts[4];
+    int tileVertCount;
+    sf::Vector2f tileNormals[4];
+
+    sf::Vector2f usedNormals[20];
+    int usedNormalCount = 0;
+
+    for (int y = top; y <= bot; y++)
+    {
+        for (int _x = left; _x <= right; _x++)
+        {
+            c->addManifold();
+            c->getLastManifold()->contactCount = 0;
+
+            int x = _x;
+            if (grid->getGrid()->getWrapX())
+                x = grid->getGrid()->wrapX(x);
+
+            if (grid->getGrid()->mTiles[y][x].mMat == 0)
+                continue;
+
+            int left = x-1;
+            int right = x+1;
+            int up = y-1;
+            int down = y+1;
+
+            if (grid->getGrid()->mWrapX)
+            {
+                left = grid->getGrid()->wrapX(left);
+                right = grid->getGrid()->wrapX(right);
+            }
+
+            bool leftT = false;
+            bool rightT = false;
+            bool upT = false;
+            bool downT = false;
+
+            if (left >= 0 && grid->getGrid()->mTiles[y][left].mMat != 0)
+                leftT = true;
+            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].mMat != 0)
+                rightT = true;
+            if (up >= 0 && grid->getGrid()->mTiles[up][x].mMat != 0)
+                upT = true;
+            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].mMat != 0)
+                downT = true;
+
+            sf::Vector2f start(_x*tileSize, y*tileSize);
+
+            /*if (!leftT && !rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start + sf::Vector2f(tileSize/2, 0);
+                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+
+                tileNormals[0] = normalize(sf::Vector2f(0.5, 1.f));
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(-0.5, 1.f));
+            }
+            else if (!leftT && rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start + sf::Vector2f(tileSize, 0);
+                tileVerts[1] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[2] = start + sf::Vector2f(0, tileSize);
+
+                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(-1.f, 1.f));
+            }
+            else if (leftT && !rightT && !upT && downT)
+            {
+                tileVertCount = 3;
+                tileVerts[0] = start;
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
+
+                tileNormals[0] = sf::Vector2f(1.f, 0.f);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = normalize(sf::Vector2f(1.f, 1.f));
+            }
+            else*/
+            {
+                tileVertCount = 4;
+                tileVerts[0] = start;
+                tileVerts[1] = start + sf::Vector2f(0, tileSize);
+                tileVerts[2] = start + sf::Vector2f(tileSize, tileSize);
+                tileVerts[3] = start + sf::Vector2f(tileSize, 0);
+
+                tileNormals[0] = sf::Vector2f(-1, 0);
+                tileNormals[1] = sf::Vector2f(0, 1);
+                tileNormals[2] = sf::Vector2f(1, 0);
+                tileNormals[3] = sf::Vector2f(0, -1);
+            }
+
+
+            // Find edge with minimum penetration
+            // Exact concept as using support points in Polygon vs Polygon
+            float separation = -FLT_MAX;
+            sf::Uint32 faceNormal = 0;
+            bool done = false;
+            for(sf::Uint32 i = 0; i < tileVertCount; ++i)
+            {
+                float s = dot( tileNormals[i], center - tileVerts[i] );
+
+                if(s > circle->getRadius())
+                {
+                    done = true;
+                    break;
+                }
+
+                if(s > separation)
+                {
+                    separation = s;
+                    faceNormal = i;
+                }
+            }
+
+            if (done)
+                continue;
+
+            /*bool used = false;
+            for (int i = 0; i < usedNormalCount; i++)
+            {
+                if (tileNormals[faceNormal] == usedNormals[i])
+                {
+                    used = true;
+                    break;
+                }
+            }
+
+            if (used)
+                continue;
+
+            usedNormals[usedNormalCount] = tileNormals[faceNormal];
+            usedNormalCount++;*/
+
+            // Grab face's vertices
+            sf::Vector2f v1 = tileVerts[faceNormal];
+            sf::Uint32 i2 = faceNormal + 1 < tileVertCount ? faceNormal + 1 : 0;
+            sf::Vector2f v2 = tileVerts[i2];
+
+            // Check to see if center is within polygon
+            if(separation < EPSILON)
+            {
+                c->getLastManifold()->contactCount = 1;
+                c->getLastManifold()->normal = -(grid->getU() * tileNormals[faceNormal]);
+                c->getLastManifold()->contacts[0] = c->getLastManifold()->normal * circle->getRadius() + b->getPosition();
+                c->getLastManifold()->penetration = circle->getRadius();
+                continue;
+            }
+
+            // Determine which voronoi region of the edge center of circle lies within
+            float dot1 = dot( center - v1, v2 - v1 );
+            float dot2 = dot( center - v2, v1 - v2 );
+            c->getLastManifold()->penetration = circle->getRadius() - separation;
+
+            // Closest to v1
+            if(dot1 <= 0.0f)
+            {
+                if(lengthSqr( center - v1 ) > circle->getRadius() * circle->getRadius())
+                    continue;
+
+                c->getLastManifold()->contactCount = 1;
+                sf::Vector2f n = v1 - center;
+                n = grid->getU() * n;
+                n = normalize(n);
+                c->getLastManifold()->normal = n;
+                v1 = grid->getU() * v1 + a->getPosition();
+                c->getLastManifold()->contacts[0] = v1;
+            }
+
+            // Closest to v2
+            else if(dot2 <= 0.0f)
+            {
+                if(lengthSqr( center - v2 ) > circle->getRadius() * circle->getRadius())
+                    continue;
+
+                c->getLastManifold()->contactCount = 1;
+                sf::Vector2f n = v2 - center;
+                v2 = grid->getU() * v2 + a->getPosition();
+                c->getLastManifold()->contacts[0] = v2;
+                n = grid->getU() * n;
+                n = normalize(n);
+                c->getLastManifold()->normal = n;
+            }
+
+            // Closest to face
+            else
+            {
+                sf::Vector2f n = tileNormals[faceNormal];
+                if(dot( center - v1, n ) > circle->getRadius())
+                    continue;
+
+                n = grid->getU() * n;
+                c->getLastManifold()->normal = -n;
+                c->getLastManifold()->contacts[0] = c->getLastManifold()->normal * circle->getRadius() + b->getPosition();
+                c->getLastManifold()->contactCount = 1;
+            }
+        }
+    }
+}
+
 void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
 {
     c->addManifold();

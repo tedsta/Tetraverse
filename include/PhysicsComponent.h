@@ -19,7 +19,8 @@ class PhysicsComponent : public Component
     friend class PhysicsSystem;
 
     public:
-        PhysicsComponent(float width = 16, float height = 16, float _density = 1.f);
+        PhysicsComponent(int width = 16, int height = 16, float _density = 1.f);
+        PhysicsComponent(float radius, float _density);
         PhysicsComponent(sf::Vector2f* verts, int vertCount, float _density = 1.f);
         PhysicsComponent(GridComponent* gridCmp);
         virtual ~PhysicsComponent();

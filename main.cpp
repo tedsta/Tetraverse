@@ -87,13 +87,13 @@ int main()
 
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
                                             BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type);
-    InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/30.f, &render->getWindow());
-    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/30.f, conn);
-    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/30.f, engine);
-    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/30.f);
+    InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/60.f, &render->getWindow());
+    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/60.f, conn);
+    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/60.f, engine);
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/60.f);
     GridSystem *gridSys = new GridSystem(engine->getEventManager(), physSys, 1.f/1000.f);
-    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/30.f);
-    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/30.f);
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/60.f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/60.f);
     LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
     engine->addSystem(render);
@@ -192,7 +192,7 @@ int main()
     scene->addEntity(planet);
     TransformComponent* pt = new TransformComponent(sf::Vector2f(0, 0));
     planet->addComponent(pt);
-    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 3);
+    GridComponent* pg = new GridComponent(pt, worldW, worldH, true, tiles, 2);
     planet->addComponent(pg);
     planet->addComponent(new BackGridComponent(pg));
     planet->addComponent(new FrontGridComponent(pg));
@@ -216,7 +216,7 @@ int main()
     //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(playerVerts.data(), playerVerts.size()));
+    player->addComponent(new PhysicsComponent(1.f, 1.f));
     player->addComponent(new PlayerComponent);
     //player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);

@@ -23,6 +23,8 @@ namespace Shape
 
 sf::Vector2f calcSupportPoint(sf::Vector2f* vertices, int vertexCount, sf::Vector2f dir);
 
+void gridToCircle(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
+void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
 void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
 void polygonToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);
 void gridToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b);

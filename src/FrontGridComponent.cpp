@@ -352,10 +352,10 @@ void FrontGridComponent::renderShadow(sf::RenderTarget& target, sf::RenderStates
 			int x = grid->wrapX(_x);
 			int y = _y;
 
-			if (grid->mTiles[y][x].mLight >= 10)
+			if (grid->mTiles[y][x].mLight >= 20)
                 continue;
 
-            float intensity = std::min(1.f, float(10-grid->mTiles[y][x].mLight)/10.f);
+            float intensity = std::min(1.f, float(20-grid->mTiles[y][x].mLight)/20.f);
 
 			auto start = sf::Vector2f(tsize * static_cast<float>(_x), tsize * static_cast<float>(_y)); // Tile start draw
 			verts[0] = sf::Vertex(start,

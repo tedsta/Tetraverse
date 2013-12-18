@@ -59,10 +59,15 @@
 			<Add directory="extlibs/include/Squirrel" />
 			<Add directory="extlibs/src/spine-c/include" />
 			<Add directory="extlibs/src/spine-sfml/src" />
+			<Add directory="extlibs/src/libfov" />
 		</Compiler>
 		<Unit filename="extlibs/include/Sqrat/sqext.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="extlibs/src/libfov/fov.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="extlibs/src/libfov/fov.h" />
 		<Unit filename="extlibs/src/spine-c/src/spine/Animation.c">
 			<Option compilerVar="CC" />
 		</Unit>

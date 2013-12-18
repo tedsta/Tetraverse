@@ -87,6 +87,7 @@ class GridComponent : public RenderComponent
     friend class BackGridComponent;
     friend class GridShape;
 
+    friend void circleToGrid(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
     friend void gridToPolygon(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
     friend void gridToGrid(phys::Collision* c, phys::RigidBody* a, phys::RigidBody* b);
 
