@@ -200,26 +200,14 @@ int main()
     planet->addComponent(new PhysicsComponent(pg));
 
     // Spawn player
-    std::vector<sf::Vector2f> playerVerts(8);
-    playerVerts[0] = sf::Vector2f(-0.5f, -1.8f);
-    playerVerts[1] = sf::Vector2f(0.5f, -1.8f);
-    playerVerts[2] = sf::Vector2f(0.9f, -1.5f);
-    playerVerts[3] = sf::Vector2f(0.9f, 1.5f);
-    playerVerts[4] = sf::Vector2f(0.5f, 1.8f);
-    playerVerts[5] = sf::Vector2f(-0.5f, 1.8f);
-    playerVerts[6] = sf::Vector2f(-0.9f, 1.5f);
-    playerVerts[7] = sf::Vector2f(-0.9f, -1.5f);
-
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
     player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
-    //player->addComponent(new SpriteComponent("robot.png"));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.6f, 1.f));
     player->addComponent(new PlayerComponent);
-    //player->addComponent(new LightComponent(500.f));
     InventoryComponent* inventory = new InventoryComponent(10);
     player->addComponent(inventory);
 
@@ -239,8 +227,6 @@ int main()
     TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
     IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
 
-    //trans->setOrigin(sf::Vector2f(30, 48));
-    //trans->setPosition(sf::Vector2f(-worldW*TILE_SIZE, -worldH*TILE_SIZE)/2.f + sf::Vector2f(1000, 1000));
     intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
     intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
     intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
