@@ -56,6 +56,7 @@
 #include "GridOps.h"
 
 #include "perlin/perlin.h"
+#include <random>
 
 Tile** newWorld(int seed, int width, int height);
 void bindSquirrel(HSQUIRRELVM vm);
@@ -312,8 +313,20 @@ int main()
 
 Tile** newWorld(int seed, int width, int height)
 {
-    int MC = 4;// this needs to be dynamicly defined...
-    //it should be random but related to the number of materials available in the game
+    int Mats = 8;
+    srand(seed);
+    int MC = rand()%Mats;
+    int* mats = new int[MC];
+    float** factors= new float* [MC];
+    for(int i = 0; i < MC; i++){
+        mats[i] = rand()%Mats;
+
+        factors[i] = new float[3];
+        factors[i][0] = 1000/(float)rand();
+        factors[i][1] = 1500/(float)rand();
+        factors[i][2] = 15000/(float)rand();
+        std::cout << mats[i] <<" "<<factors[i][0]<<" "<< factors[i][1]<<" "<< factors[i][2] << std::endl;
+    }
 
 	Tile** tiles = new Tile*[height];
 	for (int i = 0; i < height; i++)
@@ -321,28 +334,36 @@ Tile** newWorld(int seed, int width, int height)
 
 	for (int y = 0; y < height; y++)
     {
+         std::cout << std::endl;
 		for (int x = 0; x < width; x++)
 		{
-		    float matDstrb[MC];
+		    int mat = 0;
+		    float v = -2;
 		    for(int m = 0; m < MC; m++){
-
+                float f = PerlinNoise2D(y, x, factors[m][0], factors[m][1], factors[m][2]);
+                if(f > v){
+                    v = f;
+                    mat = m;
+                    std::cout << f;
+                }
 		    }
+
 			auto n = PerlinNoise1D(x, 1.01, .02, 2) + 1;
-			auto p = PerlinNoise2D(y, x, 1.01, 0.2, 10) + 1;
             auto cave = PerlinNoise2D(y, x, 0.9, 0.15, 9)+1;
-			p += float(height-y) / float(height);
+			mat += float(height-y) / float(height);
 			float o[MAX_COMPS];
+			/*
 			for (int i = 0; i < MAX_COMPS; i++)
 			{
 				o[i] = PerlinNoise2D(x, y, 1.01, 0.2, i) + 1;
 			}
-
+*/
             tiles[y][x].mLight = 20;
 
 			if (y > n*100)
 			{
 			    if(cave < .8){
-                    tiles[y][x].mMat = p * 4 / 2;
+                    tiles[y][x].mMat = mats[mat] * MC / 2;
 			    }
                 tiles[y][x].mBack = 1;
                 tiles[y][x].mLight = 0;
