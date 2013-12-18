@@ -101,7 +101,7 @@ function thruster(gridEnt, coords)
     if (grid.canPlace(x, y, 1, 1) == true)
     {
         local transform = TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1));
-        transform.setOrigin(Vector2f(24-8, 32-8));
+        transform.setOrigin(Vector2f(32-8, 48-8));
 
         local intent = IntentComponent();
         intent.mapKeyToIntent("up", KeyI, BtnStateDown);
