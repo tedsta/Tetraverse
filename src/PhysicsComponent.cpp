@@ -26,6 +26,8 @@ PhysicsComponent::PhysicsComponent(float radius, float _density) : primaryGrid(N
     body->setGravity(sf::Vector2f(0, 40.f));
     body->setFixedRotation();
     body->setRestitution(0.f);
+    body->setDynamicFriction(0.f);
+    body->setStaticFriction(0.f);
 }
 
 PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float _density) : primaryGrid(NULL), density(_density)
