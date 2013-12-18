@@ -132,8 +132,6 @@ class Swtch extends Placeable
         local gridComp = castGridComponent(grid.getComponent(GridComponentType));
         local signal = castSignalComponent(entity.getComponent(SignalComponentType));
 
-        print("what")
-
         on = !on;
         if (on)
         {

@@ -54,8 +54,6 @@ void PlaceableComponent::interact()
 {
     Entity* entity = Entity::get(mEntity);
     Entity* grid = Entity::get(mGrid);
-    if (entity && grid && mClassName.size() > 0)
-        mInst = new sqext::SQIClassInstance(Classes[mClassName]->New(entity, grid, mGridX, mGridY));
 
     try
     {
