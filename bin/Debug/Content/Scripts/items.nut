@@ -117,6 +117,7 @@ function thruster(gridEnt, coords)
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
 
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(5);
 
         return true;
