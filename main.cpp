@@ -184,8 +184,8 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-    int worldW = 2000;
-    int worldH = 1000;
+    int worldW = 200;
+    int worldH = 200;
     Tile** tiles = newWorld(0, worldW, worldH);
 
     Entity *planet = new Entity(engine->getEventManager());
@@ -203,7 +203,7 @@ int main()
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
-    player->addComponent(new TransformComponent(sf::Vector2f(100, 12000)));
+    player->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.6f, 1.f));
@@ -288,7 +288,7 @@ int main()
         if (saveClock.getElapsedTime().asSeconds() >= 10.f)
         {
             saveClock.restart();
-            engine->getScene()->save("myfunscene.tsc");
+            //engine->getScene()->save("myfunscene.tsc");
         }
     }
 
