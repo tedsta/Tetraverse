@@ -42,6 +42,11 @@ GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY
     {
         for (int x = 0; x < mSizeX; x++)
         {
+            if (mTiles[y][x].mMat != 0)
+                mTiles[y][x].setSolid();
+            else
+                mTiles[y][x].clearSolid();
+
             if (mTiles[y][x].mBack == 0)
                 applyLightRec(x, y, 30);
         }
@@ -94,6 +99,66 @@ void GridComponent::deserialize(sf::Packet &packet)
             mTiles[y][x].deserialize(packet);
     }
 
+
+    packet >> mTransformID;
+    packet >> mTickCount;
+    mCTiles.resize(mTickCount);
+    for (int i = 0; i < mTickCount; i++)
+    {
+        int cTileSize;
+        packet >> cTileSize;
+
+        mCTiles[i].resize(cTileSize);
+        for (auto& cTile : mCTiles[i])
+            packet >> cTile.x >> cTile.y;
+    }
+
+    int placeableCount;
+    packet >> placeableCount;
+    mPlaceables.resize(placeableCount);
+    for (int i = 0; i < placeableCount; i++)
+    {
+        packet >> mPlaceables[i];
+    }
+
+    mPolyShape.deserialize(packet);
+}
+
+void GridComponent::postDeserialize()
+{
+}
+
+void GridComponent::serializeBare(sf::Packet& packet)
+{
+    packet << mSizeX;
+    packet << mSizeY;
+    packet << mWrapX;
+
+    packet << mTransformID;
+    packet << mTickCount;
+    for (int i = 0; i < mTickCount; i++)
+    {
+        packet << (int)mCTiles[i].size();
+        for (auto& cTile : mCTiles[i])
+            packet << cTile.x << cTile.y;
+    }
+
+    packet << (int)mPlaceables.size();
+    for (auto placeableID : mPlaceables)
+        packet << placeableID;
+
+    mPolyShape.serialize(packet);
+}
+
+void GridComponent::deserializeBare(sf::Packet& packet)
+{
+    packet >> mSizeX;
+    packet >> mSizeY;
+    packet >> mWrapX;
+
+    mTiles = new Tile*[mSizeY];
+    for (int y = 0; y < mSizeY; y++)
+        mTiles[y] = new Tile[mSizeX];
 
     packet >> mTransformID;
     packet >> mTickCount;
@@ -187,10 +252,6 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     grid->recalculatePolygon();
 }
 
-void GridComponent::postDeserialize()
-{
-}
-
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 {
     TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
@@ -260,6 +321,24 @@ bool GridComponent::placeBack(int x, int y, int mat)
     return true;
 }
 
+void GridComponent::setSolid(int x, int y, bool solid)
+{
+    if (mWrapX)
+        x = wrapX(x);
+    if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
+		return;
+
+    if (mTiles[y][x].isSolid() == solid)
+        return;
+
+    Tile tile = getTile(x, y);
+    if (solid)
+        tile.setSolid();
+    else
+        tile.clearSolid();
+    setTile(x, y, tile, -1);
+}
+
 bool GridComponent::addFluid(int x, int y, int mat, float fluid)
 {
     if (mWrapX)
@@ -301,12 +380,24 @@ void GridComponent::setTile(int x, int y, Tile tile, int tick)
     if (y < 0 || y >= mSizeY || x < 0 || x >= mSizeX)
 		return;
 
-	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mBack == tile.mBack && mTiles[y][x].mFluid == tile.mFluid && mTiles[y][x].mLight == tile.mLight)
+	if (mTiles[y][x].mMat == tile.mMat && mTiles[y][x].mBack == tile.mBack &&
+        mTiles[y][x].mFluid == tile.mFluid && mTiles[y][x].mFlags == tile.mFlags)
 	{
 		return;
 	}
 
+    bool settingSolidness = mTiles[y][x].isSolid() != tile.isSolid();
+
 	mTiles[y][x] = tile;
+
+    if (!settingSolidness)
+    {
+        if (mTiles[y][x].mMat == 0)
+            mTiles[y][x].clearSolid();
+        else
+            mTiles[y][x].setSolid();
+    }
+
 
 	int left = wrapX(x - 1);
 	int right = wrapX(x + 1);

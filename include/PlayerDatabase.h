@@ -11,7 +11,7 @@ struct Player
 {
     std::string mName;
     std::string mPassword;
-    bool mLoggedIn;
+    int mNetID; // -1 if the player isn't logged in
     Entity* mEntity;
 };
 
@@ -22,10 +22,12 @@ class PlayerDatabase
         virtual ~PlayerDatabase();
 
         void createPlayer(std::string name, std::string password);
-        bool loginPlayer(std::string name, std::string password);
-        void logoutPlayer(std::string name);
+        bool validatePlayer(std::string name, std::string password);
+        bool loginPlayer(std::string name, int netID);
+        void logoutPlayer(int netID);
 
         Player* findPlayer(std::string name);
+        Player* findPlayer(int netID);
 
     private:
         Engine* mEngine;

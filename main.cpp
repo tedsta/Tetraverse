@@ -190,8 +190,8 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-    int worldW = 1000;
-    int worldH = 1000;
+    int worldW = 200;
+    int worldH = 200;
 
     Tile** tiles = newWorld(0, worldW, worldH);
 
@@ -213,7 +213,7 @@ int main()
     player->addComponent(new TransformComponent(sf::Vector2f(worldW/2, 0)));
     player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
     player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(1.6f, 1.f));
+    player->addComponent(new PhysicsComponent(1.5f, 1.f));
     player->addComponent(new PlayerComponent);
     InventoryComponent* inventory = new InventoryComponent(50);
     player->addComponent(inventory);
@@ -403,6 +403,9 @@ void bindSquirrel(HSQUIRRELVM vm)
     tile.Var("mMat", &Tile::mMat);
     tile.Var("mBack", &Tile::mBack);
     tile.Var("mFluid", &Tile::mFluid);
+    tile.Func("setSolid", &Tile::setSolid);
+    tile.Func("clearSolid", &Tile::clearSolid);
+    tile.Func("isSolid", &Tile::isSolid);
     Sqrat::RootTable(vm).Bind("Tile", tile);
 
     Sqrat::DerivedClass<GridComponent, Component> grid(vm);
@@ -412,6 +415,7 @@ void bindSquirrel(HSQUIRRELVM vm)
     grid.Func("getPlaceableAt", &GridComponent::getPlaceableAt);
     grid.Func("placeMid", &GridComponent::placeMid);
     grid.Func("placeBack", &GridComponent::placeBack);
+    grid.Func("setSolid", &GridComponent::setSolid);
     grid.Func("setTile", &GridComponent::setTile);
     grid.Func("getTile", &GridComponent::getTile);
     grid.Func("sliceInto", &GridComponent::sliceInto);

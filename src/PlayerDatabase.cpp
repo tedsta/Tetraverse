@@ -48,14 +48,14 @@ void PlayerDatabase::createPlayer(std::string name, std::string password)
     Player player;
     player.mName = name;
     player.mPassword = password;
-    player.mLoggedIn = false;
+    player.mNetID = -1;
 
     player.mEntity = new Entity(mEngine->getEventManager());
     player.mEntity->giveID();
     player.mEntity->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
     player.mEntity->addComponent(new SkeletonComponent("Content/Spine/player.mEntity.json", "Content/Spine/player.mEntity.atlas"));
     player.mEntity->addComponent(new IntentComponent);
-    player.mEntity->addComponent(new PhysicsComponent(1.6f, 1.f));
+    player.mEntity->addComponent(new PhysicsComponent(1.5f, 1.f));
     player.mEntity->addComponent(new PlayerComponent);
     InventoryComponent* inventory = new InventoryComponent(10);
     player.mEntity->addComponent(inventory);
@@ -105,28 +105,38 @@ void PlayerDatabase::createPlayer(std::string name, std::string password)
     mPlayers.push_back(player);
 }
 
-bool PlayerDatabase::loginPlayer(std::string name, std::string password)
+bool PlayerDatabase::validatePlayer(std::string name, std::string password)
 {
     Player* player = findPlayer(name);
 
-    if (!player || player->mLoggedIn || player->mPassword != password)
+    if (!player || player->mNetID != -1 || player->mPassword != password)
         return false;
-
-    mEngine->getScene()->addEntity(player->mEntity);
-    player->mLoggedIn = true;
 
     return true;
 }
 
-void PlayerDatabase::logoutPlayer(std::string name)
+bool PlayerDatabase::loginPlayer(std::string name, int netID)
 {
     Player* player = findPlayer(name);
 
-    if (!player || !player->mLoggedIn)
+    if (!player || player->mNetID != -1)
+        return false;
+
+    mEngine->getScene()->addEntity(player->mEntity);
+    player->mNetID = netID;
+
+    return true;
+}
+
+void PlayerDatabase::logoutPlayer(int netID)
+{
+    Player* player = findPlayer(netID);
+
+    if (!player)
         return;
 
     mEngine->getScene()->removeEntity(player->mEntity);
-    player->mLoggedIn = false;
+    player->mNetID = -1;
 }
 
 Player* PlayerDatabase::findPlayer(std::string name)
@@ -134,6 +144,20 @@ Player* PlayerDatabase::findPlayer(std::string name)
     for (auto& player : mPlayers)
     {
         if (player.mName == name)
+            return &player;
+    }
+
+    return NULL;
+}
+
+Player* PlayerDatabase::findPlayer(int netID)
+{
+    if (netID < 0)
+        return NULL;
+
+    for (auto& player : mPlayers)
+    {
+        if (player.mNetID == netID)
             return &player;
     }
 

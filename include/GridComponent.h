@@ -22,9 +22,9 @@ enum
 
 struct Tile
 {
-    Tile() : mMat(0), mBack(0), mFluid(0), mLight(0) {}
+    Tile() : mMat(0), mBack(0), mFlags(0), mFluid(0), mLight(0) {}
     Tile(sf::Uint8 mat, sf::Uint8 fluid = 0) :
-        mMat(mat), mBack(0), mFluid(fluid), mLight(0) {}
+        mMat(mat), mBack(0), mFlags(0), mFluid(fluid), mLight(0) {}
 
     // Serialization stuff
     void serialize(sf::Packet &packet)
@@ -100,6 +100,9 @@ class GridComponent : public RenderComponent
         void deserialize(sf::Packet &packet);
         void postDeserialize();
 
+        void serializeBare(sf::Packet& packet); // Smaller serialize that doesn't actually contain the tiles data
+        void deserializeBare(sf::Packet& packet);
+
         sf::Vector2f getTilePos(sf::Vector2f pos);
 
         void sliceInto(Entity* newGrid, int left, int top, int right, int bot);
@@ -108,6 +111,7 @@ class GridComponent : public RenderComponent
 
         bool placeMid(int x, int y, int mat);
         bool placeBack(int x, int y, int mat);
+        void setSolid(int x, int y, bool solid);
         bool addFluid(int x, int y, int mat, float fluid);
         void applyLightRec(int x, int y, int lastLight);
 

@@ -26,11 +26,18 @@ void TVNetwork::handlePacket(sf::Packet& packet, int netID)
             std::string username, password;
             packet >> username >> password;
 
+            if (!mPlayerDB->validatePlayer(username, password))
+                break;
+
+            mPlayerDB->loginPlayer(username, netID);
+
             break;
         }
 
         case LOGOUT:
         {
+            mPlayerDB->logoutPlayer(netID);
+
             break;
         }
         }

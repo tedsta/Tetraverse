@@ -171,7 +171,7 @@ void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             if (grid->getGrid()->getWrapX())
                 x = grid->getGrid()->wrapX(x);
 
-            if (grid->getGrid()->mTiles[y][x].mMat == 0)
+            if (!grid->getGrid()->mTiles[y][x].isSolid())
                 continue;
 
             int left = x-1;
@@ -190,13 +190,13 @@ void circleToGrid(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             bool upT = false;
             bool downT = false;
 
-            if (left >= 0 && grid->getGrid()->mTiles[y][left].mMat != 0)
+            if (left >= 0 && grid->getGrid()->mTiles[y][left].isSolid())
                 leftT = true;
-            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].mMat != 0)
+            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].isSolid())
                 rightT = true;
-            if (up >= 0 && grid->getGrid()->mTiles[up][x].mMat != 0)
+            if (up >= 0 && grid->getGrid()->mTiles[up][x].isSolid())
                 upT = true;
-            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].mMat != 0)
+            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].isSolid())
                 downT = true;
 
             sf::Vector2f start(_x*tileSize, y*tileSize);
@@ -434,7 +434,7 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             if (grid->getGrid()->mWrapX)
                 x = grid->getGrid()->wrapX(x);
 
-            if (grid->getGrid()->mTiles[y][x].mMat == 0)
+            if (!grid->getGrid()->mTiles[y][x].isSolid())
                 continue;
 
             int left = x-1;
@@ -453,13 +453,13 @@ void gridToPolygon(phys::Collision* c, phys::RigidBody *a, phys::RigidBody *b)
             bool upT = false;
             bool downT = false;
 
-            if (left >= 0 && grid->getGrid()->mTiles[y][left].mMat != 0)
+            if (left >= 0 && grid->getGrid()->mTiles[y][left].isSolid())
                 leftT = true;
-            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].mMat != 0)
+            if (right < grid->getGrid()->mSizeX && grid->getGrid()->mTiles[y][right].isSolid())
                 rightT = true;
-            if (up >= 0 && grid->getGrid()->mTiles[up][x].mMat != 0)
+            if (up >= 0 && grid->getGrid()->mTiles[up][x].isSolid())
                 upT = true;
-            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].mMat != 0)
+            if (down < grid->getGrid()->mSizeY && grid->getGrid()->mTiles[down][x].isSolid())
                 downT = true;
 
             sf::Vector2f start(_x*tileSize, y*tileSize);

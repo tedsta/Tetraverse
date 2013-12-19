@@ -35,11 +35,18 @@ class Door extends Placeable
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 0);
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+
+        local gridComp = castGridComponent(grid.getComponent(GridComponentType));
+        gridComp.setSolid(x, y, true);
+        gridComp.setSolid(x, y+1, true);
+        gridComp.setSolid(x, y+2, true);
+        gridComp.setSolid(x, y+3, true);
+        gridComp.setSolid(x, y+4, true);
     }
 
     function update(dt)
     {
-        local light = castLightComponent(entity.getComponent(LightComponentType));
+        local gridComp = castGridComponent(grid.getComponent(GridComponentType));
         local signal = castSignalComponent(entity.getComponent(SignalComponentType));
         if (signal.hasSignal())
         {
@@ -49,16 +56,25 @@ class Door extends Placeable
                 open = false;
                 castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(4, 0);
                 castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+
+                gridComp.setSolid(x, y, true);
+                gridComp.setSolid(x, y+1, true);
+                gridComp.setSolid(x, y+2, true);
+                gridComp.setSolid(x, y+3, true);
+                gridComp.setSolid(x, y+4, true);
             }
             else if (sig == 1)
             {
                 open = true;
                 castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 4);
                 castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
-            }
 
-            light.setActive(on);
-            signal.fireInt(sig);
+                gridComp.setSolid(x, y, false);
+                gridComp.setSolid(x, y+1, false);
+                gridComp.setSolid(x, y+2, false);
+                gridComp.setSolid(x, y+3, false);
+                gridComp.setSolid(x, y+4, false);
+            }
         }
     }
 
@@ -72,12 +88,24 @@ class Door extends Placeable
             open = false;
             castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(4, 0);
             castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+
+            gridComp.setSolid(x, y, true);
+            gridComp.setSolid(x, y+1, true);
+            gridComp.setSolid(x, y+2, true);
+            gridComp.setSolid(x, y+3, true);
+            gridComp.setSolid(x, y+4, true);
         }
         else
         {
             open = true;
             castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 4);
             castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+
+            gridComp.setSolid(x, y, false);
+            gridComp.setSolid(x, y+1, false);
+            gridComp.setSolid(x, y+2, false);
+            gridComp.setSolid(x, y+3, false);
+            gridComp.setSolid(x, y+4, false);
         }
     }
 };
