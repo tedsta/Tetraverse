@@ -48,6 +48,7 @@ void PlayerDatabase::createPlayer(std::string name, std::string password)
     Player player;
     player.mName = name;
     player.mPassword = password;
+    player.mLoggedIn = false;
 
     player.mEntity = new Entity(mEngine->getEventManager());
     player.mEntity->giveID();
@@ -108,8 +109,24 @@ bool PlayerDatabase::loginPlayer(std::string name, std::string password)
 {
     Player* player = findPlayer(name);
 
-    if (!player || player->mPassword != password)
+    if (!player || player->mLoggedIn || player->mPassword != password)
         return false;
+
+    mEngine->getScene()->addEntity(player->mEntity);
+    player->mLoggedIn = true;
+
+    return true;
+}
+
+void PlayerDatabase::logoutPlayer(std::string name)
+{
+    Player* player = findPlayer(name);
+
+    if (!player || !player->mLoggedIn)
+        return;
+
+    mEngine->getScene()->removeEntity(player->mEntity);
+    player->mLoggedIn = false;
 }
 
 Player* PlayerDatabase::findPlayer(std::string name)

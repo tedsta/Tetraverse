@@ -11,6 +11,7 @@ struct Player
 {
     std::string mName;
     std::string mPassword;
+    bool mLoggedIn;
     Entity* mEntity;
 };
 
@@ -22,6 +23,7 @@ class PlayerDatabase
 
         void createPlayer(std::string name, std::string password);
         bool loginPlayer(std::string name, std::string password);
+        void logoutPlayer(std::string name);
 
         Player* findPlayer(std::string name);
 
