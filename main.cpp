@@ -89,6 +89,9 @@ int main()
 
     Connection* conn = new Connection(engine->getEventManager());
 
+    PlayerDatabase* playerDB = new PlayerDatabase(engine);
+    TVNetwork* network = new TVNetwork(conn, playerDB);
+
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
                                             BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/60.f, &render->getWindow());
@@ -212,7 +215,7 @@ int main()
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.6f, 1.f));
     player->addComponent(new PlayerComponent);
-    InventoryComponent* inventory = new InventoryComponent(10);
+    InventoryComponent* inventory = new InventoryComponent(50);
     player->addComponent(inventory);
 
     reinterpret_cast<SkeletonComponent*>(player->getComponent(SkeletonComponent::Type))->setLayer(3);
@@ -382,6 +385,8 @@ void bindSquirrel(HSQUIRRELVM vm)
     Sqrat::DerivedClass<SpriteComponent, RenderComponent, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
     //sprite.Func("setTexture", &SpriteComponent::setTexture);
     sprite.Func("setFrameLoop", &SpriteComponent::setFrameLoop);
+    sprite.Func("setFrameDir", &SpriteComponent::setFrameDir);
+    sprite.Func("setLoopAnim", &SpriteComponent::setLoopAnim);
     Sqrat::RootTable(vm).Bind("SpriteComponent", sprite);
 
     Sqrat::DerivedClass<IntentComponent, Component, sqext::ConstAlloc<IntentComponent>> intent(vm);

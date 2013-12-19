@@ -27,11 +27,14 @@ class Placeable
 
 class Door extends Placeable
 {
-    on = true;
+    open = false;
 
     constructor(_entity, _grid, _x, _y)
     {
         base.constructor(_entity, _grid, _x, _y);
+
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 0);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
     }
 
     function update(dt)
@@ -42,9 +45,18 @@ class Door extends Placeable
         {
             local sig = signal.getInt();
             if (sig == 0)
-                on = false;
+            {
+                open = false;
+                castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(4, 0);
+                castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+            }
             else if (sig == 1)
-                on = true;
+            {
+                open = true;
+                castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 4);
+                castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+            }
+
             light.setActive(on);
             signal.fireInt(sig);
         }
@@ -53,13 +65,20 @@ class Door extends Placeable
     function interact()
     {
         local gridComp = castGridComponent(grid.getComponent(GridComponentType));
-        local signal = castSignalComponent(entity.getComponent(SignalComponentType));
 
-        on = !on;
-        if (on)
-            signal.fireInt(1);
+        open = !open;
+        if (!open)
+        {
+            open = false;
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(4, 0);
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+        }
         else
-            signal.fireInt(0);
+        {
+            open = true;
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setFrameLoop(0, 4);
+            castSpriteComponent(entity.getComponent(SpriteComponentType)).setLoopAnim(false);
+        }
     }
 };
 

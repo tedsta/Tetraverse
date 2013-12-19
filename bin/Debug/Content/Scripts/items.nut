@@ -72,19 +72,18 @@ function door(gridEnt, coords)
     local x = coords[0].x;
     local y = coords[0].y;
 
-    if (grid.canPlace(x, y, 1, 4) == true)
+    if (grid.canPlace(x, y, 1, 5) == true)
     {
         local entity = engine.getScene().createEntity();
         entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
-        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/door.png", 1, 1));
-        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 1, 4));
-        entity.addComponentSq(LightComponent(200));
+        entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/door.png", 5, 5));
+        entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 1, 5));
         entity.addComponentSq(SignalComponent());
         grid.addPlaceable(entity);
 
         castSpriteComponent(entity.getComponent(SpriteComponentType)).setLit(false);
-        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(2);
+        castSpriteComponent(entity.getComponent(SpriteComponentType)).setLayer(4);
 
         return true;
     }

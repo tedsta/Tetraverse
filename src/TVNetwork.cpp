@@ -1,6 +1,8 @@
 #include "TVNetwork.h"
 
-TVNetwork::TVNetwork()
+#include "PlayerDatabase.h"
+
+TVNetwork::TVNetwork(Connection* conn, PlayerDatabase* playerDB) : mConnection(conn), mPlayerDB(playerDB)
 {
     //ctor
 }
