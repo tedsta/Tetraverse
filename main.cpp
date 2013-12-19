@@ -55,6 +55,9 @@
 
 #include "GridOps.h"
 
+#include "TVNetwork.h"
+#include "PlayerDatabase.h"
+
 #include "perlin/perlin.h"
 #include <random>
 
