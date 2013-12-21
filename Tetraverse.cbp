@@ -166,6 +166,8 @@
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
 		<Unit filename="include/BackGridComponent.h" />
+		<Unit filename="include/EmitterComponent.h" />
+		<Unit filename="include/EmitterSystem.h" />
 		<Unit filename="include/FrontGridComponent.h" />
 		<Unit filename="include/GridComponent.h" />
 		<Unit filename="include/GridOps.h" />
@@ -204,6 +206,8 @@
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
 		<Unit filename="src/BackGridComponent.cpp" />
+		<Unit filename="src/EmitterComponent.cpp" />
+		<Unit filename="src/EmitterSystem.cpp" />
 		<Unit filename="src/FrontGridComponent.cpp" />
 		<Unit filename="src/GridComponent.cpp" />
 		<Unit filename="src/GridOps.cpp" />

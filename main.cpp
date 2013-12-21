@@ -47,12 +47,14 @@
 #include "SignalComponent.h"
 #include "WeaponComponent.h"
 #include "WrapComponent.h"
+#include "EmitterComponent.h"
 
 #include "GridSystem.h"
 #include "PlaceableSystem.h"
 #include "PhysicsSystem.h"
 #include "PlayerSystem.h"
 #include "LightSystem.h"
+#include "EmitterSystem.h"
 
 #include "GridOps.h"
 
@@ -88,6 +90,7 @@ int main()
     SignalComponent::Type = ComponentFactories::add(SignalComponent::factory);
     WeaponComponent::Type = ComponentFactories::add(WeaponComponent::factory);
     WrapComponent::Type = ComponentFactories::add(WrapComponent::factory);
+    EmitterComponent::Type = ComponentFactories::add(EmitterComponent::factory);
 
     Connection* conn = new Connection(engine->getEventManager());
 
