@@ -26,6 +26,9 @@
 					<Add library="extlibs\lib\libsqstdlib.a" />
 					<Add library="extlibs\lib\libenet.a" />
 					<Add library="extlibs\lib\libUnitTest++.a" />
+					<Add library="extlibs\lib\libRocketControls.dll.a" />
+					<Add library="extlibs\lib\libRocketCore.dll.a" />
+					<Add library="extlibs\lib\libRocketDebugger.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -46,6 +49,31 @@
 					<Add library="extlibs\lib\libBox2D.a" />
 					<Add library="extlibs\lib\libsquirrel.a" />
 					<Add library="extlibs\lib\libsqstdlib.a" />
+				</Linker>
+			</Target>
+			<Target title="UnitTests">
+				<Option output="bin/Tests/TetraverseTests" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Tests/" />
+				<Option object_output="obj/Tests/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="extlibs\lib\libFission.a" />
+					<Add library="extlibs\lib\libsfml-audio.a" />
+					<Add library="extlibs\lib\libsfml-network.a" />
+					<Add library="extlibs\lib\libsfml-graphics.a" />
+					<Add library="extlibs\lib\libsfml-window.a" />
+					<Add library="extlibs\lib\libsfml-system.a" />
+					<Add library="extlibs\lib\libsquirrel.a" />
+					<Add library="extlibs\lib\libsqstdlib.a" />
+					<Add library="extlibs\lib\libenet.a" />
+					<Add library="extlibs\lib\libUnitTest++.a" />
+					<Add library="extlibs\lib\libRocketControls.dll.a" />
+					<Add library="extlibs\lib\libRocketCore.dll.a" />
+					<Add library="extlibs\lib\libRocketDebugger.dll.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -169,7 +197,10 @@
 		<Unit filename="include/phys/PhysicsWorld.h" />
 		<Unit filename="include/phys/RigidBody.h" />
 		<Unit filename="include/phys/Shape.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="main.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
 		<Unit filename="src/BackGridComponent.cpp" />
@@ -203,6 +234,12 @@
 		<Unit filename="src/phys/PhysicsWorld.cpp" />
 		<Unit filename="src/phys/RigidBody.cpp" />
 		<Unit filename="src/phys/Shape.cpp" />
+		<Unit filename="src/tests/TestUnitTests.cpp">
+			<Option target="UnitTests" />
+		</Unit>
+		<Unit filename="src/tests/unittest.cpp">
+			<Option target="UnitTests" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
