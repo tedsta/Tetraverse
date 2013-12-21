@@ -7,6 +7,7 @@
 #include "PhysicsSystem.h"
 #include "PhysicsComponent.h"
 #include "PlaceableComponent.h"
+#include "WrapComponent.h"
 
 GridSystem::GridSystem(EventManager *eventManager, PhysicsSystem* physSys, float lockStep) : System(eventManager, lockStep, GridComponent::Type),
     mPhysSys(physSys)
@@ -53,6 +54,15 @@ void GridSystem::processEntity(Entity *entity, const float dt)
         else
         {
             pPhys->removeGrid(entity);
+        }
+
+        WrapComponent* wrap = reinterpret_cast<WrapComponent*>(physEnt->getComponent(WrapComponent::Type));
+        if (wrap)
+        {
+            if (pPhys->getPrimaryGrid())
+                wrap->setGrid(reinterpret_cast<GridComponent*>(pPhys->getPrimaryGrid()->getComponent(GridComponent::Type)));
+            else
+                wrap->setGrid(NULL);
         }
     }
 

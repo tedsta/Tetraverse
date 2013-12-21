@@ -72,21 +72,22 @@ namespace phys
             }
 
             // Getters
-            int getType(){return type;}
-            sf::Vector2f getGravity(){return gravity;}
-            sf::Vector2f getPosition(){return position;}
-            sf::Vector2f getVelocity(){return velocity;}
-            float getRotation(){return rotation;}
-            float getAngularVelocity(){return angularVelocity;}
-            float getTorque(){return torque;}
-            float getInertia(){return inertia;}
-            float getInverseInertia(){return inverseInertia;}
-            float getMass(){return mass;}
-            float getInverseMass(){return inverseMass;}
-            float getStaticFriction(){return staticFriction;}
-            float getDynamicFriction(){return dynamicFriction;}
-            float getRestitution(){return restitution;}
-            Shape* getShape(){return shape;}
+            int getType() const {return type;}
+            sf::Vector2f getGravity() const {return gravity;}
+            sf::Vector2f getPosition() const {return position;}
+            sf::Vector2f getVelocity() const {return velocity;}
+            float getRotation() const {return rotation;}
+            float getAngularVelocity() const {return angularVelocity;}
+            float getTorque() const {return torque;}
+            float getInertia() const {return inertia;}
+            float getInverseInertia() const {return inverseInertia;}
+            float getMass() const {return mass;}
+            float getInverseMass() const {return inverseMass;}
+            float getStaticFriction() const {return staticFriction;}
+            float getDynamicFriction() const {return dynamicFriction;}
+            float getRestitution() const {return restitution;}
+            Shape* getShape() const {return shape;}
+            const std::set<RigidBody*>& getChildren() const {return children;}
 
         private:
             int type;

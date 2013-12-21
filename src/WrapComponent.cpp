@@ -6,9 +6,8 @@
 
 TypeBits WrapComponent::Type;
 
-WrapComponent::WrapComponent(RenderComponent* rnd) : mRnd(rnd)
+WrapComponent::WrapComponent(RenderComponent* rnd) : mRnd(rnd), mGrid(NULL)
 {
-    //ctor
 }
 
 WrapComponent::~WrapComponent()
@@ -18,36 +17,51 @@ WrapComponent::~WrapComponent()
 
 void WrapComponent::render(sf::RenderTarget& target, sf::RenderStates states)
 {
+    setLayer(mRnd->getLayer());
+
+    if (!mGrid || !mGrid->getWrapX())
+        return;
+
     float tsize = static_cast<float>(TILE_SIZE);
 
-	sf::Vector2f center = mGrid->getTransform()->getTransform().transformPoint(sf::Vector2f());
-	center -= target.getView().getCenter();
-	center += sf::Vector2f(target.getView().getSize().x, target.getView().getSize().y)/2.f;
-	center.x *= -1;
-	center.y *= -1;
+	sf::Vector2f pos = states.transform.transformPoint(sf::Vector2f());
 
     float currentOffsetX = -mGrid->getSizeX()*tsize;
-
-	while (center.x+currentOffsetX > 0)
+    sf::RenderStates leftStates = states;
+	while (pos.x+currentOffsetX > target.getView().getCenter().x-target.getView().getSize().x/2)
     {
-        sf::RenderStates newStates = states;
-        newStates.transform.translate(-mGrid->getSizeX()*tsize, 0.f);
-        mRnd->render(target, newStates);
+        leftStates.transform.translate(-mGrid->getSizeX()*tsize, 0.f);
+        mRnd->render(target, leftStates);
 
         currentOffsetX -= mGrid->getSizeX()*tsize;
+    }
+
+    currentOffsetX = mGrid->getSizeX()*tsize;
+    sf::RenderStates rightStates = states;
+	while (pos.x+currentOffsetX < target.getView().getCenter().x+target.getView().getSize().x/2)
+    {
+        rightStates.transform.translate(mGrid->getSizeX()*tsize, 0.f);
+        mRnd->render(target, rightStates);
+
+        currentOffsetX += mGrid->getSizeX()*tsize;
     }
 }
 
 void WrapComponent::serialize(sf::Packet &packet)
 {
     RenderComponent::serialize(packet);
+
+    packet << mRnd->getID();
 }
 
 void WrapComponent::deserialize(sf::Packet &packet)
 {
     RenderComponent::deserialize(packet);
+
+    packet >> mRndID;
 }
 
 void WrapComponent::postDeserialize()
 {
+    mRnd = reinterpret_cast<RenderComponent*>(Component::get(mRndID));
 }

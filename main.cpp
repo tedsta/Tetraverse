@@ -98,7 +98,7 @@ int main()
     TVNetwork* network = new TVNetwork(conn, playerDB);
 
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
-                                            BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type);
+                                            BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type|WrapComponent::Type);
     InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/60.f, &render->getWindow());
     IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/60.f, conn);
     ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/60.f, engine);
@@ -195,8 +195,8 @@ int main()
 
     //scene->load("myfunscene.tsc");
 
-    int worldW = 200;
-    int worldH = 200;
+    int worldW = 50;
+    int worldH = 150;
 
     Tile** tiles = newWorld(0, worldW, worldH);
 
@@ -212,11 +212,14 @@ int main()
     planet->addComponent(new PhysicsComponent(pg));
 
     // Spawn player
+    SkeletonComponent* playerSkel = new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas");
+
     Entity *player = new Entity(engine->getEventManager());
     player->giveID();
     scene->addEntity(player);
     player->addComponent(new TransformComponent(sf::Vector2f(worldW/2, 0)));
-    player->addComponent(new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas"));
+    player->addComponent(playerSkel);
+    player->addComponent(new WrapComponent(playerSkel));
     player->addComponent(new IntentComponent);
     player->addComponent(new PhysicsComponent(1.5f, 1.f));
     player->addComponent(new PlayerComponent);
@@ -373,6 +376,13 @@ Tile** newWorld(int seed, int width, int height)
 
 void bindSquirrel(HSQUIRRELVM vm)
 {
+    Sqrat::DerivedClass<TransformComponent, Component, sqext::ConstAlloc<TransformComponent, sf::Vector2f, float, sf::Vector2f>> transform(vm);
+    transform.Func("setPosition", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setPosition);
+    transform.Func("getPosition", &TransformComponent::getPosition);
+    transform.Func("move", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::move);
+    transform.Func("setOrigin", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setOrigin);
+    Sqrat::RootTable(vm).Bind("TransformComponent", transform);
+
     Sqrat::DerivedClass<RenderComponent, Component> renderComp(vm);
     renderComp.Func("setLit", &RenderComponent::setLit);
     renderComp.Func("getLit", &RenderComponent::getLit);
@@ -380,12 +390,8 @@ void bindSquirrel(HSQUIRRELVM vm)
     renderComp.Func("getLayer", &RenderComponent::getLayer);
     Sqrat::RootTable(vm).Bind("RenderComponent", renderComp);
 
-    Sqrat::DerivedClass<TransformComponent, Component, sqext::ConstAlloc<TransformComponent, sf::Vector2f, float, sf::Vector2f>> transform(vm);
-    transform.Func("setPosition", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setPosition);
-    transform.Func("getPosition", &TransformComponent::getPosition);
-    transform.Func("move", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::move);
-    transform.Func("setOrigin", (void (TransformComponent::*)(const sf::Vector2f&))&TransformComponent::setOrigin);
-    Sqrat::RootTable(vm).Bind("TransformComponent", transform);
+    Sqrat::DerivedClass<WrapComponent, RenderComponent, sqext::ConstAlloc<WrapComponent, RenderComponent*>> wrapComp(vm);
+    Sqrat::RootTable(vm).Bind("WrapComponent", wrapComp);
 
     Sqrat::DerivedClass<SpriteComponent, RenderComponent, sqext::ConstAlloc<SpriteComponent, const std::string&, int, int>> sprite(vm);
     //sprite.Func("setTexture", &SpriteComponent::setTexture);

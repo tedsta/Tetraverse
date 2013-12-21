@@ -27,6 +27,9 @@ class WrapComponent : public RenderComponent
     private:
         RenderComponent* mRnd;
         GridComponent* mGrid;
+
+        // Used purely for deserialization
+        int mRndID;
 };
 
 #endif // WRAPCOMPONENT_H

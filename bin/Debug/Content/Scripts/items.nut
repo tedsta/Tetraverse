@@ -78,6 +78,7 @@ function door(gridEnt, coords)
         entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/door.png", 5, 5));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Door", x, y, 1, 5));
         entity.addComponentSq(SignalComponent());
         grid.addPlaceable(entity);
@@ -113,6 +114,7 @@ function thruster(gridEnt, coords)
         entity.addComponentSq(transform);
         entity.addComponentSq(intent);
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/engine.png", 1, 1));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Thruster", x, y, 1, 1));
         grid.addPlaceable(entity);
 
@@ -216,6 +218,7 @@ function light(gridEnt, coords)
         entity.giveID(-1);
         entity.addComponentSq(transform);
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/torch.png", 1, 1));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Light", x, y, 1,1));
         entity.addComponentSq(LightComponent(170));
         entity.addComponentSq(SignalComponent());
@@ -242,6 +245,7 @@ function swtch(gridEnt, coords)
         entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/button_wall.png", 2, 2));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 1));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());
@@ -268,6 +272,7 @@ function o2(gridEnt, coords)
         entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/o2.png", 1, 1));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 1, 3));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());
@@ -294,6 +299,7 @@ function reactor(gridEnt, coords)
         entity.giveID(-1);
         entity.addComponentSq(TransformComponent(Vector2f(0, 0), 0, Vector2f(1, 1)));
         entity.addComponentSq(SpriteComponent("Content/Textures/Placeables/reactor.png", 1, 1));
+        entity.addComponentSq(WrapComponent(castSpriteComponent(entity.getComponent(SpriteComponentType))));
         entity.addComponentSq(PlaceableComponent(entity, gridEnt, "Swtch", x, y, 3, 2));
         entity.addComponentSq(LightComponent(15));
         entity.addComponentSq(SignalComponent());

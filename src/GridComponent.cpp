@@ -16,6 +16,7 @@
 #include "BackGridComponent.h"
 #include "FrontGridComponent.h"
 #include "PlaceableComponent.h"
+#include "WrapComponent.h"
 #include "TetraCollision.h"
 
 int randStateCovered(int x, int y);
@@ -523,6 +524,7 @@ void GridComponent::addPlaceable(Entity* entity)
 
     TransformComponent* trans = reinterpret_cast<TransformComponent*>(entity->getComponent(TransformComponent::Type));
     PlaceableComponent* placeable = reinterpret_cast<PlaceableComponent*>(entity->getComponent(PlaceableComponent::Type));
+    WrapComponent* wrap = reinterpret_cast<WrapComponent*>(entity->getComponent(WrapComponent::Type));
 
     if (mWrapX)
         placeable->setGridX(wrapX(placeable->getGridX()));
@@ -533,6 +535,9 @@ void GridComponent::addPlaceable(Entity* entity)
     trans->setPosition(pos);
     trans->setRotation(mTransform->getRotation());
     trans->setScale(mTransform->getScale());
+
+    wrap->setGrid(this);
+
     mPlaceables.push_back(entity->getID());
 }
 
