@@ -27,14 +27,9 @@ int randStateLeft(int x, int y);
 TypeBits GridComponent::Type;
 
 GridComponent::GridComponent(TransformComponent* transform, int sizeX, int sizeY, bool wrapX, Tile** tiles, int tickCount) :
-    mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
+    mTransform(transform), mSizeX(sizeX), mSizeY(sizeY), mWrapX(wrapX), mTiles(tiles), mTickCount(tickCount)
 {
-    if (transform)
-        mTransformID = transform->getID();
-    else
-        mTransformID = -1;
-
-    //myTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
+    //mTransform->setOrigin(sf::Vector2f(mSizeX*TILE_SIZE, mSizeY*TILE_SIZE)/2.f);
 
     mCTiles.resize(tickCount);
 
@@ -68,7 +63,7 @@ void GridComponent::serialize(sf::Packet &packet)
         for (int x = 0; x < mSizeX; x++)
             mTiles[y][x].serialize(packet);
 
-    packet << mTransformID;
+    packet << mTransform->getID();
     packet << mTickCount;
     for (int i = 0; i < mTickCount; i++)
     {
@@ -99,8 +94,10 @@ void GridComponent::deserialize(sf::Packet &packet)
             mTiles[y][x].deserialize(packet);
     }
 
+    int transformID;
+    packet >> transformID;
+    mTransform = reinterpret_cast<TransformComponent*>(Component::get(transformID));
 
-    packet >> mTransformID;
     packet >> mTickCount;
     mCTiles.resize(mTickCount);
     for (int i = 0; i < mTickCount; i++)
@@ -134,7 +131,7 @@ void GridComponent::serializeBare(sf::Packet& packet)
     packet << mSizeY;
     packet << mWrapX;
 
-    packet << mTransformID;
+    packet << mTransform->getID();
     packet << mTickCount;
     for (int i = 0; i < mTickCount; i++)
     {
@@ -160,7 +157,10 @@ void GridComponent::deserializeBare(sf::Packet& packet)
     for (int y = 0; y < mSizeY; y++)
         mTiles[y] = new Tile[mSizeX];
 
-    packet >> mTransformID;
+    int transformID;
+    packet >> transformID;
+    mTransform = reinterpret_cast<TransformComponent*>(Component::get(transformID));
+
     packet >> mTickCount;
     mCTiles.resize(mTickCount);
     for (int i = 0; i < mTickCount; i++)
@@ -186,8 +186,7 @@ void GridComponent::deserializeBare(sf::Packet& packet)
 
 void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int bot)
 {
-    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
-    if (!myTransform)
+    if (!mTransform)
         return;
 
     int width = right-left+1;
@@ -213,11 +212,11 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
 
     sf::Vector2f pos(left, top);
     pos *= float(TILE_SIZE);
-    pos = myTransform->getTransform().transformPoint(pos);
+    pos = mTransform->getTransform().transformPoint(pos);
 
     newGrid->giveID();
     TransformComponent* transform = new TransformComponent(pos,
-                                                           myTransform->getRotation(), myTransform->getScale());
+                                                           mTransform->getRotation(), mTransform->getScale());
     newGrid->addComponent(transform);
 
 
@@ -254,11 +253,10 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
 
 sf::Vector2f GridComponent::getTilePos(sf::Vector2f pos)
 {
-    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
-    if (!myTransform)
+    if (!mTransform)
         return sf::Vector2f();
 
-	sf::Transform myInv = myTransform->getTransform().getInverse();
+	sf::Transform myInv = mTransform->getTransform().getInverse();
 	pos = myInv.transformPoint(pos);
 	pos = pos/float(TILE_SIZE);
 	pos.x = floor(pos.x);
@@ -518,8 +516,7 @@ bool GridComponent::canPlace(int x, int y, int width, int height)
 
 void GridComponent::addPlaceable(Entity* entity)
 {
-    TransformComponent* myTransform = reinterpret_cast<TransformComponent*>(Component::get(mTransformID));
-    if (!myTransform)
+    if (!mTransform)
         return;
 
     entity->giveID();
@@ -532,10 +529,10 @@ void GridComponent::addPlaceable(Entity* entity)
 
     sf::Vector2f pos(placeable->getGridX(), placeable->getGridY());
     pos *= float(TILE_SIZE);
-    pos = myTransform->getTransform().transformPoint(pos);
+    pos = mTransform->getTransform().transformPoint(pos);
     trans->setPosition(pos);
-    trans->setRotation(myTransform->getRotation());
-    trans->setScale(myTransform->getScale());
+    trans->setRotation(mTransform->getRotation());
+    trans->setScale(mTransform->getScale());
     mPlaceables.push_back(entity->getID());
 }
 

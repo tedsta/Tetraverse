@@ -46,6 +46,7 @@
 #include "LightComponent.h"
 #include "SignalComponent.h"
 #include "WeaponComponent.h"
+#include "WrapComponent.h"
 
 #include "GridSystem.h"
 #include "PlaceableSystem.h"
@@ -86,6 +87,7 @@ int main()
     LightComponent::Type = ComponentFactories::add(LightComponent::factory);
     SignalComponent::Type = ComponentFactories::add(SignalComponent::factory);
     WeaponComponent::Type = ComponentFactories::add(WeaponComponent::factory);
+    WrapComponent::Type = ComponentFactories::add(WrapComponent::factory);
 
     Connection* conn = new Connection(engine->getEventManager());
 
@@ -460,6 +462,9 @@ void bindSquirrel(HSQUIRRELVM vm)
     signal.Func("getFloat", &SignalComponent::getFloat);
     signal.Func("getVector", &SignalComponent::getVector);
     Sqrat::RootTable(vm).Bind("SignalComponent", signal);
+
+    Sqrat::DerivedClass<WrapComponent, Component, sqext::ConstAlloc<WrapComponent, RenderComponent*>> wrap(vm);
+    Sqrat::RootTable(vm).Bind("WrapComponent", wrap);
 
     // Button states
     Sqrat::RootTable(vm).SetValue("BtnStateDown", BtnState::DOWN);

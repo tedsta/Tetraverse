@@ -140,6 +140,7 @@ class GridComponent : public RenderComponent
         Area getArea(int x, int y) const;
         int getSizeX() const {return mSizeX;}
         int getSizeY() const {return mSizeY;}
+        TransformComponent* getTransform(){return mTransform;}
 
         static TypeBits Type;
         const TypeBits getTypeBits() const {return Type;}
@@ -150,7 +151,7 @@ class GridComponent : public RenderComponent
         int mSizeY;
         bool mWrapX;
         Tile** mTiles; // 2D array of tiles
-        int mTransformID;
+        TransformComponent* mTransform;
         int mTickCount; // The number of tick types
         std::vector<std::vector<sf::Vector2i>> mCTiles; // Cached interesting tile coordinates
         std::vector<int> mPlaceables;
