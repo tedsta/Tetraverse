@@ -233,8 +233,13 @@ void GridComponent::sliceInto(Entity* newGrid, int left, int top, int right, int
     }
     newGrid->addComponent(grid);
 
-    newGrid->addComponent(new BackGridComponent(grid));
-    newGrid->addComponent(new FrontGridComponent(grid));
+    auto backGrid = new BackGridComponent(grid);
+    auto frontGrid = new FrontGridComponent(grid);
+
+    newGrid->addComponent(backGrid);
+    newGrid->addComponent(frontGrid);
+    newGrid->addComponent(new WrapComponent(backGrid));
+    newGrid->addComponent(new WrapComponent(frontGrid));
     newGrid->addComponent(new PhysicsComponent(grid));
 
     for (int y = 0; y < height-1; y++)

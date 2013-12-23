@@ -1,10 +1,14 @@
 #include "TVNetwork.h"
 
+#include <Fission/Core/Engine.h>
+#include <Fission/Core/Scene.h>
+#include <Fission/Core/Entity.h>
+
 #include "PlayerDatabase.h"
 
-TVNetwork::TVNetwork(Connection* conn, PlayerDatabase* playerDB) : mConnection(conn), mPlayerDB(playerDB)
+TVNetwork::TVNetwork(Engine *engine, Connection* conn, PlayerDatabase* playerDB) : mEngine(engine), mConnection(conn), mPlayerDB(playerDB)
 {
-    //ctor
+    mConnection->registerHandlerAuto(this);
 }
 
 TVNetwork::~TVNetwork()
@@ -26,10 +30,19 @@ void TVNetwork::handlePacket(sf::Packet& packet, int netID)
             std::string username, password;
             packet >> username >> password;
 
+            mPlayerDB->createPlayer(username, password);
+
             if (!mPlayerDB->validatePlayer(username, password))
                 break;
 
-            mPlayerDB->loginPlayer(username, netID);
+            sendScene(netID);
+
+            if (!mPlayerDB->loginPlayer(username, netID))
+                break;
+
+            sendEntity(mPlayerDB->findPlayer(username)->mEntity);
+
+            std::cout << username << " logged in.\n";
 
             break;
         }
@@ -46,8 +59,41 @@ void TVNetwork::handlePacket(sf::Packet& packet, int netID)
     {
         switch (packetID)
         {
-        case 0:
+        case CREATE_ENTITY:
+        {
+            Entity* entity = mEngine->getScene()->createEntity();
+            entity->deserialize(packet);
+            entity->postDeserialize();
+            break;
+        }
+
+        case CREATE_SCENE:
+            mEngine->getScene()->deserialize(packet);
             break;
         }
     }
+}
+
+void TVNetwork::login(std::string user, std::string pass)
+{
+    sf::Packet packet;
+    packet << int(LOGIN);
+    packet << user << pass;
+    mConnection->send(packet, getHndID());
+}
+
+void TVNetwork::sendEntity(Entity* entity, int netID, int excludeID)
+{
+    sf::Packet packet;
+    packet << int(CREATE_ENTITY);
+    entity->serialize(packet);
+    mConnection->send(packet, getHndID(), netID, excludeID);
+}
+
+void TVNetwork::sendScene(int netID, int excludeID)
+{
+    sf::Packet packet;
+    packet << int(CREATE_SCENE);
+    mEngine->getScene()->serialize(packet);
+    mConnection->send(packet, getHndID(), netID, excludeID);
 }

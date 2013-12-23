@@ -64,14 +64,14 @@
 #include "perlin/perlin.h"
 #include <random>
 
+void runServer();
+void runClient();
 Tile** newWorld(int seed, int width, int height);
 void bindSquirrel(HSQUIRRELVM vm);
 
 int main()
 {
     ResourceManager::init();
-
-    Engine *engine = new Engine;
 
     TransformComponent::Type = ComponentFactories::add(TransformComponent::factory);
     SpriteComponent::Type = ComponentFactories::add(SpriteComponent::factory);
@@ -92,10 +92,46 @@ int main()
     WrapComponent::Type = ComponentFactories::add(WrapComponent::factory);
     EmitterComponent::Type = ComponentFactories::add(EmitterComponent::factory);
 
+    std::cout << "Tetraverse\nTeam Fission\n2013\n\nMake a selection:\n";
+    std::cout << "1. Server\n";
+    std::cout << "2. Client\n";
+
+    bool valid = false;
+
+    while (!valid)
+    {
+        int sel;
+        std::cin >> sel;
+
+        switch (sel)
+        {
+        case 1:
+            valid = true;
+            runServer();
+            break;
+        case 2:
+            valid = true;
+            runClient();
+            break;
+        default:
+            std::cout << "Invalid selection.\n";
+            break;
+        }
+    }
+
+
+    return 0;
+}
+
+void runServer()
+{
+    Engine *engine = new Engine;
+
     Connection* conn = new Connection(engine->getEventManager());
+    conn->hostServer(9999);
 
     PlayerDatabase* playerDB = new PlayerDatabase(engine);
-    TVNetwork* network = new TVNetwork(conn, playerDB);
+    TVNetwork* network = new TVNetwork(engine, conn, playerDB);
 
     RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
                                             BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type|WrapComponent::Type);
@@ -211,64 +247,6 @@ int main()
     planet->addComponent(new FrontGridComponent(pg));
     planet->addComponent(new PhysicsComponent(pg));
 
-    // Spawn player
-    SkeletonComponent* playerSkel = new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas");
-
-    Entity *player = new Entity(engine->getEventManager());
-    player->giveID();
-    scene->addEntity(player);
-    player->addComponent(new TransformComponent(sf::Vector2f(worldW/2, 0)));
-    player->addComponent(playerSkel);
-    player->addComponent(new WrapComponent(playerSkel));
-    player->addComponent(new IntentComponent);
-    player->addComponent(new PhysicsComponent(1.5f, 1.f));
-    player->addComponent(new PlayerComponent);
-    InventoryComponent* inventory = new InventoryComponent(50);
-    player->addComponent(inventory);
-
-    reinterpret_cast<SkeletonComponent*>(player->getComponent(SkeletonComponent::Type))->setLayer(3);
-
-    inventory->addItem(0, 3, 1);
-    inventory->addItem(1, 1, 999);
-    inventory->addItem(2, 2, 999);
-    inventory->addItem(3, 4, 1);
-    inventory->addItem(4, 6, 1);
-    inventory->addItem(5, 7, 1);
-    inventory->addItem(6, 11, 1);
-    inventory->addItem(7, 9, 99);
-    inventory->addItem(8, 10, 99);
-    inventory->addItem(9, 12, 1);
-
-    TransformComponent *trans = static_cast<TransformComponent*>(player->getComponent(TransformComponent::Type));
-    IntentComponent *intent = static_cast<IntentComponent*>(player->getComponent(IntentComponent::Type));
-
-    intent->mapKeyToIntent("up", sf::Keyboard::W, BtnState::DOWN);
-    intent->mapKeyToIntent("down", sf::Keyboard::S, BtnState::DOWN);
-    intent->mapKeyToIntent("left", sf::Keyboard::A, BtnState::DOWN);
-    intent->mapKeyToIntent("right", sf::Keyboard::D, BtnState::DOWN);
-
-    intent->mapKeyToIntent("0", sf::Keyboard::Num0, BtnState::DOWN);
-    intent->mapKeyToIntent("1", sf::Keyboard::Num1, BtnState::DOWN);
-    intent->mapKeyToIntent("2", sf::Keyboard::Num2, BtnState::DOWN);
-    intent->mapKeyToIntent("3", sf::Keyboard::Num3, BtnState::DOWN);
-    intent->mapKeyToIntent("4", sf::Keyboard::Num4, BtnState::DOWN);
-    intent->mapKeyToIntent("5", sf::Keyboard::Num5, BtnState::DOWN);
-    intent->mapKeyToIntent("6", sf::Keyboard::Num6, BtnState::DOWN);
-    intent->mapKeyToIntent("7", sf::Keyboard::Num7, BtnState::DOWN);
-    intent->mapKeyToIntent("8", sf::Keyboard::Num8, BtnState::DOWN);
-    intent->mapKeyToIntent("9", sf::Keyboard::Num9, BtnState::DOWN);
-
-    intent->mapMouseBtnToIntent("useLeft", sf::Mouse::Button::Left, BtnState::PRESSED);
-    intent->mapMouseBtnToIntent("useLeftRelease", sf::Mouse::Button::Left, BtnState::RELEASED);
-    intent->mapMouseBtnToIntent("useRight", sf::Mouse::Button::Right, BtnState::PRESSED);
-    intent->mapMouseBtnToIntent("useRightRelease", sf::Mouse::Button::Right, BtnState::RELEASED);
-    intent->mapKeyToIntent("interact", sf::Keyboard::E, BtnState::PRESSED);
-    intent->mapKeyToIntent("test", sf::Keyboard::T, BtnState::PRESSED);
-
-    intent->mapKeyToIntent("zoomout", sf::Keyboard::Up, BtnState::DOWN);
-    intent->mapKeyToIntent("zoomin", sf::Keyboard::Down, BtnState::DOWN);
-
-    intent->mapKeyToIntent("stupidmode", sf::Keyboard::Space, BtnState::PRESSED);
     //engine->getScene()->save("myfunscene.tsc");
 
 
@@ -298,6 +276,7 @@ int main()
         }
         frames++;
 
+        conn->update(dt);
         engine->update(dt);
 
         if (saveClock.getElapsedTime().asSeconds() >= 10.f)
@@ -308,8 +287,147 @@ int main()
     }
 
     delete engine;
+}
 
-    return 0;
+void runClient()
+{
+    std::string user, pass;
+    std::cout << "User: ";
+    std::cin >> user;
+    std::cout << "Password: ";
+    std::cin >> pass;
+
+    Engine *engine = new Engine;
+
+    Connection* conn = new Connection(engine->getEventManager());
+    conn->connectClient("localhost", 9999);
+
+    PlayerDatabase* playerDB = new PlayerDatabase(engine);
+    TVNetwork* network = new TVNetwork(engine, conn, playerDB);
+
+    RenderSystem *render = new RenderSystem(engine->getEventManager(), 0.f, ResourceManager::get()->getFont("Content/Fonts/font.ttf"),
+                                            BackGridComponent::Type|FrontGridComponent::Type|SkeletonComponent::Type|WrapComponent::Type);
+    InputSystem *input = new InputSystem(engine->getEventManager(), 1.f/60.f, &render->getWindow());
+    IntentSystem *intentSys = new IntentSystem(engine->getEventManager(), 1.f/60.f, conn);
+    ScriptSystem *scriptSys = new ScriptSystem(engine->getEventManager(), 1.f/60.f, engine);
+    PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/60.f);
+    GridSystem *gridSys = new GridSystem(engine->getEventManager(), physSys, 1.f/1000.f);
+    PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/60.f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/60.f);
+    LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
+
+    engine->addSystem(render);
+    engine->addSystem(input);
+    engine->addSystem(intentSys);
+    engine->addSystem(scriptSys);
+    engine->addSystem(playerSys);
+    engine->addSystem(placeableSys);
+    engine->addSystem(physSys);
+    engine->addSystem(gridSys);
+    engine->addSystem(lightSys);
+
+    FrontGridComponent::RndSys = render;
+
+    render->setBackgroundColor(sf::Color(130, 130, 255, 255));
+
+    scriptSys->addBinder(bindSquirrel);
+
+    // Set up all the items
+    HSQUIRRELVM itemScript = scriptSys->createScript("Content/Scripts/items.nut");
+    Item *dirtBlock = new Item("dirt block", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "dirtBlock");
+    Item::Items.push_back(dirtBlock);
+
+    Item *steelBlock = new Item("steel block", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "steelBlock");
+    Item::Items.push_back(steelBlock);
+
+    Item *steelWall = new Item("steel wall", "Content/Textures/Tiles/dirt.png", true, BtnState::DOWN, 999, 1, itemScript, "steelWall");
+    Item::Items.push_back(steelWall);
+
+    Item *crowbar = new Item("crowbar", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 1, itemScript, "crowbar");
+    Item::Items.push_back(crowbar);
+
+    Item *door = new Item("door", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 10, 1, itemScript, "door");
+    Item::Items.push_back(door);
+
+    Item *water = new Item("water", "Content/Textures/Tiles/dirt.png", false, BtnState::DOWN, 1, 1, itemScript, "water");
+    Item::Items.push_back(water);
+
+    Item *thruster = new Item("thruster", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 10, 1, itemScript, "thruster");
+    Item::Items.push_back(thruster);
+
+    Item *gridCutter = new Item("gridCutter", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "gridCutter");
+    Item::Items.push_back(gridCutter);
+
+    Item *wirer = new Item("wirer", "Content/Textures/Tiles/dirt.png", false, BtnState::PRESSED, 1, 2, itemScript, "wirer");
+    Item::Items.push_back(wirer);
+
+    Item *light = new Item("light", "Content/Textures/Placeables/light.png", false, BtnState::PRESSED, 1, 1, itemScript, "light");
+    Item::Items.push_back(light);
+
+    Item *swtch = new Item("switch", "Content/Textures/Placeables/switch.png", false, BtnState::PRESSED, 1, 1, itemScript, "swtch");
+    Item::Items.push_back(swtch);
+
+    Item *o2 = new Item("o2", "Content/Textures/Placeables/o2.png", false, BtnState::PRESSED, 1, 1, itemScript, "o2");
+    Item::Items.push_back(o2);
+
+    Item *reactor = new Item("reactor", "Content/Textures/Placeables/reactor.png", false, BtnState::PRESSED, 1, 1, itemScript, "reactor");
+    Item::Items.push_back(reactor);
+
+    // Set up the placeables
+    HSQUIRRELVM placeableScript = scriptSys->createScript("Content/Scripts/placeables.nut");
+    PlaceableComponent::registerClass(placeableScript, "Door");
+    PlaceableComponent::registerClass(placeableScript, "Thruster");
+    PlaceableComponent::registerClass(placeableScript, "Light");
+    PlaceableComponent::registerClass(placeableScript, "Swtch");
+
+    // Set up the materials
+    FrontGridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
+    FrontGridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
+    FrontGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    FrontGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel.png"));
+    FrontGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
+    FrontGridComponent::addTileSheet(7, ResourceManager::get()->getTexture("Content/Textures/Tiles/glass.png"));
+
+    BackGridComponent::addTileSheet(1, ResourceManager::get()->getTexture("Content/Textures/Tiles/dirt.png"));
+    BackGridComponent::addTileSheet(2, ResourceManager::get()->getTexture("Content/Textures/Tiles/stone.png"));
+    BackGridComponent::addTileSheet(3, ResourceManager::get()->getTexture("Content/Textures/Tiles/grass.png"));
+    BackGridComponent::addTileSheet(5, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_wall.png"));
+    BackGridComponent::addTileSheet(6, ResourceManager::get()->getTexture("Content/Textures/Tiles/steel_window.png"));
+    BackGridComponent::addTileSheet(7, ResourceManager::get()->getTexture("Content/Textures/Tiles/glass.png"));
+
+    gridSys->addTick(veggyGridOp, 5.f);
+    gridSys->addTick(fluidGridOp, 0.001f);
+    //gridSys->addTick(lightGridOp, 0.1f);
+
+    network->login(user, pass);
+
+    float accum = 0;
+    int frames = 0;
+
+    sf::Clock clock;
+    while (render->getWindow().isOpen())
+    {
+        float dt = clock.getElapsedTime().asSeconds();
+        clock.restart();
+        accum += dt;
+
+        if (accum >= 1.f)
+        {
+            std::stringstream fps;
+            std::string sFps;
+            fps << frames;
+            fps >> sFps;
+            render->getDebugDisplay()->setMessage("FPS", sFps);
+            accum = 0;
+            frames = 0;
+        }
+        frames++;
+
+        conn->update(dt);
+        engine->update(dt);
+    }
+
+    delete engine;
 }
 
 Tile** newWorld(int seed, int width, int height)

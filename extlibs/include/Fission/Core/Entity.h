@@ -31,6 +31,9 @@ class Entity : public RefCounted
         /// \brief Deserialize this entity.
         void deserialize(sf::Packet& packet);
 
+        /// \brief This NEEDS to be called after a bundle of one or more entities are deserialized.
+        void postDeserialize();
+
         /// \brief Adds a new component to this entity.
         void addComponent(Component* component);
 
@@ -44,6 +47,9 @@ class Entity : public RefCounted
 
         /// \brief Get the type bits of this entity.
         const TypeBits& getTypeBits() const {return mTypeBits;}
+
+        /// \brief Get whether or not this entity is in a scene.
+        bool inScene() const {return mInScene;}
 
         /// \brief Get single component by type bits.
         Component* getComponent(TypeBits typeBits);
@@ -63,8 +69,6 @@ class Entity : public RefCounted
         }
 
     private:
-        void postDeserialize();
-
         static std::vector<Entity*> Entities;
         static std::vector<int> FreeIDs;
 
@@ -82,6 +86,9 @@ class Entity : public RefCounted
 
         /// The number of components attached to this entity
         int mComponentCount;
+
+        /// Whether or not the entity is in the scene
+        bool mInScene;
 
         // ****************************************************************************************
 

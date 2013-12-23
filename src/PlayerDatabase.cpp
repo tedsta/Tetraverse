@@ -32,6 +32,7 @@
 #include "LightComponent.h"
 #include "SignalComponent.h"
 #include "WeaponComponent.h"
+#include "WrapComponent.h"
 
 PlayerDatabase::PlayerDatabase(Engine* engine) : mEngine(engine)
 {
@@ -50,14 +51,18 @@ void PlayerDatabase::createPlayer(std::string name, std::string password)
     player.mPassword = password;
     player.mNetID = -1;
 
+    // Spawn player
+    SkeletonComponent* playerSkel = new SkeletonComponent("Content/Spine/player.json", "Content/Spine/player.atlas");
+
     player.mEntity = new Entity(mEngine->getEventManager());
     player.mEntity->giveID();
-    player.mEntity->addComponent(new TransformComponent(sf::Vector2f(100, 1000)));
-    player.mEntity->addComponent(new SkeletonComponent("Content/Spine/player.mEntity.json", "Content/Spine/player.mEntity.atlas"));
+    player.mEntity->addComponent(new TransformComponent(sf::Vector2f(0, 0)));
+    player.mEntity->addComponent(playerSkel);
+    player.mEntity->addComponent(new WrapComponent(playerSkel));
     player.mEntity->addComponent(new IntentComponent);
     player.mEntity->addComponent(new PhysicsComponent(1.5f, 1.f));
     player.mEntity->addComponent(new PlayerComponent);
-    InventoryComponent* inventory = new InventoryComponent(10);
+    InventoryComponent* inventory = new InventoryComponent(50);
     player.mEntity->addComponent(inventory);
 
     reinterpret_cast<SkeletonComponent*>(player.mEntity->getComponent(SkeletonComponent::Type))->setLayer(3);
@@ -124,6 +129,8 @@ bool PlayerDatabase::loginPlayer(std::string name, int netID)
 
     mEngine->getScene()->addEntity(player->mEntity);
     player->mNetID = netID;
+
+    reinterpret_cast<IntentComponent*>(player->mEntity->getComponent(IntentComponent::Type))->setNetID(netID);
 
     return true;
 }

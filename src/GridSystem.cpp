@@ -56,9 +56,10 @@ void GridSystem::processEntity(Entity *entity, const float dt)
             pPhys->removeGrid(entity);
         }
 
-        WrapComponent* wrap = reinterpret_cast<WrapComponent*>(physEnt->getComponent(WrapComponent::Type));
-        if (wrap)
+        auto wraps = physEnt->getComponents(WrapComponent::Type);
+        for (auto wrapC : wraps)
         {
+            auto wrap = reinterpret_cast<WrapComponent*>(wrapC);
             if (pPhys->getPrimaryGrid())
                 wrap->setGrid(reinterpret_cast<GridComponent*>(pPhys->getPrimaryGrid()->getComponent(GridComponent::Type)));
             else
