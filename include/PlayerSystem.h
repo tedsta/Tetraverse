@@ -4,11 +4,12 @@
 #include <Fission/Core/System.h>
 
 class RenderSystem;
+class Connection;
 
 class PlayerSystem : public System
 {
     public:
-        PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, float lockStep);
+        PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, Connection* conn, float lockStep);
         virtual ~PlayerSystem();
 
     protected:
@@ -20,6 +21,7 @@ class PlayerSystem : public System
 
     private:
         RenderSystem* mRndSys;
+        Connection* mConnection;
 };
 
 #endif // PLAYERSYSTEM_H

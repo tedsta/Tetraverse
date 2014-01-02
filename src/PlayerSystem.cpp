@@ -4,6 +4,7 @@
 #include <Fission/Rendering/RenderSystem.h>
 #include <Fission/Rendering/TransformComponent.h>
 #include <Fission/Network/IntentComponent.h>
+#include <Fission/Network/Connection.h>
 
 #include "GridComponent.h"
 #include "PlayerComponent.h"
@@ -14,9 +15,9 @@
 
 #include <iostream>
 
-PlayerSystem::PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, float lockStep) :
+PlayerSystem::PlayerSystem(EventManager *eventManager, RenderSystem* rndSys, Connection* conn, float lockStep) :
     System(eventManager, lockStep, TransformComponent::Type|PlayerComponent::Type|PhysicsComponent::Type|IntentComponent::Type),
-    mRndSys(rndSys)
+    mRndSys(rndSys), mConnection(conn)
 {
     //ctor
 }

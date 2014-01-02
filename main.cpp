@@ -128,7 +128,7 @@ void runServer()
     Engine *engine = new Engine;
 
     Connection* conn = new Connection(engine->getEventManager());
-    conn->hostServer(9999);
+    //conn->hostServer(9999);
 
     PlayerDatabase* playerDB = new PlayerDatabase(engine);
     TVNetwork* network = new TVNetwork(engine, conn, playerDB);
@@ -141,7 +141,7 @@ void runServer()
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/60.f);
     GridSystem *gridSys = new GridSystem(engine->getEventManager(), physSys, 1.f/1000.f);
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/60.f);
-    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/60.f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, conn, 1.f/60.f);
     LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
     engine->addSystem(render);
@@ -229,8 +229,6 @@ void runServer()
 
     Scene *scene = engine->getScene();
 
-    //scene->load("myfunscene.tsc");
-
     int worldW = 50;
     int worldH = 150;
 
@@ -247,8 +245,8 @@ void runServer()
     planet->addComponent(new FrontGridComponent(pg));
     planet->addComponent(new PhysicsComponent(pg));
 
-    //engine->getScene()->save("myfunscene.tsc");
-
+    playerDB->createPlayer("asdf", "asdf");
+    playerDB->loginPlayer("asdf", 0);
 
     float accum = 0;
     int frames = 0;
@@ -313,7 +311,7 @@ void runClient()
     PhysicsSystem *physSys = new PhysicsSystem(engine->getEventManager(), 1.f/60.f);
     GridSystem *gridSys = new GridSystem(engine->getEventManager(), physSys, 1.f/1000.f);
     PlaceableSystem *placeableSys = new PlaceableSystem(engine->getEventManager(), 1.f/60.f);
-    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, 1.f/60.f);
+    PlayerSystem *playerSys = new PlayerSystem(engine->getEventManager(), render, conn, 1.f/60.f);
     LightSystem* lightSys = new LightSystem(engine->getEventManager(), render, 0.f);
 
     engine->addSystem(render);
