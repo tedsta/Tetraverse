@@ -7,20 +7,22 @@
 
 #include <Fission/Core/Component.h>
 
-class TransformComponent : public Component, public sf::Transformable
+namespace fsn
 {
-    public:
-        TransformComponent(sf::Vector2f pos = sf::Vector2f(0, 0), float rot = 0, sf::Vector2f scale = sf::Vector2f(1, 1));
-        virtual ~TransformComponent();
+    class TransformComponent : public Component, public sf::Transformable
+    {
+        FISSION_COMPONENT
 
-        void serialize(sf::Packet& packet);
-        void deserialize(sf::Packet& packet);
+        public:
+            TransformComponent(sf::Vector2f pos = sf::Vector2f(0, 0), float rot = 0, sf::Vector2f scale = sf::Vector2f(1, 1));
+            virtual ~TransformComponent();
 
-        static TypeBits Type;
-        const TypeBits getTypeBits() const {return Type;}
-        static Component* factory() {return new TransformComponent();}
+            void serialize(sf::Packet& packet);
+            void deserialize(sf::Packet& packet);
 
-    private:
-};
+        private:
+    };
+}
+
 
 #endif // TRANSFORMCOMPONENT_H

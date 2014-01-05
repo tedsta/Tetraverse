@@ -3,32 +3,36 @@
 
 #include <Fission/Core/Event.h>
 
-class Entity;
-class Component;
-
-enum
+namespace fsn
 {
-    EVENT_ADD_ENTITY,
-    EVENT_REMOVE_ENTITY,
-    EVENT_ADD_COMPONENT,
-    EVENT_REMOVE_COMPONENT,
+    class EntityRef;
+    class Component;
 
-    CUSTOM_EVENT = 1000
-};
+    enum
+    {
+        EVENT_ADD_ENTITY,
+        EVENT_REMOVE_ENTITY,
+        EVENT_ADD_COMPONENT,
+        EVENT_REMOVE_COMPONENT,
 
-struct EntityEvent : public IEventData
-{
-    EntityEvent(EventID evtType, Entity *e) : IEventData(evtType), mEntity(e) {}
-    Entity *mEntity;
-};
+        CUSTOM_EVENT = 1000
+    };
 
-struct EntityComponentEvent : public IEventData
-{
-    EntityComponentEvent(EventID evtType, Entity *e, Component *c)
-        : IEventData(evtType), mEntity(e), mComponent(c) {}
+    struct EntityEvent : public IEventData
+    {
+        EntityEvent(EventID evtType, EntityRef *e) : IEventData(evtType), mEntity(e) {}
+        EntityRef* mEntity;
+    };
 
-    Entity *mEntity;
-    Component *mComponent;
-};
+    struct EntityComponentEvent : public IEventData
+    {
+        EntityComponentEvent(EventID evtType, EntityRef *e, Component *c)
+            : IEventData(evtType), mEntity(e), mComponent(c) {}
+
+        EntityRef* mEntity;
+        Component* mComponent;
+    };
+}
+
 
 #endif

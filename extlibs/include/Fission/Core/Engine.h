@@ -3,38 +3,42 @@
 
 #include <vector>
 
-class Scene;
-class System;
-class EventManager;
-
-/// \brief Core class to facilitate all of the systems and the scene.
-class Engine
+namespace fsn
 {
-    public:
-        Engine();
-        virtual ~Engine();
+    class EntityManager;
+    class System;
+    class IEventManager;
 
-        /// \brief Updates all of the systems in this engine.
-        void update(const float dt);
+    /// \brief Core class to facilitate all of the systems and the scene.
+    class Engine
+    {
+        public:
+            Engine();
+            virtual ~Engine();
 
-        /// \brief Add a system to this engine.
-        void addSystem(System *system){mSystems.push_back(system);}
+            /// \brief Updates all of the systems in this engine.
+            void update(const float dt);
 
-        /// \brief Gets the event manager.
-        EventManager *getEventManager() const {return mEventManager;}
+            /// \brief Add a system to this engine.
+            void addSystem(System *system){mSystems.push_back(system);}
 
-        /// \brief Gets the current scene.
-        Scene *getScene() const {return mScene;}
+            /// \brief Gets the event manager.
+            IEventManager* getEventManager() const {return mEventManager;}
 
-    private:
-        /// The event manager
-        EventManager *mEventManager;
+            /// \brief Gets the entity manager.
+            EntityManager* getEntityManager() const {return mEntityManager;}
 
-        /// The current scene
-        Scene *mScene;
+        private:
+            // The event manager
+            IEventManager* mEventManager;
 
-        /// The systems this engine has to manage
-        std::vector<System*> mSystems;
-};
+            // The entity manager
+            EntityManager* mEntityManager;
+
+            // The systems this engine has to manage
+            std::vector<System*> mSystems;
+    };
+}
+
 
 #endif // ENGINE_H

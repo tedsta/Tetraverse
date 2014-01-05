@@ -1,56 +1,52 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include <vector>
-#include <bitset>
-
 #include <SFML/Network/Packet.hpp>
-#include <Sqrat/sqrat.h>
 
-#include <Fission/Core/config.h>
-#include <Fission/Core/RefCounted.h>
-
-// Type bits for components
-typedef unsigned int TypeBits;
-
-class Component : public RefCounted
+namespace fsn
 {
-    friend class Entity;
+    // Adds things that all components need
+    #define FISSION_COMPONENT \
+        public: \
+            static fsn::ComponentType& Type() \
+            { \
+                static fsn::ComponentType Type; \
+                return Type; \
+            } \
+            fsn::ComponentType getType() const {return Type();} \
+        private:
 
-    public:
-        Component();
-        virtual ~Component();
+    class Component;
 
-        /// \brief Serialize this component.
-        virtual void serialize(sf::Packet &packet){}
+    /// \brief Type definition for component type IDs
+    typedef std::size_t ComponentType;
 
-        /// \brief Deserialize this component.
-        virtual void deserialize(sf::Packet &packet){}
+    /// \brief Type definition for component factory functions.
+    typedef Component* (*ComponentFactory)();
 
-        /// \brief Called immediately after all entities have been deserialized
-        virtual void postDeserialize(){}
+    /// \brief A tag class for components. Components must inherit from this.
+    class Component
+    {
+        friend class ComponentTypeManager;
 
-        /// \brief Get this component's global ID
-        int getID() const {return mID;}
+        public:
+            virtual ~Component(){}
 
-        /// \brief Get this component's type bits.
-        virtual const TypeBits getTypeBits() const {return 0;}
+            // Serialization stuff
+            virtual void serialize(sf::Packet &packet){}
+            virtual void deserialize(sf::Packet &packet){}
 
-        /// \brief Get a component by it's global ID
-        static Component* get(int ID)
-        {
-            if (ID >= 0 && ID < Components.size())
-                return Components[ID];
-            return NULL;
-        }
+            /// \brief Get the component type ID of this component.
+            virtual ComponentType getType() const {return 0;}
 
-    private:
-        void giveID(int id = -1);
-
-        static std::vector<Component*> Components;
-        static std::vector<int> FreeIDs;
-
-        int mID;
-};
+        private:
+            /// \brief A template component factory.
+            template <typename c>
+            static Component* factory()
+            {
+                return new c;
+            }
+    };
+}
 
 #endif // COMPONENT_H

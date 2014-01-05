@@ -9,57 +9,83 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include <Fission/Core/System.h>
+#include <Fission/Rendering/RenderComponent.h>
+#include <Fission/Rendering/RenderManager.h>
+#include <Fission/Rendering/TransformComponent.h>
 
-class DebugDisplay;
-
-class RenderSystem : public System
+namespace fsn
 {
-    public:
-        RenderSystem(EventManager *eventManager, float lockStep, sf::Font* debugFont = NULL, TypeBits renderableTypeBits = 0);
-        virtual ~RenderSystem();
+    class IRenderSystem : public System
+    {
+        friend class RenderManager;
 
-        void addAdditionalSprite(sf::Sprite* sprite){mAdditionalSprites.push_back(sprite);}
+        public:
+            IRenderSystem(IEventManager* eventManager, float lockStep) : System(eventManager, lockStep)
+            {
+            }
 
-        // Setters
+        protected:
+            virtual void render(RenderComponent* component, sf::RenderTarget& target, sf::RenderStates& states) = 0;
 
-        void setBackgroundColor(sf::Color col){mBackgroundColor=col;}
+        private:
+    };
 
-        // Getters
+    template <typename RenderComponentT>
+    class RenderSystem : public IRenderSystem
+    {
+        friend class RenderManager;
 
-        /// \brief Get the SFML render window
-        sf::RenderWindow& getWindow(){return mWindow;}
+        public:
+            RenderSystem(IEventManager* eventManager, RenderManager* renderManager, float lockStep) :
+                IRenderSystem(eventManager, lockStep), mRenderManager(renderManager)
+            {
+                mAspect.all<TransformComponent, RenderComponentT>();
+                if (mRenderManager->mRenderSystems.size() < RenderComponentT::Type())
+                    mRenderManager->mRenderSystems.resize(RenderComponentT::Type()+1);
+                mRenderManager->mRenderSystems[RenderComponentT::Type()] = this;
+            }
 
-        /// \brief Return a reference to the SFML view
-        sf::View& getView(){return mView;}
+        protected:
 
-        /// \brief Get the debug display
-        DebugDisplay* getDebugDisplay(){return mDebugDisplay;}
+            /// \brief begin function for systems
+            void begin(const float dt)
+            {
+            }
 
-    protected:
-        /// \brief begin function for systems
-        void begin(const float dt);
+            /// \brief Process entity function for systems
+            void processEntity(EntityRef* entity, const float dt)
+            {
+            }
 
-        /// \brief Process entity function for systems
-        void processEntity(Entity* entity, const float dt);
+            /// \brief end function for systems
+            void end(const float dt)
+            {
+            }
 
-        /// \brief end function for systems
-        void end(const float dt);
+            void onEntityAdded(EntityRef* entity)
+            {
+                auto rndCmp = entity->getComponent<RenderComponentT>();
+                mRenderManager->addRenderableToLayer(rndCmp->getLayer(), entity, RenderComponentT::Type());
+            }
 
-    private:
-        // The SFML render window
-        sf::RenderWindow mWindow;
+            void onEntityRemoved(EntityRef* entity)
+            {
+                auto rndCmp = entity->getComponent<RenderComponentT>();
+                mRenderManager->removeRenderableFromLayer(rndCmp->getLayer(), RenderComponentT::Type());
+            }
 
-        // The SFML view
-        sf::View mView;
+            // Just call the derived render function
+            void render(RenderComponent* component, sf::RenderTarget& target, sf::RenderStates& states)
+            {
+                render(static_cast<RenderComponentT*>(component), target, states);
+            }
 
-        // The background color
-        sf::Color mBackgroundColor;
+            virtual void render(RenderComponentT* component, sf::RenderTarget& target, sf::RenderStates& states) = 0;
 
-        // The debug display
-        DebugDisplay* mDebugDisplay;
+        private:
+            RenderManager* mRenderManager;
+    };
+}
 
-        // Additional sprites to render
-        std::vector<sf::Sprite*> mAdditionalSprites;
-};
 
 #endif // RENDERSYSTEM_H

@@ -1,14 +1,16 @@
 #ifndef INPUTDEFS_H_INCLUDED
 #define INPUTDEFS_H_INCLUDED
 
-namespace BtnState {
-    enum
+namespace fsn
+{
+    enum ButtonState
     {
-        UP,
-        DOWN,
-        PRESSED,
-        RELEASED
+        Up,
+        Down,
+        Pressed,
+        Released
     };
 }
+
 
 #endif // INPUTDEFS_H_INCLUDED
