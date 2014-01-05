@@ -6,7 +6,7 @@
 #include "phys/PhysicsWorld.h"
 
 class GridSystem;
-class PhysicsComponent;
+class RigidBody;
 
 class PhysicsSystem : public fsn::System
 {

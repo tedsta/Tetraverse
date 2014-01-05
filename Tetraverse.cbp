@@ -165,9 +165,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
-		<Unit filename="include/Components/EmitterComponent.h" />
-		<Unit filename="include/Components/PhysicsComponent.h" />
-		<Unit filename="include/Systems/EmitterSystem.h" />
+		<Unit filename="include/Components/RigidBody.h" />
 		<Unit filename="include/Systems/PhysicsSystem.h" />
 		<Unit filename="include/phys/Collision.h" />
 		<Unit filename="include/phys/CollisionDispatcher.h" />
@@ -184,9 +182,7 @@
 		</Unit>
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
-		<Unit filename="src/Components/EmitterComponent.cpp" />
-		<Unit filename="src/Components/PhysicsComponent.cpp" />
-		<Unit filename="src/Systems/EmitterSystem.cpp" />
+		<Unit filename="src/Components/RigidBody.cpp" />
 		<Unit filename="src/Systems/PhysicsSystem.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
 		<Unit filename="src/phys/CollisionDispatcher.cpp" />

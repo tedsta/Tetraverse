@@ -1,4 +1,4 @@
-#include "Components/PhysicsComponent.h"
+#include "Components/RigidBody.h"
 
 #include <cfloat>
 
@@ -6,7 +6,7 @@
 
 #include "Systems/PhysicsSystem.h"
 
-PhysicsComponent::PhysicsComponent(int width, int height, float density) : mDensity(density)
+RigidBody::RigidBody(int width, int height, float density) : mDensity(density)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->setBox((float(width)/2.f)/PTU, (float(height)/2.f)/PTU);
@@ -15,7 +15,7 @@ PhysicsComponent::PhysicsComponent(int width, int height, float density) : mDens
     mBody->setFixedRotation();
 }
 
-PhysicsComponent::PhysicsComponent(float radius, float density) : mDensity(density)
+RigidBody::RigidBody(float radius, float density) : mDensity(density)
 {
     phys::CircleShape* shape = new phys::CircleShape(radius);
     mBody = new phys::RigidBody(shape, 2, density);
@@ -26,7 +26,7 @@ PhysicsComponent::PhysicsComponent(float radius, float density) : mDensity(densi
     mBody->setStaticFriction(0.f);
 }
 
-PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float density) : mDensity(density)
+RigidBody::RigidBody(sf::Vector2f* verts, int vertCount, float density) : mDensity(density)
 {
     phys::PolygonShape* shape = new phys::PolygonShape();
     shape->set(verts, vertCount);
@@ -35,12 +35,12 @@ PhysicsComponent::PhysicsComponent(sf::Vector2f* verts, int vertCount, float den
     mBody->setFixedRotation();
 }
 
-PhysicsComponent::~PhysicsComponent()
+RigidBody::~RigidBody()
 {
     delete mBody;
 }
 
-void PhysicsComponent::serialize(sf::Packet &packet)
+void RigidBody::serialize(sf::Packet &packet)
 {
     packet << mBody->getShape()->getType();
     mBody->getShape()->serialize(packet);
@@ -50,7 +50,7 @@ void PhysicsComponent::serialize(sf::Packet &packet)
     packet << mBody->getGravity().x << mBody->getGravity().y;
 }
 
-void PhysicsComponent::deserialize(sf::Packet &packet)
+void RigidBody::deserialize(sf::Packet &packet)
 {
     phys::Shape* shape;
 

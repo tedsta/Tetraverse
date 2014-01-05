@@ -1,5 +1,5 @@
-#ifndef PHYSICSCOMPONENT_H
-#define PHYSICSCOMPONENT_H
+#ifndef TETRA_RIGIDBODY_H
+#define TETRA_RIGIDBODY_H
 
 #include <set>
 #include <vector>
@@ -16,17 +16,17 @@ class GridComponent;
 
 const float PTU = 16.f;
 
-class PhysicsComponent : public fsn::Component
+class RigidBody : public fsn::Component
 {
     FISSION_COMPONENT
 
     friend class PhysicsSystem;
 
     public:
-        PhysicsComponent(int width = 16, int height = 16, float density = 1.f);
-        PhysicsComponent(float radius, float density);
-        PhysicsComponent(sf::Vector2f* verts, int vertCount, float density = 1.f);
-        virtual ~PhysicsComponent();
+        RigidBody(int width = 16, int height = 16, float density = 1.f);
+        RigidBody(float radius, float density);
+        RigidBody(sf::Vector2f* verts, int vertCount, float density = 1.f);
+        virtual ~RigidBody();
 
         // Serialization stuff
         void serialize(sf::Packet &packet);
@@ -41,4 +41,4 @@ class PhysicsComponent : public fsn::Component
         float mDensity;
 };
 
-#endif // PHYSICSCOMPONENT_H
+#endif // TETRA_RIGIDBODY_H
