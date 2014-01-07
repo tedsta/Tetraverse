@@ -43,7 +43,7 @@ void bindSquirrel(HSQUIRRELVM vm);
 
 int main()
 {
-    std::cout << "Tetraverse\nTeam Fission\n2013\n\n";
+    std::cout << "Tetraverse\nTeam Fission\n\n";
 
     fsn::ResourceManager::init();
 
