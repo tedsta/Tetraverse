@@ -15,13 +15,13 @@ struct BlockData
 class GridData
 {
     public:
-        GridData(BlockData** blocks, int width, int height);
+        GridData(int width, int height);
         ~GridData();
 
-        BlockData** getBlocks(){return mBlocks;}
+        int getWidth() const {return mWidth;}
+        int getHeight() const {return mHeight;}
 
     private:
-        BlockData** mBlocks;
         int mWidth;
         int mHeight;
 };

@@ -1,7 +1,6 @@
 #include "GridData.h"
 
-GridData::GridData(BlockData** blocks, int width, int height) : mBlocks(blocks), mWidth(width),
-    mHeight(height)
+GridData::GridData(int width, int height) : mWidth(width), mHeight(height)
 {
     //ctor
 }

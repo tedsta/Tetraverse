@@ -14,6 +14,9 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
+					<Add directory="extlibs/include" />
+					<Add directory="extlibs/include/Squirrel" />
 				</Compiler>
 				<Linker>
 					<Add library="extlibs\lib\libFission.a" />
@@ -166,6 +169,8 @@
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
 		<Unit filename="include/Components/RigidBody.h" />
+		<Unit filename="include/GridChunk.h" />
+		<Unit filename="include/GridData.h" />
 		<Unit filename="include/Systems/PhysicsSystem.h" />
 		<Unit filename="include/phys/Collision.h" />
 		<Unit filename="include/phys/CollisionDispatcher.h" />
@@ -183,6 +188,8 @@
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
 		<Unit filename="src/Components/RigidBody.cpp" />
+		<Unit filename="src/GridChunk.cpp" />
+		<Unit filename="src/GridData.cpp" />
 		<Unit filename="src/Systems/PhysicsSystem.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
 		<Unit filename="src/phys/CollisionDispatcher.cpp" />
@@ -192,6 +199,9 @@
 		<Unit filename="src/phys/PhysicsWorld.cpp" />
 		<Unit filename="src/phys/RigidBody.cpp" />
 		<Unit filename="src/phys/Shape.cpp" />
+		<Unit filename="src/tests/TestGridData.cpp">
+			<Option target="UnitTests" />
+		</Unit>
 		<Unit filename="src/tests/TestUnitTests.cpp">
 			<Option target="UnitTests" />
 		</Unit>
