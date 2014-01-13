@@ -32,6 +32,7 @@
 #include "phys/RigidBody.h"
 #include "phys/Shape.h"
 
+#include "Components/Block.h"
 #include "Components/RigidBody.h"
 
 #include "Systems/PhysicsSystem.h"
@@ -51,6 +52,7 @@ int main()
     fsn::ComponentTypeManager::add<fsn::Sprite>();
     fsn::ComponentTypeManager::add<fsn::Intent>();
     fsn::ComponentTypeManager::add<RigidBody>();
+    fsn::ComponentTypeManager::add<Block>();
 
     auto engine = new fsn::Engine;
     auto renderMgr = new fsn::RenderManager(800, 600, "Tetraverse", 5, fsn::ResourceManager::get()->getFont("Content/Fonts/font.ttf"));

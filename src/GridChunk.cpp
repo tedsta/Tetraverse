@@ -1,5 +1,10 @@
 #include "GridChunk.h"
 
+#include <Fission/Core/EntityRef.h>
+
+#include "BlockEntityRegistry.h"
+#include "Components/Block.h"
+
 GridChunk::GridChunk(int x, int y, int width, int height) : mBlocks(width*height), mX(x), mY(y),
     mWidth(width), mHeight(height)
 {
@@ -9,6 +14,21 @@ GridChunk::GridChunk(int x, int y, int width, int height) : mBlocks(width*height
 GridChunk::~GridChunk()
 {
     //dtor
+}
+
+void GridChunk::generateEntities(fsn::EntityManager* entityMgr, BlockEntityRegistry* blockReg)
+{
+    for (int x = 0; x < mWidth; x++)
+    {
+        for (int y = 0; y < mHeight; y++)
+        {
+            if (getBlock(x, y).mat == 0)
+                continue;
+
+            fsn::EntityRef* entity = entityMgr->getEntityRef(entityMgr->createEntity());
+            entity->addComponent(new Block(getBlock(x, y).mat));
+        }
+    }
 }
 
 void GridChunk::setBlock(int x, int y, const BlockData& block)

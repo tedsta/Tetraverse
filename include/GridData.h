@@ -1,6 +1,7 @@
 #ifndef GRIDDATA_H
 #define GRIDDATA_H
 
+#include <string>
 #include <vector>
 
 #include <SFML/Config.hpp>
@@ -16,15 +17,18 @@ struct BlockData
 class GridData
 {
     public:
-        GridData(int width, int height);
+        GridData(std::string gridFile);
+        GridData(std::string gridFile, int width, int height);
         ~GridData();
 
         // Getters
-        BlockData getBlock(int x, int y) const;
+        BlockData getBlock(int x, int y);
         int getWidth() const {return mWidth;}
         int getHeight() const {return mHeight;}
 
     private:
+        std::string mFileName; // File path to store grid data
+
         int mWidth;
         int mHeight;
 
