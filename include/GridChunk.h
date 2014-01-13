@@ -11,7 +11,11 @@ class GridChunk
         GridChunk(int x, int y, int width, int height);
         ~GridChunk();
 
+        // Setters
+        void setBlock(int x, int y, const BlockData& block);
+
         // Getters
+        const BlockData& getBlock(int x, int y) const {return mBlocks[y*mWidth + x];}
         int getX() const {return mX;}
         int getY() const {return mY;}
         int getWidth() const {return mWidth;}
