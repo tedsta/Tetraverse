@@ -8,8 +8,14 @@
 class GridChunk
 {
     public:
-        GridChunk();
+        GridChunk(int x, int y, int width, int height);
         ~GridChunk();
+
+        // Getters
+        int getX() const {return mX;}
+        int getY() const {return mY;}
+        int getWidth() const {return mWidth;}
+        int getHeight() const {return mHeight;}
 
     private:
         std::vector<BlockData> mBlocks;

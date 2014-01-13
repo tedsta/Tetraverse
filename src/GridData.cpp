@@ -9,3 +9,10 @@ GridData::~GridData()
 {
     //dtor
 }
+
+BlockData GridData::getBlock(int x, int y) const
+{
+    BlockData block;
+
+    return block;
+}

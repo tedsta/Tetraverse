@@ -199,6 +199,9 @@
 		<Unit filename="src/phys/PhysicsWorld.cpp" />
 		<Unit filename="src/phys/RigidBody.cpp" />
 		<Unit filename="src/phys/Shape.cpp" />
+		<Unit filename="src/tests/TestGridChunk.cpp">
+			<Option target="UnitTests" />
+		</Unit>
 		<Unit filename="src/tests/TestGridData.cpp">
 			<Option target="UnitTests" />
 		</Unit>

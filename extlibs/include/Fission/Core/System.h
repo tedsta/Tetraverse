@@ -3,6 +3,8 @@
 
 #include <set>
 
+#include <SFML/System/Thread.hpp>
+
 #include <Fission/Core/Aspect.h>
 #include <Fission/Core/Event.h>
 #include <Fission/Core/EntityRef.h>
@@ -21,7 +23,7 @@ namespace fsn
             virtual ~System();
 
             /// \brief Event listener event handling callback.
-            virtual bool handleEvent(IEventData const& evt);
+            virtual bool handleEvent(const IEventData& evt);
 
             /// \brief Get the active entities
             const std::set<EntityRef*>& getActiveEntities(){return mActiveEntities;}
@@ -59,7 +61,7 @@ namespace fsn
             // The active entities this system should process.
             std::set<EntityRef*> mActiveEntities;
 
-            // Used by engine for lockstep
+            // Used internally for lockstep
             float mLockStep;
             float mDtAccumulator;
     };

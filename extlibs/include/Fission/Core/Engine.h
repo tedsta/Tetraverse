@@ -14,9 +14,12 @@ namespace fsn
     {
         public:
             Engine();
-            virtual ~Engine();
 
-            /// \brief Updates all of the systems in this engine.
+            /// \brief Destructor. Stops all system threads, waits for them to successfully
+            /// finish, and deallocates everything.
+            ~Engine();
+
+            /// \brief Updates all of the systems
             void update(const float dt);
 
             /// \brief Add a system to this engine.

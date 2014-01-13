@@ -129,7 +129,6 @@ void bindSquirrel(HSQUIRRELVM vm)
 
     Sqrat::DerivedClass<fsn::Sprite, fsn::RenderComponent,
         sqext::ConstAlloc<fsn::Sprite, const std::string&, int, int>> sprite(vm);
-    //sprite.Func("setTexture", &fsn::Sprite::setTexture);
     sprite.Func("setFrameLoop", &fsn::Sprite::setFrameLoop);
     sprite.Func("setFrameDir", &fsn::Sprite::setFrameDir);
     sprite.Func("setLoopAnim", &fsn::Sprite::setLoopAnim);

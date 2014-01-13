@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <SFML/Config.hpp>
+#include <SFML/System/Mutex.hpp>
 
 struct BlockData
 {
@@ -18,12 +19,16 @@ class GridData
         GridData(int width, int height);
         ~GridData();
 
+        // Getters
+        BlockData getBlock(int x, int y) const;
         int getWidth() const {return mWidth;}
         int getHeight() const {return mHeight;}
 
     private:
         int mWidth;
         int mHeight;
+
+        sf::Mutex mMutex; // For threadsafe grid access
 };
 
 #endif // GRIDDATA_H
