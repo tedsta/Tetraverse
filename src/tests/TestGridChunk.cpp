@@ -4,7 +4,7 @@
 
 struct GridChunkFixture
 {
-    GridChunkFixture() : chunk(5, 5, 15, 10)
+    GridChunkFixture() : chunk(1, 1)
     {
     }
 
@@ -17,10 +17,8 @@ struct GridChunkFixture
 
 TEST_FIXTURE(GridChunkFixture, GridChunkCreation)
 {
-    CHECK(chunk.getX() == 5);
-    CHECK(chunk.getY() == 5);
-    CHECK(chunk.getWidth() == 15);
-    CHECK(chunk.getHeight() == 10);
+    CHECK(chunk.getChunkX() == 1);
+    CHECK(chunk.getChunkY() == 1);
 }
 
 TEST_FIXTURE(GridChunkFixture, SetBlock)
