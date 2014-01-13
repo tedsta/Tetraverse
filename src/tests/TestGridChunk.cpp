@@ -2,18 +2,29 @@
 
 #include "GridChunk.h"
 
-TEST(GridChunk_CreateGridChunk)
+struct GridChunkFixture
 {
-    GridChunk chunk(10, 10, 50, 60);
-    CHECK(chunk.getX() == 10);
-    CHECK(chunk.getY() == 10);
-    CHECK(chunk.getWidth() == 50);
-    CHECK(chunk.getHeight() == 60);
+    GridChunkFixture() : chunk(5, 5, 15, 10)
+    {
+    }
+
+    ~GridChunkFixture()
+    {
+    }
+
+    GridChunk chunk;
+};
+
+TEST_FIXTURE(GridChunkFixture, GridChunkCreation)
+{
+    CHECK(chunk.getX() == 5);
+    CHECK(chunk.getY() == 5);
+    CHECK(chunk.getWidth() == 15);
+    CHECK(chunk.getHeight() == 10);
 }
 
-TEST(GridChunk_SetBlock)
+TEST_FIXTURE(GridChunkFixture, SetBlock)
 {
-    GridChunk chunk(0, 0, 10, 10);
     BlockData block;
     block.mat = 42;
     chunk.setBlock(7, 3, block);
