@@ -26,11 +26,26 @@ GridData::GridData(std::string gridFile, int width, int height) : mFileName(grid
             file << 0;
         }
     }
+
+    file.close();
 }
 
 GridData::~GridData()
 {
     //dtor
+}
+
+void GridData::setBlock(int x, int y, const BlockData& block)
+{
+    mMutex.lock();
+
+    std::ofstream file(mFileName.c_str(), std::ios::app|std::ios::binary);
+
+    // TODO: Do stuff
+
+    file.close();
+
+    mMutex.unlock();
 }
 
 BlockData GridData::getBlock(int x, int y)

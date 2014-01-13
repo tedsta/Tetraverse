@@ -21,6 +21,9 @@ class GridData
         GridData(std::string gridFile, int width, int height);
         ~GridData();
 
+        // Setters
+        void setBlock(int x, int y, const BlockData& block);
+
         // Getters
         BlockData getBlock(int x, int y);
         int getWidth() const {return mWidth;}
