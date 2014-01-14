@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "GridData.h"
+#include "GridHandle.h"
 
 GridManager::GridManager() : mNextID(0)
 {
@@ -14,10 +14,10 @@ GridManager::~GridManager()
     //dtor
 }
 
-IGridData* GridManager::createGrid(int width, int height)
+GridHandle* GridManager::createGrid(int width, int height)
 {
     std::string strID = static_cast<std::ostringstream*>( &(std::ostringstream() << mNextID) )->str(); // Convert mNextID to string
-    GridData* grid = new GridData(std::string("grid")+strID+".tvg", width, height);
+    GridHandle* grid = new GridHandle(new GridData(std::string("grid")+strID+".tvg", width, height));
     mGrids.push_back(grid);
     mNextID++;
 

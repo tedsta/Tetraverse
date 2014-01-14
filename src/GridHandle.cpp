@@ -1,6 +1,11 @@
 #include "GridHandle.h"
 
-GridHandle::GridHandle()
+GridHandle::GridHandle(IGridData* gridData) : mGridData(gridData)
 {
     //ctor
+}
+
+GridHandle::~GridHandle()
+{
+    delete mGridData;
 }

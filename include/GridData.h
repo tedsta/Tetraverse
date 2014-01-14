@@ -17,6 +17,8 @@ struct BlockData
 class IGridData
 {
     public:
+        virtual ~IGridData(){}
+
         // Setters
         virtual void setBlock(int x, int y, const BlockData& block) = 0;
 
