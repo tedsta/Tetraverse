@@ -15,7 +15,7 @@ GridChunk::~GridChunk()
     //dtor
 }
 
-void GridChunk::generateEntities(fsn::EntityManager* entityMgr, BlockEntityRegistry* blockReg)
+void GridChunk::generateEntities(fsn::EntityManager* entityMgr)
 {
     for (int x = 0; x < ChunkSize; x++)
     {
@@ -25,9 +25,20 @@ void GridChunk::generateEntities(fsn::EntityManager* entityMgr, BlockEntityRegis
                 continue;
 
             fsn::EntityRef* entity = entityMgr->getEntityRef(entityMgr->createEntity());
-            entity->addComponent(new Block(getBlock(x, y).mat));
+            entity->addComponent(new Block(getBlock(x, y).mat, getBlock(x, y).edgeState));
 
             mEntities[y*ChunkSize + x] = entity;
+        }
+    }
+}
+
+void GridChunk::destroyEntities()
+{
+    for (int x = 0; x < ChunkSize; x++)
+    {
+        for (int y = 0; y < ChunkSize; y++)
+        {
+            mEntities[y*ChunkSize + x]->destroy();
         }
     }
 }

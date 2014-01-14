@@ -42,6 +42,8 @@
 #include "perlin/perlin.h"
 #include <random>
 
+void startServer();
+void startClient();
 void bindSquirrel(HSQUIRRELVM vm);
 
 int main()
@@ -106,6 +108,14 @@ int main()
     delete engine;
 
     return 0;
+}
+
+void startServer()
+{
+}
+
+void startClient()
+{
 }
 
 template <typename T>

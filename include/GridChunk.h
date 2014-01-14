@@ -9,15 +9,14 @@
 
 const int ChunkSize = 64; // 64x64 chunks
 
-class BlockEntityRegistry;
-
 class GridChunk
 {
     public:
         GridChunk(int x, int y, int width, int height);
         ~GridChunk();
 
-        void generateEntities(fsn::EntityManager* entityMgr, BlockEntityRegistry* blockReg);
+        void generateEntities(fsn::EntityManager* entityMgr);
+        void destroyEntities();
 
         // Setters
         void setBlock(int x, int y, const BlockData& block);
@@ -25,12 +24,16 @@ class GridChunk
         // Getters
         const BlockData& getBlock(int x, int y) const {return mBlocks[y*mWidth + x];}
         fsn::EntityRef* getEntityAt(int x, int y) const {return mEntities[y*mWidth + x];}
+        int getID() const {return mID;}
         int getChunkX() const {return mChunkX;}
         int getChunkY() const {return mChunkY;}
 
     private:
         std::vector<BlockData> mBlocks;
         std::vector<fsn::EntityRef*> mEntities;
+
+        // The chunk ID in the ChunkManager
+        int mID;
 
         // The chunk coordinates
         int mChunkX;

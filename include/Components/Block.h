@@ -10,7 +10,7 @@ class Block : public fsn::Component
     FISSION_COMPONENT
 
     public:
-        Block(sf::Uint16 mat = 0) : mMat(mat) {}
+        Block(sf::Uint16 mat = 0, sf::Uint8 edgeState = 0) : mMat(mat), mEdgeState(edgeState) {}
         ~Block() {}
 
         sf::Uint16 getMat() const {return mMat;}
