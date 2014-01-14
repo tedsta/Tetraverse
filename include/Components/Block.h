@@ -14,9 +14,11 @@ class Block : public fsn::Component
         ~Block() {}
 
         sf::Uint16 getMat() const {return mMat;}
+        sf::Uint8 getEdgeState() const {return mEdgeState;}
 
     private:
         sf::Uint16 mMat;
+        sf::Uint8 mEdgeState;
 };
 
 #endif // BLOCK_H

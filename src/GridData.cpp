@@ -9,6 +9,14 @@ bool fileExists(const std::string& filename);
 GridData::GridData(std::string gridFile) : mFileName(gridFile)
 {
     assert(fileExists(gridFile)); // Make sure this file exists.
+
+    std::fstream file(mFileName.c_str(), std::ios::in|std::ios::binary);
+
+    // Check the header
+    char header[5];
+    header[4] = 0;
+    file.read(header, 4);
+    assert(std::string(header) == std::string("GRID"));
 }
 
 GridData::GridData(std::string gridFile, int width, int height) : mFileName(gridFile),
@@ -23,7 +31,7 @@ GridData::GridData(std::string gridFile, int width, int height) : mFileName(grid
     {
         for (int y = 0; y < mHeight; y++)
         {
-            file << 0;
+            file << sf::Uint16(0) << sf::Uint8(0) << sf::Uint8(0);
         }
     }
 

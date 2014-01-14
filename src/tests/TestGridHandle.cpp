@@ -64,7 +64,10 @@ TEST_FIXTURE(GridHandleFixture, GridHandle_IsLarge)
     CHECK(!smallGrid.isLarge());
 }
 
-TEST_FIXTURE(GridHandleFixture, GridHandle_GetChunk)
+TEST_FIXTURE(GridHandleFixture, GridHandle_ChunksAreNull)
 {
+    CHECK(grid.getChunk(0, 0) == nullptr);
     CHECK(grid.getChunk(0, 1) == nullptr);
+    CHECK(grid.getChunk(1, 0) == nullptr);
+    CHECK(grid.getChunk(1, 1) == nullptr);
 }

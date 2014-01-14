@@ -4,7 +4,7 @@
 
 namespace phys
 {
-    RigidBody::RigidBody(Shape* _shape, int _type, float density) : type(_type), shape(_shape), parent(NULL)
+    RigidBody::RigidBody(Shape* _shape, int _type, float density) : type(_type), shape(_shape), parent(nullptr)
     {
         angularVelocity = 0;
         torque = 0;
