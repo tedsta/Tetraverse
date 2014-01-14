@@ -1,9 +1,9 @@
 #ifndef CHUNKMANAGER_H
 #define CHUNKMANAGER_H
 
-#include <set>
+#include <vector>
 
-class GridChunk;
+#include "GridChunk.h"
 
 class ChunkManager
 {
@@ -12,7 +12,7 @@ class ChunkManager
         ~ChunkManager();
 
     private:
-        std::set<GridChunk*> mChunks; // Loaded chunks
+        std::vector<GridChunk> mChunks; // Loaded chunks
 };
 
 #endif // CHUNKMANAGER_H
