@@ -32,6 +32,8 @@
 #include "phys/RigidBody.h"
 #include "phys/Shape.h"
 
+#include "GridData.h"
+
 #include "Components/Block.h"
 #include "Components/RigidBody.h"
 
