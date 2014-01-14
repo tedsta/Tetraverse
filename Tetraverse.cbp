@@ -168,7 +168,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="extlibs/src/spine-sfml/src/spine/spine-sfml.cpp" />
-		<Unit filename="include/BlockEntityRegistry.h" />
 		<Unit filename="include/ChunkLoadRequest.h" />
 		<Unit filename="include/ChunkManager.h" />
 		<Unit filename="include/ChunkUnloadRequest.h" />
@@ -176,6 +175,7 @@
 		<Unit filename="include/Components/RigidBody.h" />
 		<Unit filename="include/GridChunk.h" />
 		<Unit filename="include/GridData.h" />
+		<Unit filename="include/GridHandle.h" />
 		<Unit filename="include/GridManager.h" />
 		<Unit filename="include/Systems/PhysicsSystem.h" />
 		<Unit filename="include/phys/Collision.h" />
@@ -193,13 +193,13 @@
 		</Unit>
 		<Unit filename="perlin/perlin.cpp" />
 		<Unit filename="perlin/perlin.h" />
-		<Unit filename="src/BlockEntityRegistry.cpp" />
 		<Unit filename="src/ChunkLoadRequest.cpp" />
 		<Unit filename="src/ChunkManager.cpp" />
 		<Unit filename="src/ChunkUnloadRequest.cpp" />
 		<Unit filename="src/Components/RigidBody.cpp" />
 		<Unit filename="src/GridChunk.cpp" />
 		<Unit filename="src/GridData.cpp" />
+		<Unit filename="src/GridHandle.cpp" />
 		<Unit filename="src/GridManager.cpp" />
 		<Unit filename="src/Systems/PhysicsSystem.cpp" />
 		<Unit filename="src/phys/Collision.cpp" />
@@ -211,6 +211,9 @@
 		<Unit filename="src/phys/RigidBody.cpp" />
 		<Unit filename="src/phys/Shape.cpp" />
 		<Unit filename="src/tests/TestGridChunk.cpp">
+			<Option target="UnitTests" />
+		</Unit>
+		<Unit filename="src/tests/TestGridHandle.cpp">
 			<Option target="UnitTests" />
 		</Unit>
 		<Unit filename="src/tests/TestUnitTests.cpp">
