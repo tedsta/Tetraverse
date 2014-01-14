@@ -14,7 +14,19 @@ struct BlockData
     sf::Uint8 veggy;
 };
 
-class GridData
+class IGridData
+{
+    public:
+        // Setters
+        virtual void setBlock(int x, int y, const BlockData& block) = 0;
+
+        // Getters
+        virtual BlockData getBlock(int x, int y) = 0;
+        virtual int getWidth() const = 0;
+        virtual int getHeight() const = 0;
+};
+
+class GridData : public IGridData
 {
     public:
         GridData(std::string gridFile);

@@ -2,7 +2,6 @@
 
 #include <Fission/Core/EntityRef.h>
 
-#include "BlockEntityRegistry.h"
 #include "Components/Block.h"
 
 GridChunk::GridChunk(int x, int y) : mBlocks(ChunkSize*ChunkSize), mEntities(ChunkSize*ChunkSize),

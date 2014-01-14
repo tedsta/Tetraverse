@@ -3,7 +3,7 @@
 
 #include <vector>
 
-class GridData;
+class IGridData;
 
 class GridManager
 {
@@ -11,10 +11,10 @@ class GridManager
         GridManager();
         ~GridManager();
 
-        GridData* createGrid(int width, int height);
+        IGridData* createGrid(int width, int height);
 
     private:
-        std::vector<GridData*> mGrids;
+        std::vector<IGridData*> mGrids;
 
         int mNextID;
 };

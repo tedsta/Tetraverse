@@ -14,7 +14,7 @@ GridManager::~GridManager()
     //dtor
 }
 
-GridData* GridManager::createGrid(int width, int height)
+IGridData* GridManager::createGrid(int width, int height)
 {
     std::string strID = static_cast<std::ostringstream*>( &(std::ostringstream() << mNextID) )->str(); // Convert mNextID to string
     GridData* grid = new GridData(std::string("grid")+strID+".tvg", width, height);
