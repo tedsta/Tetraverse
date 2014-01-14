@@ -42,9 +42,7 @@ GridData::GridData(std::string gridFile, int width, int height) : mFileName(grid
     {
         for (int y = 0; y < mHeight; y++)
         {
-            file.write(reinterpret_cast<const char*>(&emptyBlock.mat), sizeof(emptyBlock.mat));
-            file.write(reinterpret_cast<const char*>(&emptyBlock.edgeState), sizeof(emptyBlock.edgeState));
-            file.write(reinterpret_cast<const char*>(&emptyBlock.veggy), sizeof(emptyBlock.veggy));
+            file.write(reinterpret_cast<char*>(&emptyBlock), sizeof(emptyBlock));
         }
     }
 
@@ -65,9 +63,7 @@ void GridData::setBlock(int x, int y, const BlockData& block)
     // Move cursor to block data position
     file.seekp(12 + (y*mWidth + x)*sizeof(BlockData), std::ios::beg); // header+width+height
 
-    file.write(reinterpret_cast<const char*>(&block.mat), sizeof(block.mat));
-    file.write(reinterpret_cast<const char*>(&block.edgeState), sizeof(block.edgeState));
-    file.write(reinterpret_cast<const char*>(&block.veggy), sizeof(block.veggy));
+    file.write(reinterpret_cast<const char*>(&block), sizeof(block));
 
     file.close();
 
@@ -84,9 +80,7 @@ BlockData GridData::getBlock(int x, int y)
     file.seekg(12 + (y*mWidth + x)*sizeof(BlockData)); // header+width+height
 
     BlockData block;
-    file.read(reinterpret_cast<char*>(&block.mat), sizeof(block.mat));
-    file.read(reinterpret_cast<char*>(&block.edgeState), sizeof(block.edgeState));
-    file.read(reinterpret_cast<char*>(&block.veggy), sizeof(block.veggy));
+    file.read(reinterpret_cast<char*>(&block), sizeof(block));
 
     file.close();
     mMutex.unlock();
