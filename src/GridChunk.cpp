@@ -4,8 +4,8 @@
 
 #include "Components/Block.h"
 
-GridChunk::GridChunk(int x, int y) : mBlocks(ChunkSize*ChunkSize), mEntities(ChunkSize*ChunkSize),
-    mChunkX(x), mChunkY(y)
+GridChunk::GridChunk(int x, int y, int width, int height) : mBlocks(width*height), mEntities(width*height),
+    mChunkX(x), mChunkY(y), mWidth(width), mHeight(height)
 {
     //ctor
 }
@@ -34,5 +34,5 @@ void GridChunk::generateEntities(fsn::EntityManager* entityMgr, BlockEntityRegis
 
 void GridChunk::setBlock(int x, int y, const BlockData& block)
 {
-    mBlocks[y*ChunkSize + x] = block;
+    mBlocks[y*mWidth + x] = block;
 }

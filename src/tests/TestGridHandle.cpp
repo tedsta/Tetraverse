@@ -1,6 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
 
 #include "GridData.h"
+#include "GridChunk.h"
 #include "GridHandle.h"
 
 /// \brief Mock the GridData class, which facilitates access to grid data files.
@@ -41,7 +42,7 @@ class MockGridData : public IGridData
 
 struct GridHandleFixture
 {
-    GridHandleFixture() : grid(new MockGridData(10, 10))
+    GridHandleFixture() : grid(new MockGridData(ChunkSize*2, ChunkSize*2))
     {
     }
 
@@ -50,6 +51,20 @@ struct GridHandleFixture
 
 TEST_FIXTURE(GridHandleFixture, GridHandle_Create)
 {
-    CHECK(grid.getWidth() == 10);
-    CHECK(grid.getHeight() == 10);
+    CHECK(grid.getWidth() == ChunkSize*2);
+    CHECK(grid.getHeight() == ChunkSize*2);
+}
+
+TEST_FIXTURE(GridHandleFixture, GridHandle_IsLarge)
+{
+    CHECK(grid.isLarge()); // Large one
+
+    // Small one
+    GridHandle smallGrid(new MockGridData(ChunkSize, ChunkSize-1));
+    CHECK(!smallGrid.isLarge());
+}
+
+TEST_FIXTURE(GridHandleFixture, GridHandle_GetChunk)
+{
+    CHECK(grid.getChunk(0, 1) == nullptr);
 }

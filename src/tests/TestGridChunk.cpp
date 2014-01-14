@@ -4,7 +4,7 @@
 
 struct GridChunkFixture
 {
-    GridChunkFixture() : chunk(1, 1)
+    GridChunkFixture() : chunk(1, 1, 15, 10)
     {
     }
 
