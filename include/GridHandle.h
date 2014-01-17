@@ -13,6 +13,12 @@ class GridHandle
         GridHandle(IGridData* gridData);
         ~GridHandle();
 
+        // Request that a chunk be loaded
+        void requestChunkLoad(int x, int y);
+
+        // Request that a chunk be unloaded
+        void requestChunkUnload(int x, int y);
+
         // Getters
         int getWidth() const {return mGridData->getWidth();}
         int getHeight() const {return mGridData->getHeight();}

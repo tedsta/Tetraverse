@@ -15,3 +15,11 @@ GridHandle::~GridHandle()
 {
     delete mGridData;
 }
+
+void GridHandle::requestChunkLoad(int x, int y)
+{
+}
+
+void GridHandle::requestChunkUnload(int x, int y)
+{
+}
